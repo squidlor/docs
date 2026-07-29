@@ -1,0 +1,594 @@
+@import url("https://fonts.googleapis.com/css2?family=Alexandria:wght@300..800&family=Outfit:wght@300..700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import "tailwindcss";
+
+/* Tailwind v4 needs the dark variant pointed at our class, not the media query,
+   because the theme is user-toggleable and persisted. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Alexandria", "Outfit", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --color-brand-50: #f4efff;
+  --color-brand-100: #e9dfff;
+  --color-brand-200: #d5c2ff;
+  --color-brand-300: #b795ff;
+  --color-brand-400: #9d70fc;
+  --color-brand-500: #8752fa;
+  --color-brand-600: #7433ef;
+  --color-brand-700: #6222d4;
+  --color-brand-800: #521eac;
+  --color-brand-900: #451c8a;
+
+  --breakpoint-3xl: 100rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Semantic tokens. Every component reads these, never raw palette values, so
+   the two themes stay in sync by construction.
+   --------------------------------------------------------------------------- */
+:root {
+  --bg: #ffffff;
+  --bg-subtle: #fbfbfd;
+  --bg-sunken: #f6f6f9;
+  --bg-raised: #ffffff;
+  --bg-hover: #f2f2f7;
+  --bg-active: #f4efff;
+
+  --fg: #14141b;
+  --fg-muted: #5c5c6b;
+  --fg-subtle: #8b8b9a;
+
+  --border: #e7e7ee;
+  --border-strong: #d5d5e0;
+
+  --accent: #7433ef;
+  --accent-fg: #ffffff;
+  --accent-subtle: #f4efff;
+
+  --code-bg: #f6f6f9;
+  --code-fg: #2c2c3a;
+  --code-border: #e7e7ee;
+
+  --shadow-sm: 0 1px 2px 0 rgb(20 20 27 / 0.05);
+  --shadow-md: 0 4px 16px -2px rgb(20 20 27 / 0.08), 0 2px 4px -2px rgb(20 20 27 / 0.04);
+  --shadow-lg: 0 16px 48px -8px rgb(20 20 27 / 0.16), 0 4px 12px -4px rgb(20 20 27 / 0.08);
+
+  --header-h: 3.75rem;
+  --sidebar-w: 17.5rem;
+  --toc-w: 15rem;
+}
+
+.dark {
+  --bg: #0b0b0f;
+  --bg-subtle: #101015;
+  --bg-sunken: #08080b;
+  --bg-raised: #15151c;
+  --bg-hover: #1c1c25;
+  --bg-active: #1f1830;
+
+  --fg: #ecedf1;
+  --fg-muted: #9b9bab;
+  --fg-subtle: #6e6e80;
+
+  --border: #23232e;
+  --border-strong: #32323f;
+
+  --accent: #a880ff;
+  --accent-fg: #14141b;
+  --accent-subtle: #1f1830;
+
+  --code-bg: #101015;
+  --code-fg: #d8d9e0;
+  --code-border: #23232e;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 16px -2px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 16px 48px -8px rgb(0 0 0 / 0.7), 0 4px 12px -4px rgb(0 0 0 / 0.5);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    /* No scroll-padding-top here: the headings carry scroll-margin-top, and
+       both offsets add up, landing anchor jumps twice as far down as intended. */
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: var(--accent-subtle);
+    color: var(--fg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  /* Anchor navigation focuses the target heading so screen readers follow the
+     jump (see ScrollManager). That heading is already at the top of the
+     viewport, so the ring communicates nothing to sighted readers and just
+     looks like a rendering fault — suppress it for headings only. */
+  .prose :is(h1, h2, h3, h4, h5, h6):focus,
+  .prose :is(h1, h2, h3, h4, h5, h6):focus-visible {
+    outline: none;
+  }
+
+  /* Scrollbars: thin and theme-aware, so the sidebar/TOC don't get chrome-heavy
+     light bars on a dark page. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--fg-subtle);
+    background-clip: content-box;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Prose — the rendered markdown body. Hand-rolled rather than @tailwindcss/
+   typography because every color has to route through the semantic tokens.
+   --------------------------------------------------------------------------- */
+.prose {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--fg);
+  max-width: none;
+}
+
+.prose > * + * {
+  margin-top: 1.25em;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  scroll-margin-top: calc(var(--header-h) + 1.5rem);
+  position: relative;
+}
+
+.prose h1 {
+  font-size: 2.25rem;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  margin-top: 0;
+}
+
+.prose h2 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+  margin-top: 3rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.prose h3 {
+  font-size: 1.1875rem;
+  line-height: 1.4;
+  margin-top: 2.25rem;
+}
+
+.prose h4 {
+  font-size: 1.0625rem;
+  margin-top: 1.75rem;
+}
+
+.prose h5,
+.prose h6 {
+  font-size: 1rem;
+  margin-top: 1.5rem;
+  color: var(--fg-muted);
+}
+
+/* Hover-revealed anchor links, GitBook/GitHub style. */
+.prose .heading-anchor {
+  position: absolute;
+  right: 100%;
+  padding-right: 0.35rem;
+  color: var(--fg-subtle);
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  text-decoration: none;
+  font-weight: 400;
+  user-select: none;
+}
+.prose :is(h1, h2, h3, h4, h5, h6):hover .heading-anchor,
+.prose .heading-anchor:focus-visible {
+  opacity: 1;
+}
+.prose .heading-anchor:hover {
+  color: var(--accent);
+}
+
+.prose p {
+  color: var(--fg);
+}
+
+.prose a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid color-mix(in oklab, var(--accent) 35%, transparent);
+  transition:
+    border-color 0.12s ease,
+    background-color 0.12s ease;
+}
+.prose a:hover {
+  border-bottom-color: var(--accent);
+  background-color: var(--accent-subtle);
+}
+
+.prose strong {
+  font-weight: 650;
+  color: var(--fg);
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.5rem;
+}
+.prose ul {
+  list-style-type: disc;
+}
+.prose ol {
+  list-style-type: decimal;
+}
+.prose li::marker {
+  color: var(--fg-subtle);
+}
+.prose li + li {
+  margin-top: 0.375rem;
+}
+.prose li > ul,
+.prose li > ol {
+  margin-top: 0.375rem;
+  margin-bottom: 0.375rem;
+}
+.prose li > p {
+  margin-top: 0;
+}
+.prose li > p + p {
+  margin-top: 0.625rem;
+}
+
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.prose blockquote {
+  border-left: 3px solid var(--border-strong);
+  padding-left: 1rem;
+  color: var(--fg-muted);
+  font-style: normal;
+}
+.prose blockquote > * + * {
+  margin-top: 0.75em;
+}
+
+/* Inline code */
+.prose :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.8125em;
+  font-weight: 500;
+  background-color: var(--code-bg);
+  color: var(--code-fg);
+  border: 1px solid var(--code-border);
+  border-radius: 5px;
+  padding: 0.15em 0.4em;
+  word-break: break-word;
+}
+.prose a > code {
+  color: inherit;
+}
+
+/* Code blocks */
+.prose pre {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  background-color: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: 0.625rem;
+  padding: 1rem 1.125rem;
+  overflow-x: auto;
+  tab-size: 2;
+}
+.prose pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+  color: var(--code-fg);
+}
+
+/* Inside a CodeBlock wrapper the border and radius belong to the wrapper, so
+   the header bar and the code read as one panel. */
+.prose .code-block > pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+/* Tables — wrapped in an overflow container by the renderer so wide tables
+   scroll themselves instead of the page. */
+.prose table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.prose thead th {
+  background-color: var(--bg-sunken);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  text-align: left;
+  padding: 0.625rem 0.875rem;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.prose tbody td {
+  padding: 0.625rem 0.875rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.prose tbody tr:last-child td {
+  border-bottom: 0;
+}
+.prose tbody tr:hover td {
+  background-color: var(--bg-subtle);
+}
+.prose table :not(pre) > code {
+  font-size: 0.78em;
+  white-space: nowrap;
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.625rem;
+  border: 1px solid var(--border);
+}
+
+.prose kbd {
+  font-family: var(--font-mono);
+  font-size: 0.75em;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  padding: 0.1em 0.4em;
+}
+
+/* ---------------------------------------------------------------------------
+   Syntax highlighting (highlight.js class names) mapped onto both themes.
+   --------------------------------------------------------------------------- */
+.hljs-comment,
+.hljs-quote {
+  color: var(--fg-subtle);
+  font-style: italic;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-doctag,
+.hljs-name {
+  color: #b3379a;
+}
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta .hljs-string {
+  color: #0a7a5c;
+}
+.hljs-number,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-type,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #b4581a;
+}
+.hljs-title,
+.hljs-section,
+.hljs-title.class_,
+.hljs-title.function_ {
+  color: #2f5fd0;
+}
+.hljs-attr,
+.hljs-selector-class,
+.hljs-property {
+  color: #6222d4;
+}
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-meta {
+  color: #8b8b9a;
+}
+.hljs-deletion {
+  color: #c4342b;
+}
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: 600;
+}
+
+.dark .hljs-keyword,
+.dark .hljs-selector-tag,
+.dark .hljs-literal,
+.dark .hljs-doctag,
+.dark .hljs-name {
+  color: #f490d6;
+}
+.dark .hljs-string,
+.dark .hljs-regexp,
+.dark .hljs-addition,
+.dark .hljs-attribute,
+.dark .hljs-meta .hljs-string {
+  color: #5fd6a8;
+}
+.dark .hljs-number,
+.dark .hljs-variable,
+.dark .hljs-template-variable,
+.dark .hljs-type,
+.dark .hljs-selector-attr,
+.dark .hljs-selector-pseudo,
+.dark .hljs-built_in,
+.dark .hljs-builtin-name {
+  color: #ffb672;
+}
+.dark .hljs-title,
+.dark .hljs-section,
+.dark .hljs-title.class_,
+.dark .hljs-title.function_ {
+  color: #7fb0ff;
+}
+.dark .hljs-attr,
+.dark .hljs-selector-class,
+.dark .hljs-property {
+  color: #c4a5ff;
+}
+.dark .hljs-deletion {
+  color: #ff8a80;
+}
+
+/* ---------------------------------------------------------------------------
+   Callouts. Authored in markdown as a blockquote whose first line is
+   {% hint style="info" %} (GitBook syntax) or > **Note:** — normalized in the
+   content pipeline into <div class="callout callout-info">.
+   --------------------------------------------------------------------------- */
+.prose .callout {
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+  border-radius: 0.5rem;
+  padding: 0.875rem 1rem;
+  background-color: var(--bg-subtle);
+  font-size: 0.9375rem;
+}
+.prose .callout > * + * {
+  margin-top: 0.625em;
+}
+.prose .callout > :first-child {
+  margin-top: 0;
+}
+.prose .callout-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-bottom: 0.375rem;
+}
+.prose .callout-info {
+  border-left-color: var(--accent);
+}
+.prose .callout-info .callout-title {
+  color: var(--accent);
+}
+.prose .callout-success {
+  border-left-color: #17a673;
+}
+.prose .callout-success .callout-title {
+  color: #17a673;
+}
+.dark .prose .callout-success {
+  border-left-color: #45d6a4;
+}
+.dark .prose .callout-success .callout-title {
+  color: #45d6a4;
+}
+.prose .callout-warning {
+  border-left-color: #d98315;
+}
+.prose .callout-warning .callout-title {
+  color: #d98315;
+}
+.dark .prose .callout-warning {
+  border-left-color: #fcb045;
+}
+.dark .prose .callout-warning .callout-title {
+  color: #fcb045;
+}
+.prose .callout-danger {
+  border-left-color: #d93a34;
+}
+.prose .callout-danger .callout-title {
+  color: #d93a34;
+}
+.dark .prose .callout-danger {
+  border-left-color: #ff7b73;
+}
+.dark .prose .callout-danger .callout-title {
+  color: #ff7b73;
+}
+
+/* Utility used across the chrome */
+@utility surface {
+  background-color: var(--bg-raised);
+  border: 1px solid var(--border);
+}

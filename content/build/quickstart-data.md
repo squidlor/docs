@@ -23,7 +23,7 @@ curl https://api.squidlor.com/aggregator/v1/robinhood/feeds/BTC_USD/value
 }
 ```
 
-Pairs use an underscore in the path (`BTC_USD`), and chains accept a slug (`robinhood`, `arbitrum`, `qubetics`) or a numeric chain ID.
+Pairs use an underscore in the path (`BTC_USD`), and chains accept a slug (`robinhood`, `arbitrum`) or a numeric chain ID.
 
 ## Every feed on a chain
 

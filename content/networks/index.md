@@ -11,22 +11,18 @@ Squidlor is chain-agnostic by construction. No contract hardcodes a chain, and e
 | --- | --- | --- |
 | **[Robinhood Chain](/networks/robinhood-chain)** | 4663 | **Primary. Live** — oracle, aggregators, registry, and randomness. |
 | Arbitrum One | 42161 | Oracle aggregators live. The source of the "Arbitrum hub" prices the relay medians. |
-| Qubetics | 9030 | Aggregators and registry deployed. Awaiting an active pusher. |
 
 ## Tooling coverage
 
 Different layers know about different chains, which is worth checking before you assume a path works.
 
-| | Robinhood (4663) | Arbitrum (42161) | Qubetics (9030) |
-| --- | --- | --- | --- |
-| Contracts deployed | Yes | Yes | Yes |
-| On the live public API | Yes | Yes | Yes |
-| In `@squidlor/oracle-sdk` | Yes | Yes | Yes |
-| On the MCP server | Yes | Yes | Yes |
-| Randomness API endpoint | No | Yes | No |
-
-> [!NOTE]
-> Qubetics aggregators are deployed and addressable, but no pusher is currently writing to them, so reads revert with `InsufficientHealthySources` until one is running. The SDK surfaces that as a typed `StaleFeedError` rather than an opaque selector.
+| | Robinhood (4663) | Arbitrum (42161) |
+| --- | --- | --- |
+| Contracts deployed | Yes | Yes |
+| On the live public API | Yes | Yes |
+| In `@squidlor/oracle-sdk` | Yes | Yes |
+| On the MCP server | Yes | Yes |
+| Randomness API endpoint | No | Yes |
 
 ## Chain slugs
 

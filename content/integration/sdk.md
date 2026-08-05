@@ -35,7 +35,6 @@ console.log(updatedAt);  // 1785243053 (unix seconds)
 | --- | --- | --- |
 | `robinhood` | 4663 | BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL (all /USD) |
 | `arbitrum` | 42161 | BTC, ETH, SOL, EUR, XAU, TSLA (/USD), FBTC/POR |
-| `qubetics` | 9030 | BTC, ETH, SOL, BNB, XRP (all /USD) |
 
 Chain IDs work in place of slugs: `getFeed(4663, "BTC/USD")`.
 
@@ -63,7 +62,7 @@ If too few sources are fresh, the aggregator reverts rather than serve a number 
 import { getFeed, StaleFeedError } from "@squidlor/oracle-sdk";
 
 try {
-  await getFeed("qubetics", "BTC/USD").read();
+  await getFeed("robinhood", "BTC/USD").read();
 } catch (e) {
   if (e instanceof StaleFeedError) {
     console.warn(`only ${e.healthy}/${e.required} sources fresh — falling back`);
@@ -107,7 +106,7 @@ const feed = getFeed("robinhood", "SOMETHING/USD", {
 });
 
 // 2. Resolve through the on-chain registry — async, because it reads a contract.
-//    Robinhood and Qubetics registries ship in the SDK, so no address is needed.
+//    The Robinhood registry ships in the SDK, so no address is needed.
 import { getFeedViaRegistry } from "@squidlor/oracle-sdk";
 
 const resolved = await getFeedViaRegistry("robinhood", "NVDA/USD");

@@ -53,6 +53,12 @@ For crypto, the sources medianed per pair in the live deployment:
 
 For equities, the relay medians free market-data APIs and pushes during US market hours only.
 
+**What the Arbitrum hub actually contributes.** The hub is a `SquidlorOracleAggregator` of the same kind described in Layer 3, and it is frequently described as a Chainlink + Pyth + DIA median. Measured on 2026-08-05, that overstates it. BTC/USD runs in `PRIMARY_WITH_FALLBACK` mode, so it returns its first healthy source — Chainlink — and never medians at all. Its Pyth source is enabled but 25.8 h behind, and DIA, RedStone, API3, Chronicle and Stork are all disabled on-chain. ETH/USD does median, but only Chainlink and the Uniswap V3 TWAP were inside their windows at read time; SOL/USD reduced to Chainlink alone. So the hub reads today as **Chainlink, with a TWAP cross-check on two pairs** — one venue in the relay's five, not a pre-medianed composite of three oracle networks.
+
+That is not fatal to Layer 1 — the four CEX reads are independent of it, and the median only needs the hub to be *a* source, not a good one. But nothing should be described as defended by cross-oracle aggregation on the strength of the hub. The per-source measurements, and the two configuration bugs behind them, are recorded in `aggregator-contract/docs/HUB_SOURCE_STATE.md`.
+
+**When it publishes.** The relay prices every feed once a minute but only transmits on a trigger, the same rule every production push oracle uses: a feed goes on-chain when it has moved **≥ 0.5%** from its stored value, or when that value reaches the **1h heartbeat**. Both are measured against the adapter's own state, not against what the relay last attempted, so the numbers mean what a consumer reads. Feeds already past half their heartbeat ride along in a transaction another feed has already paid for.
+
 **What this layer buys you:** a single venue printing a bad tick — a thin-book wick, a stuck API — does not become the on-chain price. The median absorbs it.
 
 **What it does not buy you:** if the relayer itself is wrong or malicious, every source it reports is equally suspect. That is Layer 2's problem.

@@ -47,6 +47,24 @@ export const nav: NavGroup[] = [
     ],
   },
   {
+    title: "Build with Squidlor",
+    icon: "rocket",
+    items: [
+      { title: "Overview", slug: "/build" },
+      { title: "Authentication", slug: "/build/authentication" },
+      { title: "Rate limits & plans", slug: "/build/rate-limits" },
+      { title: "Agent quickstart", slug: "/build/quickstart-agents" },
+      { title: "Contract quickstart", slug: "/build/quickstart-contracts" },
+      { title: "Data quickstart", slug: "/build/quickstart-data" },
+      { title: "Templates", slug: "/build/templates" },
+      { title: "Showcase", slug: "/build/showcase" },
+      { title: "Builder rewards", slug: "/build/rewards" },
+      { title: "Bounties", slug: "/build/bounties" },
+      { title: "Rewards terms", slug: "/build/rewards-terms" },
+      { title: "Changelog", slug: "/build/changelog" },
+    ],
+  },
+  {
     title: "API Reference",
     icon: "code",
     items: [

@@ -73,11 +73,33 @@ if (feed.healthyCount < 2 && feed.sources.length > 1) {
 
 ## Rate limits
 
-There is no documented rate limit and no API key. That is not an invitation to hammer it.
+| Tier | Requests/minute | Counted per |
+|---|---|---|
+| Anonymous (no key) | 30 | IP address |
+| Free key | 300 | key |
+| Pro | 3,000 | key |
+| Institutional | unlimited | key |
+
+Every `/v1` response carries `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset` and `X-Squidlor-Tier`. Exceeding the allowance returns `429` with `code: "RATE_LIMITED"`, a `Retry-After` header and `retryAfterSec` in the body.
+
+`X-Squidlor-Tier` is the quickest way to confirm your key is being read — if you sent one and see `anon`, it did not arrive.
+
+An unrecognised chain is a `404`, not a fallback: `/v1/robinhoood/feeds` (typo) returns
+`chain not supported: robinhoood` rather than quietly serving another chain's prices. On the
+legacy query-param routes, a malformed `chainId` is a `400` with `code: INVALID_CHAIN_ID`.
+
+Two authentication errors are worth knowing:
+
+- `401 INVALID_API_KEY` — the key does not exist or was revoked. A bad key is an error rather than a silent downgrade, so a broken deploy is loud.
+- `X-Squidlor-Key-Unverified: true` on a `200` — our key lookup was degraded, so your valid key was served at anonymous limits instead of being rejected.
+
+On the anonymous and free tiers, `/history`, `/ohlc` and `/audit` reach back 30 days. Longer windows are **clamped, not rejected**: you get `200` with 30 days of data plus `X-History-Clamped: true` and `X-History-Lookback-Days`.
+
+See [authentication](/build/authentication) and [rate limits & plans](/build/rate-limits) for the full picture.
 
 Responses are cached for 10 seconds, so polling faster than that returns identical bytes and buys you nothing. Practical guidance:
 
-- **Poll at 10 seconds or slower.** Anything faster is served from cache.
+- **Poll at 10 seconds or slower.** Anything faster is served from cache and still counts against your limit.
 - **Cache on your side too**, especially if you fan a single price out to many users.
 - **Back off on `500` and `503`** with exponential delay and jitter, rather than retrying in a tight loop.
 - **For real-time UI**, prefer Squidlor's WebSocket push over polling this API.

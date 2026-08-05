@@ -37,7 +37,7 @@ The equity second source is the most consequential item here. Until it lands, th
 | Initiative | What it unlocks |
 | --- | --- |
 | **Additional EVM chains** | Each deployment is a script plus configuration — no Solidity changes, as the Robinhood launch demonstrated. |
-| **SDK coverage per chain** | `@squidlor/oracle-sdk` currently ships addresses for Arbitrum only. |
+| **SDK coverage per chain** | Closed. `@squidlor/oracle-sdk` 0.2.0 ships addresses for Robinhood Chain, Arbitrum and Qubetics. |
 
 ## AI and agents
 

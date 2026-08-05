@@ -5,8 +5,7 @@ description: Squidlor oracle data as Model Context Protocol tools — for Claude
 
 `@squidlor/mcp` exposes the oracle's read surface as MCP tools, so any MCP client can query live feed state, history, and audit trails. It is built on `@modelcontextprotocol/sdk` with zod schemas, and is a thin read-only layer over the [aggregator API](/api).
 
-> [!NOTE]
-> The README states an intended production deployment at `https://api.squidlor.com/mcp`. That is not confirmed live — run it locally over stdio in the meantime.
+Live at **`https://api.squidlor.com/mcp`**. See the [agent quickstart](/build/quickstart-agents) for client configuration, and [authentication](/build/authentication) for attaching an API key so your agent's calls count toward [builder rewards](/build/rewards).
 
 ## Tools
 
@@ -36,7 +35,7 @@ MCP_TRANSPORT=stdio node dist/index.js
 
 ### Streamable HTTP — the default
 
-A stateless `POST /mcp` on port `5020`, intended to sit behind nginx.
+A stateless `POST /mcp`, served in production at `https://api.squidlor.com/mcp` behind nginx (port `5012` locally on the host).
 
 Statelessness is what makes it deployable behind a plain reverse proxy: there is no session to pin to a process, so it scales horizontally without sticky routing.
 

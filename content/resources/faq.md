@@ -7,11 +7,15 @@ description: Short answers to the questions that come up most — integration, p
 
 ### Do I need an API key?
 
-No. The [read API](/api) is unauthenticated and there is no signup. On-chain reads are `view` calls, so they need nothing either.
+Not to start. The [read API](/api) works unauthenticated at 30 requests/minute per IP, and on-chain reads are `view` calls that need nothing at all.
+
+A [free key](/build/authentication) raises that to 300 requests/minute, shows you your own usage, and makes your traffic count toward [builder rewards](/build/rewards).
 
 ### What does it cost to read a price?
 
-Nothing. On-chain reads are `view` calls; the HTTP API is free. Squidlor is a push oracle — the relayer pays to publish, consumers read for free.
+Nothing. On-chain reads are `view` calls; the HTTP API is free at the anonymous and free-key tiers. Squidlor is a push oracle — the relayer pays to publish, consumers read for free.
+
+Paid plans exist for throughput and history depth, not for access to data. See [rate limits & plans](/build/rate-limits).
 
 ### Is it really a one-line change from Chainlink?
 

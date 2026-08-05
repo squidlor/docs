@@ -1,12 +1,12 @@
 ---
 title: Quick start
-description: Read a Squidlor price from a Solidity contract or over plain HTTP. No SDK, no API key, no allowlist.
+description: Read a Squidlor price from a Solidity contract or over plain HTTP. No SDK and no API key needed to start.
 ---
 
 Squidlor feeds are readable two ways, and both hit the same on-chain state:
 
 - **On-chain**, through the standard Chainlink `AggregatorV3Interface`. If your contract already reads a Chainlink feed, you change one address.
-- **Off-chain**, through the public read API, which returns JSON over HTTPS with no authentication.
+- **Off-chain**, through the public read API, which returns JSON over HTTPS. No key is required to start; a [free key](/build/authentication) raises your rate limit from 30 to 300 requests/minute.
 
 ## Read a price on-chain
 

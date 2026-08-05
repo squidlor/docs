@@ -3,7 +3,9 @@ title: Oracle SDK
 description: '@squidlor/oracle-sdk — a thin viem wrapper that resolves feed addresses per chain and reads them with one call.'
 ---
 
-`@squidlor/oracle-sdk` is a small read-only SDK over viem. It resolves a feed address from a `(chain, pair)` pair and reads it. That is the whole scope — it is deliberately thin, because the feeds are Chainlink-compatible and anything that can read a Chainlink feed can read these.
+`@squidlor/oracle-sdk` is a small read-only SDK. It resolves a feed address from a `(chain, pair)` pair and reads it on-chain via viem, and it wraps the REST API for the things the chain does not store — history, candles, per-source audit.
+
+It stays deliberately thin: the feeds are Chainlink-compatible, so anything that can read a Chainlink feed can read these without an SDK at all.
 
 ## Install
 
@@ -16,7 +18,7 @@ npm install @squidlor/oracle-sdk viem
 ```typescript
 import { getFeed } from "@squidlor/oracle-sdk";
 
-const feed = getFeed("arbitrum", "BTC/USD");
+const feed = getFeed("robinhood", "BTC/USD");
 const { formatted, price, decimals, updatedAt, roundId } = await feed.read();
 
 console.log(formatted);  // "63434.90498170"
@@ -31,14 +33,63 @@ console.log(updatedAt);  // 1785243053 (unix seconds)
 
 | Chain | ID | Built-in aggregators |
 | --- | --- | --- |
-| `arbitrum` | 42161 | BTC/USD, ETH/USD, SOL/USD |
+| `robinhood` | 4663 | BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL (all /USD) |
+| `arbitrum` | 42161 | BTC, ETH, SOL, EUR, XAU, TSLA (/USD), FBTC/POR |
+| `qubetics` | 9030 | BTC, ETH, SOL, BNB, XRP (all /USD) |
 
-Chain IDs work in place of slugs: `getFeed(42161, "BTC/USD")`.
+Chain IDs work in place of slugs: `getFeed(4663, "BTC/USD")`.
 
-Anything outside that map needs an explicit address — see [address resolution](#address-resolution).
+```typescript
+import { knownPairs, supportedChains } from "@squidlor/oracle-sdk";
 
-> [!WARNING]
-> The SDK does **not** yet include Robinhood Chain (4663), which is where the primary deployment lives. Until it does, pass the aggregator address explicitly with `opts.address` — the addresses are in [deployed addresses](/networks/addresses) — or read [directly with viem](/integration/reading-offchain#via-direct-rpc-with-viem).
+knownPairs("robinhood");  // ['BTC/USD', 'ETH/USD', ...]
+supportedChains();        // [{ key: 'robinhood', chainId: 4663, pairs: 7 }, ...]
+```
+
+Anything outside that map needs an explicit address or a registry lookup — see [address resolution](#address-resolution).
+
+## Read the health of a feed
+
+`health()` calls the aggregator's `peek()`, which returns the answer alongside how many sources were fresh and in-bounds for it. Use it anywhere being wrong is expensive:
+
+```typescript
+const { formatted, healthyCount } = await getFeed("robinhood", "BTC/USD").health();
+if (healthyCount < 2) throw new Error("too few healthy sources to act on");
+```
+
+If too few sources are fresh, the aggregator reverts rather than serve a number it does not stand behind. The SDK decodes that into a typed error:
+
+```typescript
+import { getFeed, StaleFeedError } from "@squidlor/oracle-sdk";
+
+try {
+  await getFeed("qubetics", "BTC/USD").read();
+} catch (e) {
+  if (e instanceof StaleFeedError) {
+    console.warn(`only ${e.healthy}/${e.required} sources fresh — falling back`);
+  } else throw e;
+}
+```
+
+Do not retry this in a tight loop: freshness only changes when a pusher lands an update.
+
+## Read off-chain data
+
+The same package wraps the REST API for history, candles and the audit trail:
+
+```typescript
+import { createClient } from "@squidlor/oracle-sdk";
+
+const api = createClient({ apiKey: process.env.SQUIDLOR_API_KEY }); // key optional
+
+const btc = await api.getValue("robinhood", "BTC/USD");
+const candles = await api.getOhlc("robinhood", "BTC/USD", { interval: "1h", limit: 24 });
+const flagged = await api.getAudit("robinhood", "BTC/USD", { flagged: true });
+```
+
+Standalone equivalents are exported too: `listFeedsRest`, `getFeedRest`, `getValue`, `getHistory`, `getOhlc`, `getAudit`, `getConstituents`. Failures throw `SquidlorApiError` with `status`, `code` and `retryAfterSec`.
+
+A key is optional but raises your rate limit — see [authentication](/build/authentication).
 
 ## Address resolution
 
@@ -50,17 +101,16 @@ Three ways, in the order the SDK tries them:
 
 ```typescript
 // 1. Explicit address — the escape hatch for any chain or pair the SDK
-//    doesn't know about, including Robinhood Chain today.
-const feed = getFeed("arbitrum", "NVDA/USD", {
+//    doesn't know about yet.
+const feed = getFeed("robinhood", "SOMETHING/USD", {
   address: "0x7D8E02C7d2Ee80c75EFF199B8AD64522C4a88b91",
 });
 
 // 2. Resolve through the on-chain registry — async, because it reads a contract.
+//    Robinhood and Qubetics registries ship in the SDK, so no address is needed.
 import { getFeedViaRegistry } from "@squidlor/oracle-sdk";
 
-const resolved = await getFeedViaRegistry("arbitrum", "BTC/USD", {
-  registry: "0xbbCf13b4A9AFf2Ef444dE83751B280ccEB57349a",
-});
+const resolved = await getFeedViaRegistry("robinhood", "NVDA/USD");
 ```
 
 Resolving through the registry adds the registry admin to your trust surface — see the [trade-off table](/contracts/registry#trade-off-registry-lookup-versus-a-hardcoded-address).

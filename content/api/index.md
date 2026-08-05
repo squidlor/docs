@@ -17,9 +17,22 @@ Running the service yourself, it listens on port `5010` by default and the base 
 
 ## Authentication
 
-None. No API key, no signup, no allowlist. The data is public on-chain state; the API is a convenience layer over it.
+**Optional.** Every endpoint works without a key — the data is public on-chain state and the API is a convenience layer over it. That path is supported and is not going away.
 
-There is no documented rate limit either. See [errors & limits](/api/errors) for what that means in practice and how to be a good citizen.
+A key raises your limits and lets you see your own usage:
+
+| | Requests/minute | History lookback |
+|---|---|---|
+| No key | 30 (per IP) | 30 days |
+| Free key | 300 | 30 days |
+| Pro | 3,000 | unlimited |
+
+```bash
+curl -H "Authorization: Bearer sq_live_..." \
+  https://api.squidlor.com/aggregator/v1/robinhood/feeds/BTC_USD/value
+```
+
+Get one at [build.squidlor.com](https://build.squidlor.com). Full detail in [authentication](/build/authentication) and [rate limits](/build/rate-limits); error codes in [errors & limits](/api/errors).
 
 ## Two ways to address a chain
 

@@ -70,6 +70,7 @@ export const nav: NavGroup[] = [
     items: [
       { title: "Overview", slug: "/api" },
       { title: "Feeds", slug: "/api/feeds" },
+      { title: "Realtime prices", slug: "/api/realtime" },
       { title: "History & OHLC", slug: "/api/history" },
       { title: "Events", slug: "/api/events" },
       { title: "Randomness", slug: "/api/randomness" },

@@ -3,9 +3,15 @@ title: MCP server
 description: Squidlor oracle data as Model Context Protocol tools — for Claude Code, Claude Desktop, or any MCP-aware agent.
 ---
 
-`@squidlor/mcp` exposes the oracle's read surface as MCP tools, so any MCP client can query live feed state, history, and audit trails. It is built on `@modelcontextprotocol/sdk` with zod schemas, and is a thin read-only layer over the [aggregator API](/api).
+`@squidlor/mcp` exposes the oracle's read surface as MCP tools, so any MCP client can query live feed state, history, and audit trails. It is built on `@modelcontextprotocol/sdk` with zod schemas, and is a read-only layer over the [aggregator API](/api).
 
-Live at **`https://api.squidlor.com/mcp`**. See the [agent quickstart](/build/quickstart-agents) for client configuration, and [authentication](/build/authentication) for attaching an API key so your agent's calls count toward [builder rewards](/build/rewards).
+Tool definitions, execution and result enrichment come from `@squidlor/oracle-tools`, shared with [Oracle Chat](/ai/oracle-chat). That matters to you as a caller: results carry the same coverage verdicts, print-age annotation and block-explorer links the chat agents get, so a stale weekend equity close reads as a close rather than an outage.
+
+> **Not live yet.** The server is built and tested; `https://api.squidlor.com/mcp` is the
+> address it will serve at, and is not answering today. Run it locally in the meantime — see
+> [transports](#transports) below.
+
+See the [agent quickstart](/build/quickstart-agents) for client configuration, and [authentication](/build/authentication) for attaching an API key so your agent's calls count toward [builder rewards](/build/rewards).
 
 ## Tools
 
@@ -20,6 +26,9 @@ Seven, all returning JSON:
 | `get_ohlc` | OHLC candles. |
 | `get_audit_trail` | Deviation in bps, staleness, and anomaly flags per source. |
 | `list_events` | Registered event-outcome state. |
+| `get_squidlor_breakdown` | The per-API quotes (Yahoo, Nasdaq, Finnhub, Twelve Data) behind Squidlor's own equity leg, so our feed is never a single opaque source. |
+| `list_flagged` | One call that scans every feed on a chain for anomalous rounds, worst deviation first. Use instead of walking pairs one at a time. |
+| `get_realtime_prices` | Off-chain 1-second median across venues — the freshest number we have. The on-chain aggregate only moves on a 0.5% deviation or the hourly heartbeat, so between pushes these two legitimately disagree. |
 
 `compare_oracles` and `get_audit_trail` are the two that justify the integration. Both answer questions that are tedious to assemble by hand and natural to ask in a sentence — "are Chainlink and Squidlor disagreeing on ETH right now, and by how much?"
 
@@ -35,7 +44,7 @@ MCP_TRANSPORT=stdio node dist/index.js
 
 ### Streamable HTTP — the default
 
-A stateless `POST /mcp`, served in production at `https://api.squidlor.com/mcp` behind nginx (port `5012` locally on the host).
+A stateless `POST /mcp`, to be served in production at `https://api.squidlor.com/mcp` behind nginx (port `5020` locally by default, set with `MCP_PORT`).
 
 Statelessness is what makes it deployable behind a plain reverse proxy: there is no session to pin to a process, so it scales horizontally without sticky routing.
 

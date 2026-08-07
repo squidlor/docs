@@ -7,11 +7,7 @@ Most oracles give an agent a URL to scrape. Squidlor exposes its data as MCP too
 
 ## Connect a client
 
-The server speaks streamable HTTP at `https://api.squidlor.com/mcp`.
-
-> **Not live yet.** That endpoint is not answering today — the MCP server is built but not
-> deployed. Everything below is correct for a local run (`MCP_PORT=5020`, or
-> `MCP_TRANSPORT=stdio`); swap the URL when the hosted endpoint goes up.
+The server speaks streamable HTTP at `https://api.squidlor.com/mcp`, live since 2026-08-07.
 
 **Claude Code / Claude Desktop** — add to your MCP config:
 

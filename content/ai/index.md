@@ -32,8 +32,8 @@ Both of these sit as thin layers over the [aggregator API](/api). Neither is a s
 
 | System | State |
 | --- | --- |
-| **Oracle Chat** | Built and actively developed. Not yet wired into the production topology. |
-| **MCP server** | Built, 10 tools, not deployed. Intended to serve at `api.squidlor.com/mcp`. |
+| **Oracle Chat** | Live at [chat.squidlor.com](https://chat.squidlor.com). Signs builders in, mints API keys, sets up price alerts, and generates integration code. |
+| **MCP server** | Live at `api.squidlor.com/mcp`, 18 tools including signed webhooks and usage. |
 
 > [!WARNING]
 > Both run locally today. If you are evaluating Squidlor's data access, the [HTTP API](/api) is the layer that is actually live and serving traffic — everything on this page reads through it.

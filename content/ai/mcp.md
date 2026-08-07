@@ -7,11 +7,7 @@ description: Squidlor oracle data as Model Context Protocol tools — for Claude
 
 Tool definitions, execution and result enrichment come from `@squidlor/oracle-tools`, shared with [Oracle Chat](/ai/oracle-chat). That matters to you as a caller: results carry the same coverage verdicts, print-age annotation and block-explorer links the chat agents get, so a stale weekend equity close reads as a close rather than an outage.
 
-> **Not live yet.** The server is built and tested; `https://api.squidlor.com/mcp` is the
-> address it will serve at, and is not answering today. Run it locally in the meantime — see
-> [transports](#transports) below.
-
-See the [agent quickstart](/build/quickstart-agents) for client configuration, and [authentication](/build/authentication) for attaching an API key so your agent's calls count toward [builder rewards](/build/rewards).
+Live at **`https://api.squidlor.com/mcp`** (deployed 2026-08-07). See the [agent quickstart](/build/quickstart-agents) for client configuration, and [authentication](/build/authentication) for attaching an API key so your agent's calls count toward [builder rewards](/build/rewards).
 
 ## Tools
 
@@ -60,7 +56,7 @@ MCP_TRANSPORT=stdio node dist/index.js
 
 ### Streamable HTTP — the default
 
-A stateless `POST /mcp`, to be served in production at `https://api.squidlor.com/mcp` behind nginx (port `5020` locally by default, set with `MCP_PORT`).
+A stateless `POST /mcp`, served in production at `https://api.squidlor.com/mcp` behind nginx (port `5020` by default, set with `MCP_PORT`). GET and DELETE return 405 — it is POST-only by design.
 
 Statelessness is what makes it deployable behind a plain reverse proxy: there is no session to pin to a process, so it scales horizontally without sticky routing.
 

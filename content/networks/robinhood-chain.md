@@ -96,7 +96,7 @@ Every address is in [deployed addresses](/networks/addresses).
 | Service | State on chain 4663 |
 | --- | --- |
 | `relay-pusher` | Crypto medians on a **0.5% deviation or 1h heartbeat** trigger; equity medians on the same trigger, during US market hours only. |
-| `aggregator-api` | Chain config exists in source; **not deployed** to the public API yet. |
+| `aggregator-api` | **Live** at `api.squidlor.com/aggregator/v1/robinhood/…` — all 7 feeds (BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL against USD). |
 
 The first relay push landed five feeds in one transaction — roughly 522k gas, about **$0.05**. Steady state is cheaper, because the storage slots are already warm: **~351k gas** for the same five feeds, about **$0.013** at 0.02 gwei. For comparison, a Chainlink OCR transmit on this chain is 120–132k gas for one feed (~$0.0045), so per feed the batched push is the cheaper of the two.
 

@@ -29,6 +29,22 @@ Seven, all returning JSON:
 | `get_squidlor_breakdown` | The per-API quotes (Yahoo, Nasdaq, Finnhub, Twelve Data) behind Squidlor's own equity leg, so our feed is never a single opaque source. |
 | `list_flagged` | One call that scans every feed on a chain for anomalous rounds, worst deviation first. Use instead of walking pairs one at a time. |
 | `get_realtime_prices` | Off-chain 1-second median across venues — the freshest number we have. The on-chain aggregate only moves on a 0.5% deviation or the hourly heartbeat, so between pushes these two legitimately disagree. |
+| `generate_integration` | Ready-to-run integration code for six shapes: a REST read, an on-chain read, a Solidity read, a page widget, an MCP agent, a signed-webhook receiver. |
+| `list_bounties` · `list_showcase` | Open paid work, and what other builders have shipped. No key needed. |
+
+### Account tools
+
+These act on the project behind the API key you present, so they need one — see [authentication](/build/authentication). Called without a key they return a `needsApiKey` result telling you where to get one, rather than a protocol error.
+
+| Tool | What it does |
+| --- | --- |
+| `create_webhook` | Subscribe to signed push notifications on deviation, staleness, recovery and round events, so an agent can **react** to a move instead of polling for one. The signing secret is returned once. |
+| `list_webhooks` · `delete_webhook` | Manage your subscriptions. A subscription auto-disabled by repeated delivery failures shows `active:false` with the reason. |
+| `test_webhook` | Fire a synthetic delivery now. Do this immediately after creating one — otherwise your first delivery is a real event you may miss, and a receiver that silently rejects everything looks identical to a market that never moved. |
+| `get_my_usage` | Your tier and per-day usage split by client family. Answers "why am I being rate limited" from inside the agent. |
+
+> [!IMPORTANT]
+> When verifying a webhook, compute the HMAC over the **raw** request body. `express.json()` gives you an object whose re-serialisation differs byte-for-byte, and the signature will never match. A 401 from your own receiver is almost always this.
 
 `compare_oracles` and `get_audit_trail` are the two that justify the integration. Both answer questions that are tedious to assemble by hand and natural to ask in a sentence — "are Chainlink and Squidlor disagreeing on ETH right now, and by how much?"
 

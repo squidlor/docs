@@ -3,7 +3,7 @@ title: MCP server
 description: Squidlor oracle data as Model Context Protocol tools — for Claude Code, Claude Desktop, or any MCP-aware agent.
 ---
 
-`@squidlor/mcp` exposes the oracle's read surface as MCP tools, so any MCP client can query live feed state, history, and audit trails. It is built on `@modelcontextprotocol/sdk` with zod schemas, and is a read-only layer over the [aggregator API](/api).
+`@squidlor/mcp` exposes the oracle's read surface as MCP tools, so any MCP client can query live feed state, history, and audit trails. It is built on `@modelcontextprotocol/sdk` with zod schemas. The oracle tools are a read-only layer over the [aggregator API](/api), and nothing on this server can write on-chain state or move funds.
 
 Tool definitions, execution and result enrichment come from `@squidlor/oracle-tools`, shared with [Oracle Chat](/ai/oracle-chat). That matters to you as a caller: results carry the same coverage verdicts, print-age annotation and block-explorer links the chat agents get, so a stale weekend equity close reads as a close rather than an outage.
 

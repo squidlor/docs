@@ -43,7 +43,9 @@ The equity second source is the most consequential item here. Until it lands, th
 
 | Initiative | What it unlocks |
 | --- | --- |
-| **Oracle Chat and the MCP server into production** | Neither is currently in the deployed topology. |
+| **Oracle Chat and the MCP server into production** | Closed. Chat is live at [chat.squidlor.com](https://chat.squidlor.com), MCP at `api.squidlor.com/mcp`. |
+| **Paid chat credits over x402** | Built and switched off. A user out of daily messages can pay instead of waiting for midnight. |
+| **Wallet and quote tools over MCP** | Chat serves them today. The public MCP endpoint does not advertise them yet. |
 | **Evaluate ACP / GAME SDK integration** | An open question with no code yet. |
 
 ## Reading the roadmap honestly

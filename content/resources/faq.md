@@ -101,7 +101,11 @@ Not yet. Pass the aggregator address explicitly via `opts.address`, or read [dir
 
 ### Is the MCP server live?
 
-Not confirmed. Run it locally over stdio — see [MCP server](/ai/mcp).
+Yes, at `https://api.squidlor.com/mcp`, serving 20 tools over streamable HTTP. You can also run it locally over stdio. See [MCP server](/ai/mcp).
+
+### Can I just ask a question instead of integrating?
+
+Yes. [chat.squidlor.com](https://chat.squidlor.com) has five desks over live feed state, wallets and Virtuals agent tokens, and it will mint you an API key and write your integration code in the same conversation. 15 messages a day without an account. See [Oracle Chat](/ai/oracle-chat).
 
 ## Deployment
 

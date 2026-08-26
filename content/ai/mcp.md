@@ -7,11 +7,20 @@ description: Squidlor oracle data as Model Context Protocol tools — for Claude
 
 Tool definitions, execution and result enrichment come from `@squidlor/oracle-tools`, shared with [Oracle Chat](/ai/oracle-chat). That matters to you as a caller: results carry the same coverage verdicts, print-age annotation and block-explorer links the chat agents get, so a stale weekend equity close reads as a close rather than an outage.
 
-Live at **`https://api.squidlor.com/mcp`** (deployed 2026-08-07). See the [agent quickstart](/build/quickstart-agents) for client configuration, and [authentication](/build/authentication) for attaching an API key so your agent's calls count toward [builder rewards](/build/rewards).
+Live at **`https://api.squidlor.com/mcp`**. See the [agent quickstart](/build/quickstart-agents) for client configuration, and [authentication](/build/authentication) for attaching an API key so your agent's calls count toward [builder rewards](/build/rewards).
 
 ## Tools
 
-Seven, all returning JSON:
+The public endpoint serves 20 tools, all returning JSON. Ask it yourself:
+
+```bash
+curl -s -X POST https://api.squidlor.com/mcp \
+  -H 'content-type: application/json' \
+  -H 'accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+```
+
+Thirteen read the oracle:
 
 | Tool | Purpose |
 | --- | --- |
@@ -23,10 +32,13 @@ Seven, all returning JSON:
 | `get_audit_trail` | Deviation in bps, staleness, and anomaly flags per source. |
 | `list_events` | Registered event-outcome state. |
 | `get_squidlor_breakdown` | The per-API quotes (Yahoo, Nasdaq, Finnhub, Twelve Data) behind Squidlor's own equity leg, so our feed is never a single opaque source. |
+| `get_provider_scorecard` | How each provider has actually behaved on a feed: uptime, median deviation, and how often it went stale. The question "should I trust this source" answered from history rather than from one reading. |
+| `get_price_at` | The median as of a past timestamp, with the rounds it was derived from. Use it to settle what a contract would have read at a point in time. |
 | `list_flagged` | One call that scans every feed on a chain for anomalous rounds, worst deviation first. Use instead of walking pairs one at a time. |
 | `get_realtime_prices` | Off-chain 1-second median across venues — the freshest number we have. The on-chain aggregate only moves on a 0.5% deviation or the hourly heartbeat, so between pushes these two legitimately disagree. |
 | `generate_integration` | Ready-to-run integration code for six shapes: a REST read, an on-chain read, a Solidity read, a page widget, an MCP agent, a signed-webhook receiver. |
-| `list_bounties` · `list_showcase` | Open paid work, and what other builders have shipped. No key needed. |
+
+Two more need no key and answer what work is open: `list_bounties` and `list_showcase`.
 
 ### Account tools
 
@@ -41,6 +53,12 @@ These act on the project behind the API key you present, so they need one — se
 
 > [!IMPORTANT]
 > When verifying a webhook, compute the HMAC over the **raw** request body. `express.json()` gives you an object whose re-serialisation differs byte-for-byte, and the signature will never match. A 401 from your own receiver is almost always this.
+
+### Wallet and token tools, off by default
+
+The shared package also defines wallet reads (`get_wallet_overview`, `get_wallet_card`, `get_transaction`), token lookups (`resolve_token`, `scan_token_safety`, `get_audit_report`) and swap or send quotes (`quote_swap`, `quote_send`) with scheduled tasks beside them. [Oracle Chat](/ai/oracle-chat) serves them today. The public MCP endpoint does not: it advertises a tool only when it can reach the service behind it, and a tool listed but guaranteed to fail is worse than an absent one, because the agent plans around a capability it does not have.
+
+Run your own server with `DEFI_AGENT_URL` and `DEFI_AGENT_KEY_MCP` set and the wallet and token tools appear. The quote tools stay behind a second switch, `DEFI_AGENT_QUOTES=true`, because an MCP client is an autonomous agent and an operator should decide to hand it transactions rather than discover that it has them. Quotes come back unsigned with an expiry either way, and the engine enforces what the surface key is entitled to whatever a tool definition asks for.
 
 `compare_oracles` and `get_audit_trail` are the two that justify the integration. Both answer questions that are tedious to assemble by hand and natural to ask in a sentence — "are Chainlink and Squidlor disagreeing on ETH right now, and by how much?"
 
@@ -102,6 +120,10 @@ Restart Claude Desktop afterwards.
 | `MCP_TRANSPORT` | `stdio` or unset for Streamable HTTP. |
 | `AGGREGATOR_API_URL` | Where tools read from. |
 | `MCP_PORT` | HTTP port (default 5020). |
+| `SQUIDLOR_API_KEY` | Fallback key used when the caller presents none. On stdio there is no header to carry one, so a local agent sets it here. Over HTTP the request's `Authorization` header wins. |
+| `DEVELOPER_API_URL`, `NOTIFICATION_API_URL` | The services behind the account tools. Unset means those tools are not advertised. |
+| `DEFI_AGENT_URL`, `DEFI_AGENT_KEY_MCP` | The engine behind the wallet and token tools. Both required, or neither is advertised. |
+| `DEFI_AGENT_QUOTES` | `true` also advertises the swap and send quote tools. |
 
 Point `AGGREGATOR_API_URL` at your own instance to query a chain the public API does not yet serve — [Robinhood Chain, today](/api#two-ways-to-address-a-chain).
 
@@ -109,7 +131,7 @@ Point `AGGREGATOR_API_URL` at your own instance to query a chain the public API 
 
 **Can:** read live prices, compare sources, pull history and candles, inspect audit trails, list events — on any chain the configured API instance serves.
 
-**Cannot:** write anything. No transactions, no trades, no market creation, no resolution. There is no write path in the server at all, which is the property that makes it safe to hand to an agent.
+**Cannot:** move anything. No transactions, no trades, no market creation, no resolution. The oracle tools have no write path at all, and a quote tool, where an operator has enabled one, returns an unsigned transaction that only the holder of the keys can broadcast.
 
 ## Interpreting results
 

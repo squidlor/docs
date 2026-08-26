@@ -50,17 +50,26 @@ curl -X POST https://api.squidlor.com/mcp \
 
 ## The tools
 
+Twenty tools, listed in full on the [MCP server](/ai/mcp) page. The ones an agent reaches for first:
+
 | Tool | What it answers |
 |---|---|
 | `list_feeds` | What pairs exist on a chain, with live medians |
 | `get_price` | The current aggregated price of one pair |
+| `get_realtime_prices` | The off-chain 1-second median, which moves between on-chain pushes |
 | `compare_oracles` | What each provider reports for one pair, side by side, with staleness |
+| `get_provider_scorecard` | How a provider has behaved over time, not just right now |
 | `get_price_history` | Sampled median series over a window |
-| `get_ohlc` | Candles at `1m`–`1d` |
+| `get_ohlc` | Candles at `1m` to `1d` |
+| `get_price_at` | The median as of a past timestamp |
 | `get_audit_trail` | Per-source deviation and staleness records |
-| `list_events` | Registered event-outcome aggregators |
+| `list_flagged` | Anomalous rounds across every feed on a chain, worst first |
+| `create_webhook` | Signed push on deviation, staleness, recovery and round events |
+| `generate_integration` | Working code for a REST read, a contract read, a widget, or a webhook receiver |
 
 `compare_oracles` is the one worth knowing about: it is how an agent answers "is this price trustworthy?" rather than just "what is the price?". It returns every source behind the median with its own timestamp, so a model can notice that four providers agree and one is nine hours stale.
+
+`create_webhook` is the one that changes an agent's shape. Polling a price means the agent is only as current as its loop; a signed webhook means a deviation wakes it up. Fire `test_webhook` right after you create one, because otherwise your first delivery is a real event you might miss, and a receiver that silently rejects everything looks exactly like a market that never moved.
 
 ## Without MCP
 

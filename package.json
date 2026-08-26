@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run check-links && tsc -b && vite build",
+    "build": "npm run check-deps && npm run check-links && tsc -b && vite build",
     "check-links": "node scripts/check-links.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check-deps": "node scripts/check-deps.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
     "hast-util-to-string": "^3.0.1",
+    "highlight.js": "^11.11.1",
     "highlightjs-solidity": "^2.0.6",
     "lowlight": "^3.3.0",
     "lucide-react": "^0.555.0",

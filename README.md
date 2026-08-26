@@ -10,10 +10,17 @@ React 19 + Vite 7 + Tailwind 4, matching the `landing/` stack.
 ```bash
 npm install
 npm run dev        # → http://localhost:3100
-npm run build      # link-check, typecheck, then build to dist/
+npm run build      # dep-check, link-check, typecheck, then build to dist/
+npm run check-deps
 npm run check-links
 npm run preview
 ```
+
+Netlify builds this site with **pnpm**, which does not hoist transitive dependencies the way
+npm does. A package imported by `src/` but missing from `package.json` therefore resolves
+locally and fails the deploy. `npm run check-deps` catches that before the build, and
+`pnpm install --frozen-lockfile && npm run build` in a clean checkout reproduces what Netlify
+runs. Keep `pnpm-lock.yaml` updated alongside `package-lock.json` when you change a dependency.
 
 ## Writing content
 

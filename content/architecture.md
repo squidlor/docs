@@ -28,7 +28,7 @@ Squidlor is one system with three faces: contracts on chain, a set of backend se
                     ┌──────────────┼──────────────┐
                     ▼              ▼              ▼
    ┌────────────────────────────────────────────────────────────┐
-   │ admin (ops)  ·  landing  ·  docs                           │
+   │ admin (ops)  ·  landing  ·  docs  ·  portal                │
    │ oracle-chat  ·  mcp                                        │
    └────────────────────────────────────────────────────────────┘
 ```
@@ -57,6 +57,10 @@ The backend is a pnpm/Turborepo monorepo of independent Express services. Redis 
 | **relay-pusher** | The price relay: reads sources, medians, signs, and pushes on-chain on a schedule. Crypto hourly; equities during US market hours. |
 | **pyth-pusher** | Keeps Pyth's on-chain price cache warm for low-liquidity feeds, which can otherwise go stale for days under a pure pull model. |
 | **sports-pusher** | Resolves sports events on-chain — the working pilot for [resolver oracles](/oracle/resolver-oracles). |
+| **price-stream** | The realtime half of the oracle. Holds WebSocket connections to the venues, keeps a rolling median per symbol, and publishes it to Redis once a second. `aggregator-api`, the websocket service, notifications and the relay all read from there. See [realtime prices](/api/realtime). |
+| **developer** | API keys, projects, plans and usage metering. Behind every key the read API accepts and the chat's `create_api_key` tool. |
+| **notification** | Price alerts and signed webhooks, including the `create_webhook` tool on MCP. |
+| **defi-agent** | The capability layer behind the wallet, token and quote tools. It holds Squidlor auth, the identity mapping and the server-side policy, and it is the only service that talks to the execution engine. Quotes come back unsigned, so it holds no key material. |
 | **mcp** | The [MCP server](/ai/mcp). |
 
 Every service follows the same boot sequence — connect Mongo and Redis, then listen — and reads configuration from both its own environment file and the monorepo root.
@@ -68,7 +72,8 @@ Every service follows the same boot sequence — connect Mongo and Redis, then l
 | **admin** | The operator control panel: feed health, source status, chain switching, relay cadence, event-outcome management, roles, validators, randomness state, earnings. |
 | **landing** | The public marketing site. |
 | **docs** | This site. |
-| **oracle-chat** | The [natural-language interface](/ai/oracle-chat) to live feed state. |
+| **portal** | The builder portal at [build.squidlor.com](https://build.squidlor.com): projects, API keys, usage charts and plans. |
+| **oracle-chat** | [Oracle Chat](/ai/oracle-chat): five desks over live feed state, wallets and Virtuals agent tokens, live at [chat.squidlor.com](https://chat.squidlor.com). |
 
 ## Chain-agnostic by construction
 

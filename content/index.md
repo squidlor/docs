@@ -6,7 +6,7 @@ description: A self-owned, multi-source on-chain price oracle — live on Robinh
 Squidlor is a self-owned price oracle, fronted by an AI query layer:
 
 1. **[Squidlor Oracle](/oracle)** — a multi-source on-chain price oracle. It serves crypto (BTC, ETH, SOL, BNB, XRP) and tokenized US equities (NVDA, TSLA, AAPL, GOOGL) today. Event-resolution oracles for sports, weather, and custom outcomes are next.
-2. **[The Squidlor Agent](/ai)** — a chat interface and an MCP server that query and narrate live feed state.
+2. **[The Squidlor Agent](/ai)** — a chat interface and an MCP server that query and narrate live feed state, read wallets, and quote swaps.
 
 The oracle is live on **[Robinhood Chain](/networks/robinhood-chain) mainnet (chain ID 4663)**, an Ethereum L2 for tokenized real-world assets. It cost under $1 in gas to deploy.
 
@@ -77,7 +77,7 @@ The Robinhood Chain deployment proved this out: it required no Solidity changes 
   },
   {
     "title": "Query with an AI agent",
-    "description": "Ask about feed state in natural language, or wire the MCP server into your own agent.",
+    "description": "Ask five desks about feed state in natural language, or wire the MCP server's 20 tools into your own agent.",
     "href": "/ai",
     "icon": "bot"
   },

@@ -72,6 +72,7 @@ export const nav: NavGroup[] = [
       { title: "Feeds", slug: "/api/feeds" },
       { title: "Realtime prices", slug: "/api/realtime" },
       { title: "History & OHLC", slug: "/api/history" },
+      { title: "Daily prices", slug: "/api/daily" },
       { title: "Events", slug: "/api/events" },
       { title: "Randomness", slug: "/api/randomness" },
       { title: "Errors & limits", slug: "/api/errors" },

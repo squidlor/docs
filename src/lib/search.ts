@@ -2,7 +2,7 @@
  * Client-side search over the bundled markdown.
  *
  * The whole corpus is a few hundred KB of text, so it ships with the app and
- * queries run synchronously — no index server, no network round trip, and it
+ * queries run synchronously: no index server, no network round trip, and it
  * works offline. Documents are split into heading-scoped sections so a hit can
  * deep-link to the exact anchor rather than the top of a long page.
  */
@@ -72,7 +72,7 @@ function buildSections(groupOf: Map<string, string>): SearchSection[] {
       const text = stripInlineMarkdown(match[2]);
       const id = slugger(text);
 
-      // h1 is the page title — keep accumulating into the lead section.
+      // h1 is the page title; keep accumulating into the lead section.
       if (depth === 1) continue;
 
       flush();
@@ -187,7 +187,7 @@ export function search(
       score += tokenScore;
     }
 
-    // Require every token to land somewhere — AND semantics keep multi-word
+    // Require every token to land somewhere; AND semantics keep multi-word
     // queries from drowning in pages that only match the common word.
     if (matchedTokens < tokens.length) continue;
 

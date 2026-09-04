@@ -1,6 +1,6 @@
 ---
 title: Oracle aggregator
-description: SquidlorOracleAggregator — the consumer-facing contract that combines multiple oracle networks into one Chainlink-compatible feed per pair.
+description: SquidlorOracleAggregator, the consumer-facing contract that combines multiple oracle networks into one Chainlink-compatible feed per pair.
 ---
 
 `SquidlorOracleAggregator` is the contract your protocol should read. One instance exists per pair. It holds an ordered list of sources, filters out the unhealthy ones, and combines the rest.
@@ -13,7 +13,7 @@ On every read:
 
 1. Iterate the configured sources.
 2. For each, call `latestPrice()` on its adapter to get `(price, updatedAt)`.
-3. Skip any source that is disabled, reverts, or is stale — where stale means `now > updatedAt + effectiveMaxStaleness`.
+3. Skip any source that is disabled, reverts, or is stale, where stale means `now > updatedAt + effectiveMaxStaleness`.
 4. If fewer than `minHealthySources` remain, **revert**.
 5. Combine the survivors according to `selectionMode`.
 
@@ -41,7 +41,7 @@ Median:          63201                    ← unaffected
 
 Use source 0 while it is healthy; otherwise fall down the ordered list. Source order is priority, which is why `reorderSources` matters in this mode.
 
-Appropriate when one source is genuinely authoritative and the others exist only as a safety net. It provides no manipulation resistance — whatever the primary says is the answer.
+Appropriate when one source is genuinely authoritative and the others exist only as a safety net. It provides no manipulation resistance: whatever the primary says is the answer.
 
 ## Staleness resolution
 
@@ -53,7 +53,7 @@ effectiveMaxStaleness = source.maxStaleness != 0
     : aggregator.defaultMaxStaleness
 ```
 
-This lets one aggregator hold sources with genuinely different update rhythms — a 3-second Squidlor push and a 24-hour Chainlink heartbeat — without forcing one window on both.
+This lets one aggregator hold sources with genuinely different update rhythms (a 3-second Squidlor push and a 24-hour Chainlink heartbeat) without forcing one window on both.
 
 ## Source adapters
 
@@ -71,13 +71,13 @@ interface IPriceSource {
 | `ChainlinkSource` | A Chainlink `AggregatorV3Interface` feed. |
 | `SquidSource` | A [`SquidPriceFeed`](/contracts/price-feed). |
 
-Adding an oracle network means writing one adapter and calling `addSource`. `SquidlorOracleAggregator` is never modified to accommodate a provider — that is the whole point of the adapter layer.
+Adding an oracle network means writing one adapter and calling `addSource`. `SquidlorOracleAggregator` is never modified to accommodate a provider; that is the whole point of the adapter layer.
 
 `name()` is self-reported by the adapter and surfaces in the [API](/api/feeds#source-fields) and admin panel. It is a label, not an authenticated claim.
 
 ## Rounds
 
-Live reads compute the aggregate at call time and write nothing. `poke()` — which is **permissionless** — commits the current aggregate as a numbered round that `getRoundData` can retrieve.
+Live reads compute the aggregate at call time and write nothing. `poke()`, which is **permissionless**, commits the current aggregate as a numbered round that `getRoundData` can retrieve.
 
 > [!IMPORTANT]
 > If nobody has ever called `poke()` on an aggregator, `latestRoundData()` returns a live aggregate stamped with `block.timestamp`. A staleness check against that `updatedAt` will always pass, because it is the time of *your read*, not of the data.
@@ -93,7 +93,7 @@ All admin functions are `onlyOwner`, with `Ownable2Step` ownership.
 | `addSource(adapter, maxStaleness, enabled)` | Append a source. |
 | `setSource(index, adapter, maxStaleness, enabled)` | Replace or reconfigure in place. |
 | `removeSource(index)` | Remove a source. |
-| `reorderSources(order)` | Reorder — priority under `PRIMARY_WITH_FALLBACK`. |
+| `reorderSources(order)` | Reorder. Order is priority under `PRIMARY_WITH_FALLBACK`. |
 | `setParameters(...)` | Adjust `minHealthySources` and `defaultMaxStaleness`. |
 | `setSelectionMode(mode)` | Switch mode. |
 
@@ -108,7 +108,7 @@ Every aggregator in the live deployment runs:
 | `minHealthySources` | 1 |
 
 > [!WARNING]
-> `minHealthySources = 1` means an aggregator will happily serve a price derived from a single surviving source. That is the right default for availability — the alternative is reverting and halting every consumer — but it means **a successful read does not prove multi-source agreement**.
+> `minHealthySources = 1` means an aggregator will happily serve a price derived from a single surviving source. That is the right default for availability (the alternative is reverting and halting every consumer), but it means **a successful read does not prove multi-source agreement**.
 >
 > If your protocol needs that guarantee, read `peek()` and enforce your own minimum on `healthyCount`. See [read prices on-chain](/integration/reading-prices).
 
@@ -118,4 +118,4 @@ Two things are worth watching on an aggregator you depend on:
 
 **`healthyCount` versus `sourceCount`.** A drop means a source has gone stale or started reverting. The price may still be valid while the protection has quietly thinned.
 
-**Ownership and source changes.** The owner can add, remove, and reorder sources. Watch the ownership and configuration events on any aggregator you rely on — the [trust model](/resources/trust-model) is explicit that this is the most consequential trust the current deployment asks for.
+**Ownership and source changes.** The owner can add, remove, and reorder sources. Watch the ownership and configuration events on any aggregator you rely on; the [trust model](/resources/trust-model) is explicit that this is the most consequential trust the current deployment asks for.

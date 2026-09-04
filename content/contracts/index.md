@@ -1,6 +1,6 @@
 ---
 title: Smart contracts
-description: The contract set behind Squidlor — what each one does, how they inherit, and which you should actually interact with.
+description: The contract set behind Squidlor: what each one does, how they inherit, and which you should actually interact with.
 ---
 
 Squidlor's oracle contracts live in two repositories that deploy independently.
@@ -21,7 +21,7 @@ Squidlor's oracle contracts live in two repositories that deploy independently.
   },
   {
     "title": "Oracle aggregator",
-    "description": "The contract consumers read — cross-oracle aggregation per pair.",
+    "description": "The contract consumers read: cross-oracle aggregation per pair.",
     "href": "/contracts/aggregator",
     "icon": "layers"
   },
@@ -45,9 +45,9 @@ Squidlor's oracle contracts live in two repositories that deploy independently.
 | Auditing how a price was formed | The aggregator's `sources()`, then each adapter's `latestPrice()`. |
 
 > [!IMPORTANT]
-> The aggregator is almost always the right answer. Reading a `SquidPriceFeed` directly gets you Squidlor's own price with no cross-oracle protection — Layer 3 of the [aggregation architecture](/oracle/architecture) is skipped entirely. Do that only if you specifically want the single source.
+> The aggregator is almost always the right answer. Reading a `SquidPriceFeed` directly gets you Squidlor's own price with no cross-oracle protection; Layer 3 of the [aggregation architecture](/oracle/architecture) is skipped entirely. Do that only if you specifically want the single source.
 
-## Inheritance — the oracle core
+## Inheritance in the oracle core
 
 ```text
 OracleVerifier          calldata parsing + ECDSA verification
@@ -75,7 +75,7 @@ Each subclass supplies just a `dataFeedId()` and a `description()`. All of them 
 
 ## The contract set
 
-### Oracle core — `squid-contract`
+### Oracle core: `squid-contract`
 
 | Contract | Role |
 | --- | --- |
@@ -85,7 +85,7 @@ Each subclass supplies just a `dataFeedId()` and a `description()`. All of them 
 | `SquidPriceFeed` | Abstract per-asset facade implementing `AggregatorV3Interface` over the adapter. Stateless. |
 | `*PriceFeed` | One concrete proxy per asset. |
 
-### Aggregation and economics — `aggregator-contract`
+### Aggregation and economics: `aggregator-contract`
 
 | Contract | Role |
 | --- | --- |
@@ -97,13 +97,13 @@ Each subclass supplies just a `dataFeedId()` and a `description()`. All of them 
 | `FeeCollector` | Fee accrual and treasury split. |
 | `SquidlorCommitRevealRandomness` | Commit-reveal randomness with a reveal delay. |
 | `EventOracleAggregator` | The event-outcome equivalent of the price aggregator. |
-| `OperatorSignedEventSource` | Fast-path event source — operator signature, no bond. |
+| `OperatorSignedEventSource` | Fast-path event source: operator signature, no bond. |
 
 ## Design constraints that shaped all of it
 
 **Pure EVM.** Solidity ≥ 0.8 and standard `ecrecover`. No precompiles, no chain-specific opcodes. This is what makes a new-chain deployment a `forge script` rather than a port.
 
-**Storage derived from feed IDs.** Slots are computed as `keccak256(abi.encode(feedId, "squid.price"))` rather than assigned by declaration order. New assets cannot collide with existing storage, so adding one never requires a migration — even across proxy upgrades.
+**Storage derived from feed IDs.** Slots are computed as `keccak256(abi.encode(feedId, "squid.price"))` rather than assigned by declaration order. New assets cannot collide with existing storage, so adding one never requires a migration, even across proxy upgrades.
 
 **Batch updates.** One `updateDataFeedsValues` call carries every feed. The relayer's per-feed cost approaches zero as the asset list grows.
 
@@ -113,4 +113,4 @@ Each subclass supplies just a `dataFeedId()` and a `description()`. All of them 
 
 ## Verification
 
-Contracts are deployed and verifiable on the host chain's explorer. On Robinhood Chain that is Blockscout — see [deployed addresses](/networks/addresses) for links.
+Contracts are deployed and verifiable on the host chain's explorer. On Robinhood Chain that is Blockscout; see [deployed addresses](/networks/addresses) for links.

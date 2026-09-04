@@ -94,7 +94,7 @@ for (const file of files) {
   const seen = new Map();
 
   // The app lifts a leading H1 into the page header before rendering, so it
-  // never produces an anchor — match that here.
+  // never produces an anchor; match that here.
   const lines = stripFences(body).split(/\r?\n/);
   let i = 0;
   while (i < lines.length && lines[i].trim() === "") i++;
@@ -210,7 +210,7 @@ for (const file of walkSource(SRC)) {
 }
 
 // --- Nav agreement -----------------------------------------------------------
-// Commented-out nav entries are shelved, not active — strip JS comments before
+// Commented-out nav entries are shelved, not active; strip JS comments before
 // reading slugs, or a `// { slug: "/markets" }` line still counts as published.
 const nav = readFileSync(NAV_FILE, "utf8")
   .replace(/\/\*[\s\S]*?\*\//g, "")
@@ -238,7 +238,7 @@ console.log(
   `pages: ${docs.size - hiddenCount} published, ${hiddenCount} hidden   nav entries: ${navSlugs.length}`,
 );
 if (problems.length === 0) {
-  console.log("OK — no dead links, anchors, or nav drift");
+  console.log("OK: no dead links, anchors, or nav drift");
 } else {
   console.log(`\n${problems.length} problem(s):\n`);
   for (const p of problems) console.log("  " + p);

@@ -3,7 +3,7 @@ title: Aggregator registry
 description: Resolve aggregator addresses by pair name on-chain, so integrations don't hardcode addresses.
 ---
 
-`AggregatorRegistry` maps pair names to aggregator addresses. It exists so that a consumer — a contract, an SDK, or a frontend — can discover a feed by name instead of shipping a hardcoded address per chain.
+`AggregatorRegistry` maps pair names to aggregator addresses. It exists so that a consumer (a contract, an SDK, or a frontend) can discover a feed by name instead of shipping a hardcoded address per chain.
 
 It is **UUPS-upgradeable**, deployed behind a proxy.
 
@@ -60,7 +60,7 @@ contract RegistryConsumer {
 ```
 
 > [!IMPORTANT]
-> `getAggregatorByName` returns `address(0)` for an unknown pair — it does not revert. Calling into the zero address does not fail the way you might hope, so check the return value explicitly. The `if (aggregator == address(0)) revert` line above is not optional defensiveness.
+> `getAggregatorByName` returns `address(0)` for an unknown pair; it does not revert. Calling into the zero address does not fail the way you might hope, so check the return value explicitly. The `if (aggregator == address(0)) revert` line above is not optional defensiveness.
 
 ## Trade-off: registry lookup versus a hardcoded address
 
@@ -75,7 +75,7 @@ Worth deciding deliberately rather than by default.
 
 The last row is the one that matters. Resolving through the registry means the registry admin can change which contract your protocol reads from. That is convenient for operations and an additional trust assumption for you.
 
-**Recommendation:** for high-value on-chain logic, resolve the address once — off-chain or at deployment — and store it immutably. Use the registry for discovery, tooling, and frontends, where flexibility is worth more than pinning.
+**Recommendation:** for high-value on-chain logic, resolve the address once, off-chain or at deployment, and store it immutably. Use the registry for discovery, tooling, and frontends, where flexibility is worth more than pinning.
 
 ## Live deployment
 
@@ -85,4 +85,4 @@ On Robinhood Chain the registry registers all seven live pairs. Proxy and implem
 
 ## Off-chain resolution
 
-The [Oracle SDK](/integration/sdk) supports registry resolution through `getFeedViaRegistry`, and the [API](/api/feeds#list-feeds) returns each feed's aggregator address in its response — so neither needs a hardcoded map either.
+The [Oracle SDK](/integration/sdk) supports registry resolution through `getFeedViaRegistry`, and the [API](/api/feeds#list-feeds) returns each feed's aggregator address in its response, so neither needs a hardcoded map either.

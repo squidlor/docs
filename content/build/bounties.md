@@ -1,6 +1,6 @@
 ---
 title: Bounties
-description: Specific things we will pay cash for — priced, scoped, and open to anyone.
+description: Specific things we will pay cash for: priced, scoped, and open to anyone.
 ---
 
 Bounties are the things we most want built and have not built ourselves. Each is scoped, priced in USDC, and judged by a human.
@@ -10,11 +10,11 @@ The live board with current status is at [build.squidlor.com/bounties](https://b
 ## How to claim
 
 1. Read the bounty's requirements on the board.
-2. Build it. Talk to us first (<build@squidlor.com>) if scope is ambiguous — we would rather answer a question than reject a submission.
+2. Build it. Talk to us first (<build@squidlor.com>) if scope is ambiguous; we would rather answer a question than reject a submission.
 3. Submit a link (repo, deployed address, live URL) against one of your projects in the portal.
 4. We review weekly.
 
-**Submitting does not lock a bounty.** Several people may submit for the same one and the first accepted submission is paid — a claim button that reserved work would let a drive-by park a bounty for a month. If two good submissions land close together, we will talk to both of you.
+**Submitting does not lock a bounty.** Several people may submit for the same one and the first accepted submission is paid; a claim button that reserved work would let a drive-by park a bounty for a month. If two good submissions land close together, we will talk to both of you.
 
 ## What gets accepted
 
@@ -62,4 +62,4 @@ You will need a payout address and accepted rewards terms before we can pay you.
 
 ## Proposing one
 
-If you want to build something not listed, email <build@squidlor.com> with what it is, what it needs from us, and what you think it is worth. Ideas that unblock other builders — a client library, a template, a testing harness — are the easiest yes.
+If you want to build something not listed, email <build@squidlor.com> with what it is, what it needs from us, and what you think it is worth. Ideas that unblock other builders (a client library, a template, a testing harness) are the easiest yes.

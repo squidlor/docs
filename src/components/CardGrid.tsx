@@ -53,7 +53,7 @@ const isExternal = (href: string) =>
   /^[a-z][a-z0-9+.-]*:/i.test(href) || href.startsWith("//");
 
 /**
- * Card navigation for overview pages — the docs equivalent of GitBook's card
+ * Card navigation for overview pages, the docs equivalent of GitBook's card
  * blocks. Authored in markdown as a ```cards fence holding a JSON array, which
  * keeps the content files plain markdown with no JSX or raw HTML.
  */

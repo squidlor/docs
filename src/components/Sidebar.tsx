@@ -46,7 +46,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const [collapsed, setCollapsed] = useState<Record<number, boolean>>({});
   const activeLinkRef = useRef<HTMLAnchorElement | null>(null);
 
-  // On a fresh load (or a deep link), scroll the active item into view — long
+  // On a fresh load (or a deep link), scroll the active item into view; long
   // sidebars otherwise open scrolled to the top with no visible selection.
   useEffect(() => {
     activeLinkRef.current?.scrollIntoView({ block: "nearest" });
@@ -130,7 +130,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-/** Desktop rail — sticky, independently scrollable, hidden under lg. */
+/** Desktop rail: sticky, independently scrollable, hidden under lg. */
 export function Sidebar() {
   return (
     <aside className="hidden lg:block">

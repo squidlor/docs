@@ -19,7 +19,7 @@ export default defineConfig({
     // The whole markdown corpus is bundled deliberately: it makes navigation
     // instant and lets search run offline with no index server. That puts the
     // main chunk over Rollup's 500 kB advisory, which isn't a problem worth
-    // code-splitting around here — splitting wouldn't help, since search needs
+    // code-splitting around here; splitting wouldn't help, since search needs
     // every page's text up front anyway.
     chunkSizeWarningLimit: 900,
   },

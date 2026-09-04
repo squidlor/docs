@@ -2,7 +2,7 @@
  * Syntax highlighting via lowlight, with our own language set.
  *
  * Replaces rehype-highlight, which statically imports lowlight's `common`
- * bundle (~40 grammars) at module scope — its `languages` option adds to that
+ * bundle (~40 grammars) at module scope; its `languages` option adds to that
  * set but can't shrink it, so the unused grammars ship either way. Driving
  * lowlight directly means the bundle contains exactly the languages listed in
  * lib/languages and nothing else.
@@ -45,7 +45,7 @@ export function rehypeHighlightCode() {
     const walk = (node: Element, parent: Element | null) => {
       if (node.type === "element" && node.tagName === "code" && parent?.tagName === "pre") {
         highlight(node);
-        // Highlighted children are terminal — no need to descend further.
+        // Highlighted children are terminal; no need to descend further.
         return;
       }
       for (const child of node.children ?? []) walk(child, node);

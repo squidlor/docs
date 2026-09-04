@@ -135,7 +135,7 @@
   /* Anchor navigation focuses the target heading so screen readers follow the
      jump (see ScrollManager). That heading is already at the top of the
      viewport, so the ring communicates nothing to sighted readers and just
-     looks like a rendering fault — suppress it for headings only. */
+     looks like a rendering fault; suppress it for headings only. */
   .prose :is(h1, h2, h3, h4, h5, h6):focus,
   .prose :is(h1, h2, h3, h4, h5, h6):focus-visible {
     outline: none;
@@ -167,7 +167,7 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Prose — the rendered markdown body. Hand-rolled rather than @tailwindcss/
+   Prose: the rendered markdown body. Hand-rolled rather than @tailwindcss/
    typography because every color has to route through the semantic tokens.
    --------------------------------------------------------------------------- */
 .prose {
@@ -361,7 +361,7 @@
   border-radius: 0;
 }
 
-/* Tables — wrapped in an overflow container by the renderer so wide tables
+/* Tables: wrapped in an overflow container by the renderer so wide tables
    scroll themselves instead of the page. */
 .prose table {
   width: 100%;
@@ -516,7 +516,7 @@
 
 /* ---------------------------------------------------------------------------
    Callouts. Authored in markdown as a blockquote whose first line is
-   {% hint style="info" %} (GitBook syntax) or > **Note:** — normalized in the
+   {% hint style="info" %} (GitBook syntax) or > **Note:**; normalized in the
    content pipeline into <div class="callout callout-info">.
    --------------------------------------------------------------------------- */
 .prose .callout {

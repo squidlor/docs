@@ -1,6 +1,6 @@
 ---
 title: Feeds
-description: List feeds, read full per-source feed state, or fetch just the latest value — with every response field explained.
+description: List feeds, read full per-source feed state, or fetch just the latest value, with every response field explained.
 ---
 
 Three endpoints, in increasing order of detail. All are live reads of on-chain state, cached for 10 seconds.
@@ -40,17 +40,17 @@ curl https://api.squidlor.com/aggregator/v1/arbitrum/feeds
 | Field | Meaning |
 | --- | --- |
 | `pair` | Normalized uppercase pair name. |
-| `aggregator` | The `SquidlorOracleAggregator` address — the contract to read on-chain. |
+| `aggregator` | The `SquidlorOracleAggregator` address, the contract to read on-chain. |
 | `median` | The aggregate answer as a decimal string, already scaled by the feed's decimals. |
 | `healthyCount` | How many sources passed the staleness check on this read. |
 | `totalSources` | How many sources are configured, healthy or not. |
 | `freshestUpdatedAt` | Unix seconds. The most recent `updatedAt` among healthy sources. |
-| `peekError` | Present only on failure — the revert reason from `peek()`. `median` is then absent. |
+| `peekError` | Present only on failure: the revert reason from `peek()`. `median` is then absent. |
 
 > [!IMPORTANT]
-> Watch the ratio of `healthyCount` to `totalSources`. In the response above, 1 of 8 sources is healthy — the aggregate is technically valid because it clears `minHealthySources`, but it is effectively a single-source price. A monitoring integration should alert on that, not just on a missing value.
+> Watch the ratio of `healthyCount` to `totalSources`. In the response above, 1 of 8 sources is healthy; the aggregate is technically valid because it clears `minHealthySources`, but it is effectively a single-source price. A monitoring integration should alert on that, not just on a missing value.
 
-An empty `feeds` array means no aggregators are configured for that chain on this instance — not that the chain has no feeds. Configuration is per deployment.
+An empty `feeds` array means no aggregators are configured for that chain on this instance, not that the chain has no feeds. Configuration is per deployment.
 
 ## Get one feed
 
@@ -126,7 +126,7 @@ curl https://api.squidlor.com/aggregator/v1/arbitrum/feeds/BTC_USD
 | --- | --- |
 | `index` | Position in the source list. Under `PRIMARY_WITH_FALLBACK` this is priority order. |
 | `adapter` | The adapter contract wrapping this source. |
-| `name` | Self-reported label from the adapter — `chainlink`, `squidlor`, and so on. |
+| `name` | Self-reported label from the adapter: `chainlink`, `squidlor`, and so on. |
 | `enabled` | Disabled sources are never counted, even if fresh. |
 | `maxStaleness` | Seconds. `0` means the aggregator's `defaultMaxStaleness` applies. |
 | `price` / `priceRaw` | This source's own answer, formatted and raw. |
@@ -134,7 +134,7 @@ curl https://api.squidlor.com/aggregator/v1/arbitrum/feeds/BTC_USD
 | `isStale` | Computed: `now > updatedAt + effectiveMaxStaleness`. |
 | `error` | Present if reading the adapter failed. `price` is then absent. |
 
-A source with `isStale: true` or an `error` is excluded from the median but still reported — which is what makes this endpoint useful for diagnosis rather than just display.
+A source with `isStale: true` or an `error` is excluded from the median but still reported, which is what makes this endpoint useful for diagnosis rather than just display.
 
 ## Get just the value
 
@@ -183,7 +183,7 @@ curl "https://api.squidlor.com/aggregator/v1/feeds/BTC_USD/value?chainId=42161"
 
 ### When the aggregate is unavailable
 
-If `peek()` reverts — typically because too few sources are healthy — this endpoint returns **503**, not 200 with a null:
+If `peek()` reverts, typically because too few sources are healthy, this endpoint returns **503**, not 200 with a null:
 
 ```json
 {
@@ -219,7 +219,7 @@ if (ageSeconds > 3600) {
 | Status | Meaning |
 | --- | --- |
 | `404` | No such feed on that chain, or the chain is not configured on this instance. |
-| `503` | The aggregate is unavailable — `peek()` reverted. |
+| `503` | The aggregate is unavailable; `peek()` reverted. |
 | `500` | RPC failure or an unexpected error. |
 
 Full detail in [errors & limits](/api/errors).

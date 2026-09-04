@@ -1,6 +1,6 @@
 ---
 title: Read prices off-chain
-description: Consuming Squidlor feeds from a backend, bot, or dashboard — via the HTTP API, or directly over RPC with viem.
+description: Consuming Squidlor feeds from a backend, bot, or dashboard, via the HTTP API, or directly over RPC with viem.
 ---
 
 Off-chain, you have two options: the [HTTP API](/api) or a direct RPC read. They differ in what you have to trust and what you have to operate.
@@ -37,7 +37,7 @@ async function getPrice(chain: string, pair: string): Promise<FeedValue> {
     signal: AbortSignal.timeout(5000),
   });
 
-  // 503 means the aggregate is unavailable — too few healthy sources.
+  // 503 means the aggregate is unavailable: too few healthy sources.
   // 404 means the feed or chain isn't configured on this instance.
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
@@ -54,11 +54,11 @@ console.log(`${btc.pair} = ${btc.value} (${btc.healthyCount} healthy sources)`);
 ### Don't do float math on prices
 
 ```typescript
-// WRONG — `value` is a decimal string for a reason. parseFloat silently loses
+// WRONG: `value` is a decimal string for a reason. parseFloat silently loses
 // precision, and the error compounds through anything downstream.
 const price = parseFloat(feed.value);
 
-// RIGHT — stay in integers, using the raw value and its declared scale.
+// RIGHT: stay in integers, using the raw value and its declared scale.
 const raw = BigInt(feed.valueRaw);      // 6343490498170n
 const scale = 10n ** BigInt(feed.decimals); // 100000000n
 const dollars = raw / scale;             // 63434n
@@ -69,7 +69,7 @@ Format for display at the very end. Keep everything in `bigint` until then.
 
 ## Via direct RPC with viem
 
-No dependency on Squidlor's servers — just an RPC endpoint:
+No dependency on Squidlor's servers, just an RPC endpoint:
 
 ```typescript
 import { createPublicClient, http, parseAbi, formatUnits } from "viem";
@@ -109,11 +109,11 @@ console.log({
 ```
 
 > [!IMPORTANT]
-> `peek()` **reverts** when fewer than `minHealthySources` sources are healthy. With `allowFailure: false` that throws; with `allowFailure: true` you get a `status: "failure"` entry. Either way, handle it — a feed being unreadable is a normal state to encounter, not an exceptional one.
+> `peek()` **reverts** when fewer than `minHealthySources` sources are healthy. With `allowFailure: false` that throws; with `allowFailure: true` you get a `status: "failure"` entry. Either way, handle it: a feed being unreadable is a normal state to encounter, not an exceptional one.
 
 ## A monitoring pattern
 
-The most useful thing to build off-chain is not a price display — it is a health check. A feed serving a valid price from one of eight sources looks fine and is not.
+The most useful thing to build off-chain is not a price display. It is a health check. A feed serving a valid price from one of eight sources looks fine and is not.
 
 ```typescript
 type FeedHealth = {
@@ -151,7 +151,7 @@ async function checkFeed(chain: string, pair: string): Promise<FeedHealth> {
       };
     }
 
-    // Name the stale sources — that's what tells you which pusher to look at.
+    // Name the stale sources; that's what tells you which pusher to look at.
     const stale = feed.sources
       .filter((source: { isStale: boolean; error?: string }) => source.isStale || source.error)
       .map((source: { name: string }) => source.name);
@@ -169,15 +169,15 @@ async function checkFeed(chain: string, pair: string): Promise<FeedHealth> {
 
 The three conditions worth alerting on, in priority order:
 
-1. **`peekError`** — the feed has no usable price at all.
-2. **`healthyCount` below 2 on a multi-source feed** — the price is valid, the protection is not.
-3. **Named stale sources** — one pusher or provider is behind while others carry the feed.
+1. **`peekError`**: the feed has no usable price at all.
+2. **`healthyCount` below 2 on a multi-source feed**: the price is valid, the protection is not.
+3. **Named stale sources**: one pusher or provider is behind while others carry the feed.
 
 Most monitoring setups catch only the first. The second is the one that precedes an incident.
 
 ## Polling cadence
 
-The API caches for 10 seconds, so polling faster than that returns identical bytes. Poll at 10 seconds or slower, cache on your side, and back off on `500`/`503` — see [errors & limits](/api/errors).
+The API caches for 10 seconds, so polling faster than that returns identical bytes. Poll at 10 seconds or slower, cache on your side, and back off on `500`/`503`; see [errors & limits](/api/errors).
 
 For real-time UI, use Squidlor's WebSocket push rather than polling.
 

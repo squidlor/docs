@@ -1,6 +1,6 @@
 ---
 title: SquidPriceFeed
-description: The per-asset Chainlink-compatible facade over the adapter — stateless, 8-decimal, and one deployment per asset.
+description: The per-asset Chainlink-compatible facade over the adapter: stateless, 8-decimal, and one deployment per asset.
 ---
 
 `SquidPriceFeed` presents a single asset from `SquidlorAdapterV2` as a Chainlink `AggregatorV3Interface`. It is abstract; one concrete subclass is deployed per asset.
@@ -67,8 +67,8 @@ Historical lookup. One difference from `latestRoundData` worth noting: here `sta
 
 So on a historical round:
 
-- `startedAt` — when the price was true off-chain.
-- `updatedAt` — when it landed on-chain.
+- `startedAt`: when the price was true off-chain.
+- `updatedAt`: when it landed on-chain.
 
 The gap between them is the relay latency for that round, which makes this pair genuinely informative for auditing.
 
@@ -80,7 +80,7 @@ function description() external view returns (string memory);
 function version() external pure returns (uint256);     // 1
 ```
 
-`decimals()` is `pure` and hardcoded to 8 — the same across every Squidlor feed, and not configurable.
+`decimals()` is `pure` and hardcoded to 8, the same across every Squidlor feed, and not configurable.
 
 ### Legacy Chainlink functions
 
@@ -92,7 +92,7 @@ function latestRound() external view returns (uint80);
 Provided for older consumers built against Chainlink's pre-`latestRoundData` interface.
 
 > [!WARNING]
-> `latestAnswer()` returns a price and nothing else — no timestamp, no round. There is no way to check freshness against it. It exists for compatibility with legacy consumers; new code should never call it.
+> `latestAnswer()` returns a price and nothing else: no timestamp, no round. There is no way to check freshness against it. It exists for compatibility with legacy consumers; new code should never call it.
 
 ### Timestamp getters
 
@@ -101,7 +101,7 @@ function getLastDataTimestamp() external view returns (uint256);   // millisecon
 function getLastBlockTimestamp() external view returns (uint256);  // seconds
 ```
 
-Again, note the differing units — milliseconds for the data timestamp, seconds for the block timestamp.
+Again, note the differing units: milliseconds for the data timestamp, seconds for the block timestamp.
 
 ### `updateDataFeedValue`
 
@@ -109,7 +109,7 @@ Again, note the differing units — milliseconds for the data timestamp, seconds
 function updateDataFeedValue(uint256) external pure override;
 ```
 
-Always reverts. Prices are never written to a feed proxy — they are written to the adapter by the relayer. The function exists only to satisfy an interface.
+Always reverts. Prices are never written to a feed proxy; they are written to the adapter by the relayer. The function exists only to satisfy an interface.
 
 ## Initialization
 
@@ -149,7 +149,7 @@ contract SquidFeedConsumer {
         (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
 
         require(answer > 0, "invalid price");
-        // updatedAt is the on-chain publish time — a real staleness signal here,
+        // updatedAt is the on-chain publish time, a real staleness signal here,
         // unlike the aggregator's live-read fallback.
         require(block.timestamp - updatedAt <= maxAge, "stale");
 

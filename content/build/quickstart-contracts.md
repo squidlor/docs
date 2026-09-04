@@ -39,8 +39,8 @@ contract PriceConsumer {
 
 Two checks that are not optional:
 
-- **`answer <= 0`** — a non-positive price is never valid, and casting a negative `int256` to `uint256` produces an enormous number. This is how oracle-related exploits usually start.
-- **`updatedAt`** — the timestamp is when the price was published on-chain. Choose `maxAge` from how often the feed actually updates, not from how often you read it.
+- **`answer <= 0`**: a non-positive price is never valid, and casting a negative `int256` to `uint256` produces an enormous number. This is how oracle-related exploits usually start.
+- **`updatedAt`**: the timestamp is when the price was published on-chain. Choose `maxAge` from how often the feed actually updates, not from how often you read it.
 
 ## Use the health check
 
@@ -72,7 +72,7 @@ contract LendingMarket {
 }
 ```
 
-Note that `peek()` itself reverts with `InsufficientHealthySources(healthy, required)` when the aggregator's own minimum is not met — the feed refuses to serve a number it does not stand behind. Your `MIN_SOURCES` is a stricter check layered on top for paths where being wrong is expensive.
+Note that `peek()` itself reverts with `InsufficientHealthySources(healthy, required)` when the aggregator's own minimum is not met; the feed refuses to serve a number it does not stand behind. Your `MIN_SOURCES` is a stricter check layered on top for paths where being wrong is expensive.
 
 ## Resolve addresses at runtime
 
@@ -96,7 +96,7 @@ contract DynamicConsumer {
 }
 ```
 
-The registry is admin-gated for writes, so a pair cannot be repointed by anyone but us — but that also means you are trusting our admin key on top of the feed itself. For a single well-known pair, the constant is the tighter choice.
+The registry is admin-gated for writes, so a pair cannot be repointed by anyone but us, but that also means you are trusting our admin key on top of the feed itself. For a single well-known pair, the constant is the tighter choice.
 
 ## Addresses
 

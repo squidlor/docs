@@ -11,7 +11,7 @@ export function ThemeToggle() {
       onClick={toggleTheme}
       title={
         isSystem
-          ? `Following system (${theme}) — switch to ${next}`
+          ? `Following system (${theme}). Switch to ${next}`
           : `Switch to ${next} theme`
       }
       aria-label={`Switch to ${next} theme`}

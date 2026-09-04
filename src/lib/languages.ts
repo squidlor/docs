@@ -1,7 +1,7 @@
 /**
  * Explicit highlight.js language registry.
  *
- * rehype-highlight defaults to highlight.js's "common" bundle — around 40
+ * rehype-highlight defaults to highlight.js's "common" bundle, around 40
  * grammars, most of which never appear in these docs. Registering only what we
  * use cuts a large chunk out of the JS payload, and lets us add Solidity, which
  * highlight.js doesn't ship at all.

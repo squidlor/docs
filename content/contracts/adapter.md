@@ -1,6 +1,6 @@
 ---
 title: SquidlorAdapterV2
-description: The oracle's storage core — signature verification, the signer set, per-feed rounds, and the update entry point.
+description: The oracle's storage core: signature verification, the signer set, per-feed rounds, and the update entry point.
 ---
 
 `SquidlorAdapterV2` is the single storage contract behind every Squidlor asset. One deployment serves all feeds; the relayer calls it once per cycle to update them together.
@@ -18,7 +18,7 @@ function updateDataFeedsValues(
 ) external;
 ```
 
-The relayer's entry point. Signed price packages are appended to the transaction's calldata after the ABI-encoded arguments — see [calldata format](#calldata-format).
+The relayer's entry point. Signed price packages are appended to the transaction's calldata after the ABI-encoded arguments; see [calldata format](#calldata-format).
 
 | Parameter | Meaning |
 | --- | --- |
@@ -27,7 +27,7 @@ The relayer's entry point. Signed price packages are appended to the transaction
 
 Execution order:
 
-1. `allowedUpdater(msg.sender)` — the access-control hook.
+1. `allowedUpdater(msg.sender)`, the access-control hook.
 2. Enforce the minimum update interval of **3 seconds**.
 3. Require the timestamp to be newer than the last stored one.
 4. Store the new timestamps.
@@ -44,11 +44,11 @@ Reverts on `UpdateTooSoon`, `StaleDataPackage`, `ZeroPrice`, or any verification
 function allowedUpdater(address) public view virtual {}
 ```
 
-An overridable hook. The default permits any caller — which is safe, because signature verification still applies: an unauthorized caller cannot produce validly-signed packages. Override it to additionally restrict *who may submit*, for example to one keeper address.
+An overridable hook. The default permits any caller, which is safe, because signature verification still applies: an unauthorized caller cannot produce validly-signed packages. Override it to additionally restrict *who may submit*, for example to one keeper address.
 
 ## Reading prices
 
-Most consumers should not call these directly — read a [`SquidPriceFeed`](/contracts/price-feed) or, better, a [`SquidlorOracleAggregator`](/contracts/aggregator). These are the primitives underneath.
+Most consumers should not call these directly. Read a [`SquidPriceFeed`](/contracts/price-feed) or, better, a [`SquidlorOracleAggregator`](/contracts/aggregator). These are the primitives underneath.
 
 ```solidity
 function latestRound() external view returns (uint80);
@@ -65,7 +65,7 @@ function getLastDataTimestamp() external view returns (uint256);
 | `getLastDataTimestamp()` | Millisecond timestamp of the most recently accepted packages. |
 
 > [!WARNING]
-> The two timestamps have different units. `dataTs` is milliseconds because that is what the signed packages carry; `blockTs` is seconds because that is what the EVM provides. Mixing them up produces a staleness check that is wrong by a factor of 1000 — which will either never fire or always fire.
+> The two timestamps have different units. `dataTs` is milliseconds because that is what the signed packages carry; `blockTs` is seconds because that is what the EVM provides. Mixing them up produces a staleness check that is wrong by a factor of 1000, which will either never fire or always fire.
 
 ## Verification pipeline
 
@@ -105,7 +105,7 @@ function signerAt(uint256 index1Based) external view returns (address);
 function isSigner(address signer) external view returns (bool);
 ```
 
-`setRequiredSigners` is the M in M-of-N. It reverts with `ThresholdTooHigh` if it would exceed the signer count, and `ThresholdZero` for zero — so the threshold can never be set to something unsatisfiable or to nothing.
+`setRequiredSigners` is the M in M-of-N. It reverts with `ThresholdTooHigh` if it would exceed the signer count, and `ThresholdZero` for zero, so the threshold can never be set to something unsatisfiable or to nothing.
 
 > [!IMPORTANT]
 > The live deployment runs `requiredSigners = 1` with a single signer. The mechanism is real and enforced; the *configuration* provides no multi-party protection today. Whoever holds that key can publish any price the aggregator will then read. See the [trust model](/resources/trust-model).
@@ -184,7 +184,7 @@ The magic marker:
 0x0000000000000000000000000000000000000000000000000002ed57011e0000
 ```
 
-Reading backwards is what allows a variable number of packages to ride along without their size being declared in the ABI. Building this payload is the relayer's job — see [push price updates](/integration/sending-updates).
+Reading backwards is what allows a variable number of packages to ride along without their size being declared in the ABI. Building this payload is the relayer's job; see [push price updates](/integration/sending-updates).
 
 ## Storage layout
 

@@ -54,7 +54,7 @@ export function CodeBlock({
     try {
       await navigator.clipboard.writeText(text);
     } catch {
-      // Insecure context or denied permission — fall back to a hidden textarea.
+      // Insecure context or denied permission; fall back to a hidden textarea.
       const textarea = document.createElement("textarea");
       textarea.value = text;
       textarea.setAttribute("readonly", "");

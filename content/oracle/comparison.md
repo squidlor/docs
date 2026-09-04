@@ -1,6 +1,6 @@
 ---
 title: How it compares
-description: Squidlor Oracle against Chainlink, Pyth, API3, UMA, and Chronicle — including where the competition genuinely wins.
+description: Squidlor Oracle against Chainlink, Pyth, API3, UMA, and Chronicle, including where the competition genuinely wins.
 ---
 
 The useful version of this comparison names the losses as well as the wins. Squidlor is younger and less decentralized than the incumbents; it is also structurally different in ways that matter for some integrations and not others.
@@ -13,8 +13,8 @@ The useful version of this comparison names the losses as well as the wins. Squi
 | Latency for new pushes | ~3s floor | ~5–60 min | Sub-second (on pull) | ~minutes | 24–48h dispute window | ~minutes |
 | Multi-asset per transaction | One tx, N feeds | One per feed | Per-pull | Per-publisher | n/a | On-chain median |
 | Chainlink-interface compatible | Yes | Yes (it is the standard) | Wrapper needed | Yes | No | Custom |
-| Custom event outcomes | Roadmap | Functions / Any-API | No | No | Yes — its core use case | No |
-| Self-owned full stack | Yes | No — third-party network | No — third-party | Federated | No — third-party | Yes |
+| Custom event outcomes | Roadmap | Functions / Any-API | No | No | Yes, its core use case | No |
+| Self-owned full stack | Yes | No, third-party network | No, third-party | Federated | No, third-party | Yes |
 | Layers of aggregation | Source + signer + oracle | Signer + oracle | Oracle only | Oracle only | Single, dispute-based | Signer + oracle |
 | Deployable on any EVM chain | Single contract deploy | Needs node deployment | Needs Wormhole / Pythnet | Needs publisher onboarding | Needs UMA contracts | Maker-centric |
 
@@ -38,7 +38,7 @@ The useful version of this comparison names the losses as well as the wins. Squi
 
 **Pyth: sub-second latency for gas-paying consumers.** For a perp DEX willing to pay per read, pull-based sub-second pricing is simply better than any push cadence. Different architecture, different right answer.
 
-**UMA: battle-tested dispute resolution.** For genuinely ambiguous outcomes — where the question is contestable, not merely unknown — an economic dispute system is the correct mechanism, and UMA's is proven.
+**UMA: battle-tested dispute resolution.** For genuinely ambiguous outcomes, where the question is contestable rather than merely unknown, an economic dispute system is the correct mechanism, and UMA's is proven.
 
 **Chainlink and Pyth: far greater operator decentralization, today.** This is the honest gap. Squidlor's signer set is currently one key. The contracts enforce M-of-N and the roadmap closes it, but as of now the incumbents are meaningfully more decentralized and it would be misleading to imply otherwise.
 

@@ -43,7 +43,7 @@ export function stripCodeBlocks(markdown: string): string {
  *
  * Needed by anything that scans document *structure* line by line. The renderer
  * never displays a comment, so a commented-out `## Section` is invisible on the
- * page — but a heading scanner would still see it and put a phantom entry in the
+ * page, but a heading scanner would still see it and put a phantom entry in the
  * on-this-page rail pointing at an anchor that was never rendered.
  */
 export function stripComments(markdown: string): string {
@@ -53,7 +53,7 @@ export function stripComments(markdown: string): string {
 }
 
 /**
- * Code blocks and comments removed together — the usual preprocessing for any
+ * Code blocks and comments removed together: the usual preprocessing for any
  * structural scan (headings, search sections).
  */
 export function stripNonContent(markdown: string): string {
@@ -99,7 +99,7 @@ export function stripInlineMarkdown(text: string): string {
 export function toPlainText(markdown: string): string {
   return stripCodeBlocks(markdown)
     // Whole comments first, spanning lines. The renderer drops HTML nodes, so
-    // commented-out prose is invisible on the page — but stripping tags
+    // commented-out prose is invisible on the page, but stripping tags
     // line-by-line further down would leave a multi-line comment's *body*
     // behind, silently indexing shelved content into search.
     .replace(/<!--[\s\S]*?-->/g, "")

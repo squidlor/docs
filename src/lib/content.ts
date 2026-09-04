@@ -11,7 +11,7 @@ export type DocHeading = {
 export type Doc = {
   /** Route path, e.g. "/oracle/architecture". Root page is "/". */
   slug: string;
-  /** Source file, relative to content/ — shown in "edit this page". */
+  /** Source file, relative to content/; shown in "edit this page". */
   sourcePath: string;
   title: string;
   description?: string;
@@ -26,7 +26,7 @@ export type Doc = {
   /**
    * `hidden: true` in frontmatter unpublishes a page without deleting it: it
    * stops being routable, drops out of search, and is exempt from the nav
-   * cross-check. Used to shelve a section that isn't ready to announce —
+   * cross-check. Used to shelve a section that isn't ready to announce;
    * restoring it is one line of frontmatter plus its nav entry.
    */
   hidden: boolean;
@@ -76,7 +76,7 @@ function extractHeadings(markdown: string, slugger: (text: string) => string) {
  *
  * The page header renders the title and description together, so leaving the H1
  * in the markdown would either duplicate it or push the description above it.
- * Only a title in the first non-blank position is taken — an H1 further down is
+ * Only a title in the first non-blank position is taken; an H1 further down is
  * real content.
  */
 function splitLeadingTitle(markdown: string): { title?: string; body: string } {
@@ -123,7 +123,7 @@ function buildDoc(globKey: string, raw: string): Doc {
   };
 }
 
-/** Every parsed file, including hidden ones — the authoring view. */
+/** Every parsed file, including hidden ones: the authoring view. */
 export const allDocs: Doc[] = Object.entries(modules)
   .map(([key, raw]) => buildDoc(key, raw))
   .sort((a, b) => a.slug.localeCompare(b.slug));

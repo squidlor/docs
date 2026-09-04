@@ -3,7 +3,7 @@ title: Data quickstart
 description: Pull prices, history, OHLC candles and the per-source audit trail over plain HTTP for dashboards, bots and analytics.
 ---
 
-Everything the chain does not store — history, candles, per-source breakdowns — lives on the REST API. No key needed to start.
+Everything the chain does not store (history, candles, per-source breakdowns) lives on the REST API. No key needed to start.
 
 ## One price
 
@@ -31,7 +31,7 @@ Pairs use an underscore in the path (`BTC_USD`), and chains accept a slug (`robi
 curl https://api.squidlor.com/aggregator/v1/robinhood/feeds
 ```
 
-Good first call for a dashboard — one request gives you every pair with its live median, healthy-source count and aggregator address.
+Good first call for a dashboard: one request gives you every pair with its live median, healthy-source count and aggregator address.
 
 ## Candles
 
@@ -39,7 +39,7 @@ Good first call for a dashboard — one request gives you every pair with its li
 curl "https://api.squidlor.com/aggregator/v1/robinhood/feeds/BTC_USD/ohlc?interval=1h&limit=24"
 ```
 
-Intervals: `1m`, `5m`, `15m`, `1h`, `4h`, `1d`. Candles are built from sampled medians (one sample per minute), so they reflect what the oracle published rather than exchange trades. A one-minute candle from a feed that updates every ten minutes will be flat — that is accurate, not a gap.
+Intervals: `1m`, `5m`, `15m`, `1h`, `4h`, `1d`. Candles are built from sampled medians (one sample per minute), so they reflect what the oracle published rather than exchange trades. A one-minute candle from a feed that updates every ten minutes will be flat; that is accurate, not a gap.
 
 ## History
 
@@ -49,7 +49,7 @@ curl "https://api.squidlor.com/aggregator/v1/robinhood/feeds/BTC_USD/history?int
 
 `from` and `to` accept unix seconds, unix milliseconds or ISO-8601. Without `interval` you get raw samples; with one, downsampled points.
 
-Anonymous and free-tier requests are capped at 30 days of lookback. Reaching further back returns 30 days plus `X-History-Clamped: true` rather than an error — see [rate limits](/build/rate-limits).
+Anonymous and free-tier requests are capped at 30 days of lookback. Reaching further back returns 30 days plus `X-History-Clamped: true` rather than an error; see [rate limits](/build/rate-limits).
 
 ## The audit trail
 
@@ -61,7 +61,7 @@ curl "https://api.squidlor.com/aggregator/v1/robinhood/feeds/BTC_USD/audit?flagg
 
 Each record is one sampled round with every source's own price, publish time, deviation from the median in basis points, and staleness flag. `flagged=true` returns only rounds where a source deviated past the threshold or went stale.
 
-Use it to answer "was this feed healthy at 14:32 last Tuesday?" — including for pairs you do not consume, since it is open to everyone. Like `/history`, it reaches back 30 days on the free tiers.
+Use it to answer "was this feed healthy at 14:32 last Tuesday?", including for pairs you do not consume, since it is open to everyone. Like `/history`, it reaches back 30 days on the free tiers.
 
 ## Equity constituents
 
@@ -71,7 +71,7 @@ For US equity pairs, the chain stores only the median. This exposes the sources 
 curl https://api.squidlor.com/aggregator/v1/robinhood/feeds/NVDA_USD/constituents
 ```
 
-The response deliberately returns both the on-chain stored value and a live recomputation. They will differ between pushes — report the on-chain figure if you are describing what a contract sees, and never substitute the live one for it.
+The response deliberately returns both the on-chain stored value and a live recomputation. They will differ between pushes; report the on-chain figure if you are describing what a contract sees, and never substitute the live one for it.
 
 ## With the SDK
 
@@ -106,7 +106,7 @@ The server caches responses for 10 seconds and feeds only change when a pusher l
 
 ## Machine-readable spec
 
-An OpenAPI 3.1 description of every endpoint is served at [`/openapi.json`](https://api.squidlor.com/aggregator/openapi.json) — usable for client generation or as an agent tool definition.
+An OpenAPI 3.1 description of every endpoint is served at [`/openapi.json`](https://api.squidlor.com/aggregator/openapi.json), usable for client generation or as an agent tool definition.
 
 ## Ready-made
 

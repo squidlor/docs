@@ -8,7 +8,7 @@ const groupOf = new Map(flatNav.map((item) => [item.slug, item.group]));
 export function NotFound() {
   const { pathname } = useLocation();
 
-  // Treat the URL itself as a query — a mistyped or moved path usually still
+  // Treat the URL itself as a query; a mistyped or moved path usually still
   // contains the words the reader wanted.
   const query = pathname.replace(/[/_-]+/g, " ").trim();
   const suggestions = query ? search(query, getSections(groupOf), 5) : [];

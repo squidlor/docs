@@ -1,6 +1,6 @@
 ---
 title: Events
-description: Read event-outcome aggregator state — registered questions, per-source attestations, and the aggregated YES/NO/INVALID result.
+description: Read event-outcome aggregator state: registered questions, per-source attestations, and the aggregated YES/NO/INVALID result.
 ---
 
 These endpoints expose the event-resolution side of the oracle: not "what is the price of X" but "did event Y happen". They read an `EventOracleAggregator` and its sources.
@@ -17,7 +17,7 @@ Every outcome is one of four values, reported both as a label and a numeric code
 | `0` | `UNRESOLVED` | No answer yet. |
 | `1` | `YES` | The event occurred. |
 | `2` | `NO` | The event did not occur. |
-| `3` | `INVALID` | The question cannot be meaningfully answered — void, ambiguous, or cancelled. |
+| `3` | `INVALID` | The question cannot be meaningfully answered: void, ambiguous, or cancelled. |
 
 `INVALID` is the important one. Without it, an unanswerable question forces a wrong answer; with it, a market can settle as void rather than settling incorrectly.
 
@@ -105,7 +105,7 @@ curl https://api.squidlor.com/aggregator/v1/arbitrum/events
 
 | Field | Meaning |
 | --- | --- |
-| `eventId` | The event's on-chain identifier — a `bytes32`. |
+| `eventId` | The event's on-chain identifier, a `bytes32`. |
 | `question` | Human-readable question text, stored on-chain. |
 | `registeredAt` | Unix seconds when the event was registered. |
 | `livenessSeconds` | Dispute/liveness window for this event. |
@@ -118,13 +118,13 @@ curl https://api.squidlor.com/aggregator/v1/arbitrum/events
 
 | Field | Meaning |
 | --- | --- |
-| `sourceName` | Which mechanism attested — `operator-signed` for the fast path, `uma-optimistic` for the bonded path. |
+| `sourceName` | Which mechanism attested: `operator-signed` for the fast path, `uma-optimistic` for the bonded path. |
 | `outcome` / `outcomeCode` | What this source says. |
 | `resolved` | Whether it has answered at all. |
 | `resolvedAt` | When it did. |
 | `enabled` | Disabled sources are reported but not counted. |
 
-The `perSource` array is where the two-path resolution design becomes visible. An operator-signed source resolving quickly while a UMA source is still inside its dispute window is the normal, expected state — and reading both tells you how much confidence the current answer deserves.
+The `perSource` array is where the two-path resolution design becomes visible. An operator-signed source resolving quickly while a UMA source is still inside its dispute window is the normal, expected state, and reading both tells you how much confidence the current answer deserves.
 
 ## Get one event
 
@@ -148,4 +148,4 @@ Returns `404` if no event with that ID is registered.
 | `404` on `/events/:eventId` | No such event. |
 | `500` | RPC failure. |
 
-An `aggregated.error` inside a `200` response means the aggregate read reverted while the per-source reads succeeded — usually `minHealthy` not yet met. The per-source data is still valid and useful.
+An `aggregated.error` inside a `200` response means the aggregate read reverted while the per-source reads succeeded, usually `minHealthy` not yet met. The per-source data is still valid and useful.

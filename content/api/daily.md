@@ -1,6 +1,6 @@
 ---
 title: Daily prices
-description: One price per asset per 00:00 UTC boundary, kept permanently — every streamed token, every tracked stock, and every on-chain feed.
+description: One price per asset per 00:00 UTC boundary, kept permanently: every streamed token, every tracked stock, and every on-chain feed.
 ---
 
 Every other price endpoint answers "now" or "recently". This one is the long-run record: a single price for every asset we track, taken at each **00:00 UTC** boundary, and kept indefinitely.
@@ -24,7 +24,7 @@ A row belongs to exactly one class, and the class decides how the price was meas
 | `equity` | `NVDA`, `TSLA` | median of independent quote APIs, captured at the boundary |
 | `onchain` | `BTC/USD` | the on-chain aggregator's answer at the boundary |
 
-`crypto` and `onchain` can both hold the same asset. They are two different measurements — the off-chain market and the value contracts actually read, which only updates on a 0.5% deviation or the hourly heartbeat — so they are stored and returned separately rather than merged.
+`crypto` and `onchain` can both hold the same asset. They are two different measurements (the off-chain market, and the value contracts actually read, which only updates on a 0.5% deviation or the hourly heartbeat), so they are stored and returned separately rather than merged.
 
 The same pair on two chains is likewise two rows, not one: `BTC/USD` on Arbitrum and on Robinhood have different sources and different push timing.
 
@@ -48,7 +48,7 @@ Every row says where its number came from. This matters more than the number for
 GET /v1/daily/coverage
 ```
 
-Call this before charting a series. A series read returns the rows it has, so a range with holes looks identical to a shorter range — this is where the holes are visible.
+Call this before charting a series. A series read returns the rows it has, so a range with holes looks identical to a shorter range; this is where the holes are visible.
 
 ```bash
 curl "https://api.squidlor.com/aggregator/v1/daily/coverage"
@@ -121,11 +121,11 @@ GET /v1/daily/:symbol
 | Parameter | Default | Meaning |
 | --- | --- | --- |
 | `class` | all | Pick one measurement rather than mixing them. |
-| `chain` | — | Required when a pair is stored for more than one chain. |
-| `from` / `to` | — | `YYYY-MM-DD`, ISO timestamp or unix time. Inclusive. |
+| `chain` | - | Required when a pair is stored for more than one chain. |
+| `from` / `to` | - | `YYYY-MM-DD`, ISO timestamp or unix time. Inclusive. |
 | `limit` | `400` | Newest N rows in range, returned **oldest-first**. |
 
-`:symbol` is a ticker (`BTC`, `NVDA`) for off-chain rows or a pair for on-chain ones, written with `_` for `/` — `BTC_USD`. With `class=onchain`, a bare ticker is read as `TICKER/USD`.
+`:symbol` is a ticker (`BTC`, `NVDA`) for off-chain rows or a pair for on-chain ones, written with `_` for `/`, as in `BTC_USD`. With `class=onchain`, a bare ticker is read as `TICKER/USD`.
 
 ```bash
 curl "https://api.squidlor.com/aggregator/v1/daily/BTC?from=2026-08-25"
@@ -162,7 +162,7 @@ A pair published on several chains returns **400** `AMBIGUOUS_CHAIN` listing the
 GET /v1/daily/:symbol/:day
 ```
 
-The settlement shape: exact day in, one price out, **404** `NO_SNAPSHOT` when nothing is stored for it. It never substitutes a neighbouring day — a settlement that silently used the wrong day is worse than one that failed. When you want the nearest observation with the distance attached instead, use [`/at`](/api/history).
+The settlement shape: exact day in, one price out, **404** `NO_SNAPSHOT` when nothing is stored for it. It never substitutes a neighbouring day; a settlement that silently used the wrong day is worse than one that failed. When you want the nearest observation with the distance attached instead, use [`/at`](/api/history).
 
 ```bash
 curl "https://api.squidlor.com/aggregator/v1/daily/NVDA/2026-08-27"
@@ -188,7 +188,7 @@ curl "https://api.squidlor.com/aggregator/v1/daily/NVDA/2026-08-27"
 ## Where the pre-history comes from
 
 Days that predate our own recording are seeded once from free, keyless public endpoints, then never
-touched again — a captured observation always outranks a backfilled candle. Measured on 2026-08-27:
+touched again; a captured observation always outranks a backfilled candle. Measured on 2026-08-27:
 
 | Source | Auth | Depth reached | Served |
 | --- | --- | --- | --- |
@@ -197,7 +197,7 @@ touched again — a captured observation always outranks a backfilled candle. Me
 | Kraken OHLC | none | last 720 candles only | 38 tail tokens nothing else lists |
 | Yahoo chart | none | 1990 and earlier | every US ticker tried |
 
-For crypto the price at 00:00 UTC is the daily candle's **open** — identically the previous day's
+For crypto the price at 00:00 UTC is the daily candle's **open**, identically the previous day's
 close. The primary venue is used wherever it has data and a later venue only fills days it never
 listed, so BTC reaches 2015-07-20 instead of stopping at Binance's 2017 start. Each row names the
 venue that supplied it, so a handover is visible in the data rather than hidden behind one label.
@@ -211,16 +211,16 @@ One full seeding run, measured end to end:
 
 ## Stocks and the 00:00 UTC boundary
 
-00:00 UTC is 19:00 or 20:00 ET depending on daylight saving — after the US close, before the next open. So an equity row is the **previous session's close**, and `session` names which session that was:
+00:00 UTC is 19:00 or 20:00 ET depending on daylight saving: after the US close, before the next open. So an equity row is the **previous session's close**, and `session` names which session that was:
 
 - A weekday boundary carries the day before's close.
 - Saturday, Sunday and Monday boundaries all carry Friday's close.
 - A holiday boundary repeats the last session that traded.
 
-`sessionInferred: true` means the session was worked out from the calendar (weekends only — there is no holiday table), rather than reported by the data source. Crypto has no sessions: 00:00 UTC is a genuine daily open, and the value is the market at that instant.
+`sessionInferred: true` means the session was worked out from the calendar (weekends only; there is no holiday table), rather than reported by the data source. Crypto has no sessions: 00:00 UTC is a genuine daily open, and the value is the market at that instant.
 
 > [!WARNING]
-> Backfilled equity rows are **split-adjusted**. AAPL's January 1990 sessions come back near $0.39, not the ~$35 they printed at the time. That is the right series to chart and the wrong number to quote as a historical price. It also means a future split changes what a re-run backfill returns for old days, while rows captured live at the boundary stay nominal — so a series spanning a split can carry a step that is the adjustment, not the market. Rows we captured ourselves (`source: equity-median`) are never re-adjusted.
+> Backfilled equity rows are **split-adjusted**. AAPL's January 1990 sessions come back near $0.39, not the ~$35 they printed at the time. That is the right series to chart and the wrong number to quote as a historical price. It also means a future split changes what a re-run backfill returns for old days, while rows captured live at the boundary stay nominal, so a series spanning a split can carry a step that is the adjustment, not the market. Rows we captured ourselves (`source: equity-median`) are never re-adjusted.
 
 ## Plan limits
 

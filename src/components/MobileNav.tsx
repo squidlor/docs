@@ -38,7 +38,7 @@ export function MobileNav({
         }`}
       />
       {/* The panel stays mounted so it can animate out, but it only claims the
-          dialog role while open — a permanently-present aria-modal element
+          dialog role while open; a permanently-present aria-modal element
           confuses assistive tech and any tooling that looks for a live dialog. */}
       <div
         role={open ? "dialog" : undefined}

@@ -56,7 +56,7 @@ function Shell() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [isMac, openSearch]);
 
-  // Any navigation dismisses the drawer — including browser back/forward.
+  // Any navigation dismisses the drawer, including browser back/forward.
   useEffect(() => setMobileNavOpen(false), [pathname]);
 
   return (

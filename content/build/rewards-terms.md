@@ -75,7 +75,7 @@ authoritative description of how points are computed. In summary:
 - Content, template and referral awards are assessed by a human.
 
 Machine-computed points enter the ledger as **pending** and are settled only after human
-review. Squidlor may reject any row, and may change the methodology between epochs — changes
+review. Squidlor may reject any row, and may change the methodology between epochs; changes
 apply prospectively and are noted in the [changelog](/build/changelog).
 
 Once an epoch is settled on-chain, its rows are final and are not retroactively edited.
@@ -128,7 +128,7 @@ Program does not entitle you to any role or access beyond the portal.
 
 The Program, the API, the SDK, the MCP server and the contracts are provided **as is**,
 without warranty of any kind. Oracle data may be delayed, incorrect, or unavailable; you are
-responsible for the staleness and health checks appropriate to your use — see
+responsible for the staleness and health checks appropriate to your use; see
 [trust model](/resources/trust-model).
 
 To the maximum extent permitted by law, Squidlor is not liable for any indirect,

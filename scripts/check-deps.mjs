@@ -59,7 +59,7 @@ for (const file of files) {
 }
 
 if (missing.size > 0) {
-  console.error("undeclared imports — add these to package.json dependencies:\n");
+  console.error("undeclared imports: add these to package.json dependencies:\n");
   for (const [name, where] of [...missing].sort()) {
     console.error(`  ${name}`);
     for (const file of [...where].sort()) console.error(`      ${file}`);

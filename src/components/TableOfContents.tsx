@@ -32,7 +32,7 @@ function useActiveHeading(headings: DocHeading[]): string {
       const readLine = headerHeight + 80;
 
       // Near the bottom nothing new can scroll past the read line, so pin to
-      // the last heading — otherwise the final section never highlights.
+      // the last heading; otherwise the final section never highlights.
       const scrollBottom = window.scrollY + window.innerHeight;
       if (scrollBottom >= document.documentElement.scrollHeight - 24) {
         setActive(headings[headings.length - 1].id);

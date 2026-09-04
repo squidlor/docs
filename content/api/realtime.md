@@ -1,6 +1,6 @@
 ---
 title: Realtime prices
-description: The 1-second off-chain price feed — REST snapshot, Server-Sent Events, socket.io, and signed webhooks — and how it differs from the on-chain value.
+description: The 1-second off-chain price feed (REST snapshot, Server-Sent Events, socket.io, and signed webhooks), and how it differs from the on-chain value.
 ---
 
 Squidlor runs two feeds at two cadences, on purpose.
@@ -12,7 +12,7 @@ Squidlor runs two feeds at two cadences, on purpose.
 | Cost per update | zero | gas |
 | Use it for | charts, tickers, alerts, UI | liquidations, settlement, anything a contract reads |
 
-This is the same split Chainlink and Pyth use — continuous computation off-chain, threshold-gated publication on-chain — because latency is free off-chain and costs gas on-chain. Measured on Robinhood Chain 4663, publishing every second instead of on a trigger costs ~$17.6/day against ~$0.33/day for the same information.
+This is the same split Chainlink and Pyth use (continuous computation off-chain, threshold-gated publication on-chain), because latency is free off-chain and costs gas on-chain. Measured on Robinhood Chain 4663, publishing every second instead of on a trigger costs ~$17.6/day against ~$0.33/day for the same information.
 
 > [!WARNING]
 > Do not price a liquidation off this feed. A contract reads the on-chain value, so a liquidation decided against a 1-second price that has not been published yet can be wrong at the moment it executes. Use `/v1/feeds` for anything that must agree with a contract, and this feed for anything a human looks at.
@@ -35,7 +35,7 @@ curl "https://api.squidlor.com/aggregator/v1/prices?symbols=BTC,ETH"
     {
       "symbol": "BTC",
       "price": 64919.98,        // median across live venues
-      "priceRaw": "6491998000000",  // same value at 8 decimals — what gets signed and pushed
+      "priceRaw": "6491998000000",  // same value at 8 decimals; what gets signed and pushed
       "decimals": 8,
       "ts": 1785958022007,
       "seq": 302,               // per-symbol counter; a jump backwards means the engine restarted
@@ -66,11 +66,11 @@ es.addEventListener("event", (e) => console.log("price event", JSON.parse(e.data
 
 | Event | When |
 | --- | --- |
-| `snapshot` | once, immediately on connect — so you render prices without waiting for the next tick |
+| `snapshot` | once, immediately on connect, so you render prices without waiting for the next tick |
 | `tick` | one per symbol per second |
 | `event` | `deviation` (moved ≥ 0.5%), `stale`, `recovered`. Suppress with `?events=false` |
 
-SSE rather than a WebSocket because it survives every corporate proxy, needs no client library, and reconnects on its own — and this is a one-way firehose with nothing for a client to send back.
+SSE rather than a WebSocket because it survives every corporate proxy, needs no client library, and reconnects on its own. It is also a one-way firehose with nothing for a client to send back.
 
 - `?symbols=` filters server-side. Use it; a client watching BTC should not pay for XRP frames.
 - **Five concurrent streams per caller.** A stream is metered once at connect but held for hours, so filter with `?symbols=` instead of opening several connections.
@@ -93,7 +93,7 @@ socket.on("oracle:event", (ev) => console.log(ev));     // a round landed on-cha
 
 ## Webhooks
 
-Webhooks carry **events, not ticks**. A webhook per second per subscriber would melt both ends; what you get is "BTC moved 0.5%", "the ETH feed went stale", "a new round landed on-chain" — things a backend reacts to once.
+Webhooks carry **events, not ticks**. A webhook per second per subscriber would melt both ends; what you get is "BTC moved 0.5%", "the ETH feed went stale", "a new round landed on-chain": things a backend reacts to once.
 
 ```bash
 curl -X POST https://api.squidlor.com/notification/webhooks \
@@ -107,7 +107,7 @@ curl -X POST https://api.squidlor.com/notification/webhooks \
   }'
 ```
 
-The response contains a `secret` **shown exactly once**. Store it — it is not retrievable later.
+The response contains a `secret` **shown exactly once**. Store it; it is not retrievable later.
 
 | Event | Fires when |
 | --- | --- |
@@ -120,7 +120,7 @@ Omit `symbols` for all symbols. `POST /notification/webhooks/:id/test` delivers 
 
 ### Verifying the signature
 
-Every delivery is signed. Reject anything that fails this check, and anything whose timestamp is more than a few minutes old — the timestamp is inside the signed material specifically so a captured delivery cannot be replayed later.
+Every delivery is signed. Reject anything that fails this check, and anything whose timestamp is more than a few minutes old; the timestamp is inside the signed material specifically so a captured delivery cannot be replayed later.
 
 ```javascript
 import crypto from "node:crypto";
@@ -140,7 +140,7 @@ app.post("/hooks/squidlor", express.raw({ type: "application/json" }), (req, res
 });
 ```
 
-Delivery is retried three times with exponential backoff. A 4xx (other than 408/429) is not retried — the same body would be rejected again. **After 20 consecutive failures a subscription is disabled**; re-enable it with `PATCH /notification/webhooks/:id {"active": true}`, which also clears the failure count.
+Delivery is retried three times with exponential backoff. A 4xx (other than 408/429) is not retried, because the same body would be rejected again. **After 20 consecutive failures a subscription is disabled**; re-enable it with `PATCH /notification/webhooks/:id {"active": true}`, which also clears the failure count.
 
 ## What backs the median
 
@@ -150,11 +150,11 @@ Delivery is retried three times with exponential backoff. A 4xx (other than 408/
 | Binance | USDT | |
 | Bybit | USDT | |
 | Gate.io | USDT | |
-| Arbitrum hub | USD | one venue, *not* a pre-medianed composite — see [aggregation architecture](/oracle/architecture) |
+| Arbitrum hub | USD | one venue, *not* a pre-medianed composite; see [aggregation architecture](/oracle/architecture) |
 
 USDT-quoted venues are medianed together with the USD-quoted one. The peg risk is bounded: a depegging USDT moves at most two of five inputs, and a median only moves if the median voter moves.
 
-A venue whose socket drops ages out of the median within 10 seconds and reconnects with backoff. A symbol with no live venue publishes nothing and emits `stale` — you will see absence, never a frozen price presented as current.
+A venue whose socket drops ages out of the median within 10 seconds and reconnects with backoff. A symbol with no live venue publishes nothing and emits `stale`; you will see absence, never a frozen price presented as current.
 
 ## Health
 

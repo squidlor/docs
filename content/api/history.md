@@ -1,15 +1,15 @@
 ---
 title: History & OHLC
-description: Sampled median history, OHLC candles, and the per-source audit trail — the three endpoints that require a configured database.
+description: Sampled median history, OHLC candles, and the per-source audit trail: the three endpoints that require a configured database.
 ---
 
-These three endpoints read recorded samples rather than live chain state. A background recorder samples every configured feed on an interval (60 seconds by default) and writes the result — median, per-source prices, staleness, and deviation — into MongoDB.
+These three endpoints read recorded samples rather than live chain state. A background recorder samples every configured feed on an interval (60 seconds by default) and writes the result (median, per-source prices, staleness, and deviation) into MongoDB.
 
 > [!WARNING]
 > All three require the API instance to have `MONGODB_URI` configured. Without it, the service still serves live reads but these endpoints return **503**:
 >
 > ```json
-> { "message": "history not enabled — set MONGODB_URI for the aggregator-api" }
+> { "message": "history not enabled: set MONGODB_URI for the aggregator-api" }
 > ```
 
 Default retention is 90 days.
@@ -46,10 +46,10 @@ The recorded median series for a feed.
 
 | Parameter | Default | Meaning |
 | --- | --- | --- |
-| `from` | — | Start of range. |
-| `to` | — | End of range. |
+| `from` | - | Start of range. |
+| `to` | - | End of range. |
 | `interval` | `raw` | Downsample to this bucket. Omit for every recorded sample. |
-| `limit` | — | Maximum points returned. |
+| `limit` | - | Maximum points returned. |
 
 ```bash
 curl "https://api.squidlor.com/aggregator/v1/arbitrum/feeds/BTC_USD/history?interval=1h&limit=3"
@@ -78,7 +78,7 @@ curl "https://api.squidlor.com/aggregator/v1/arbitrum/feeds/BTC_USD/history?inte
 | `healthyCount` | Source count at the time of that sample. |
 
 > [!NOTE]
-> `median` and `medianNum` exist for different jobs. `medianNum` is a double and will lose precision on large values — fine for a chart axis, wrong for accounting. `median` is the exact string.
+> `median` and `medianNum` exist for different jobs. `medianNum` is a double and will lose precision on large values: fine for a chart axis, wrong for accounting. `median` is the exact string.
 >
 > `healthyCount` on a historical point is genuinely useful: it tells you whether a past price move was corroborated by several sources or came from one.
 
@@ -93,8 +93,8 @@ Candles computed over the recorded samples.
 | Parameter | Default | Meaning |
 | --- | --- | --- |
 | `interval` | `1h` | Candle width. |
-| `from` / `to` | — | Range. |
-| `limit` | — | Maximum candles. |
+| `from` / `to` | - | Range. |
+| `limit` | - | Maximum candles. |
 
 ```bash
 curl "https://api.squidlor.com/aggregator/v1/arbitrum/feeds/ETH_USD/ohlc?interval=4h&limit=2"
@@ -116,7 +116,7 @@ curl "https://api.squidlor.com/aggregator/v1/arbitrum/feeds/ETH_USD/ohlc?interva
 `samples` is the count of recorded points that went into the candle. It is the honesty field: a candle built from 240 samples is meaningful, one built from 3 is not, and a gap in recording shows up here rather than being silently smoothed over.
 
 > [!IMPORTANT]
-> These candles describe **the oracle's published price**, not exchange trading activity. There is no volume, because no trades happened here. Do not treat them as market data — treat them as a record of what the oracle said.
+> These candles describe **the oracle's published price**, not exchange trading activity. There is no volume, because no trades happened here. Do not treat them as market data; treat them as a record of what the oracle said.
 
 ## Audit trail
 
@@ -128,9 +128,9 @@ The per-source forensic record: what each source reported at each sample, how fa
 
 | Parameter | Default | Meaning |
 | --- | --- | --- |
-| `from` / `to` | — | Range. |
-| `limit` | — | Maximum rounds. |
-| `source` | — | Filter to one source by name, e.g. `chainlink`. |
+| `from` / `to` | - | Range. |
+| `limit` | - | Maximum rounds. |
+| `source` | - | Filter to one source by name, e.g. `chainlink`. |
 | `flagged` | `false` | `true` returns only rounds flagged for deviation or staleness. |
 
 ```bash
@@ -156,7 +156,7 @@ curl "https://api.squidlor.com/aggregator/v1/arbitrum/feeds/BTC_USD/audit?flagge
 }
 ```
 
-`deviationBps` is the source's distance from that round's median in basis points — 100 bps is 1%. A source is flagged when it exceeds the configured threshold (100 bps by default) or when it was stale or erroring.
+`deviationBps` is the source's distance from that round's median in basis points; 100 bps is 1%. A source is flagged when it exceeds the configured threshold (100 bps by default) or when it was stale or erroring.
 
 This is the endpoint behind the ABYSS persona in [Oracle Chat](/ai/oracle-chat) and the `get_audit_trail` tool on the [MCP server](/ai/mcp). It answers the question that matters after an incident: *which source was wrong, and for how long?*
 
@@ -166,4 +166,4 @@ This is the endpoint behind the ABYSS persona in [Oracle Chat](/ai/oracle-chat) 
 
 **Retention is finite.** 90 days by default. If you need a longer record, pull it into your own store on a schedule.
 
-**A gap means the recorder was down.** The absence of samples over a window means nothing was recorded then — not that the price was unchanged. `samples` on a candle is the fastest way to spot this.
+**A gap means the recorder was down.** The absence of samples over a window means nothing was recorded then, not that the price was unchanged. `samples` on a candle is the fastest way to spot this.

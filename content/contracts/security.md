@@ -3,7 +3,7 @@ title: Security properties
 description: What the contracts cryptographically guarantee, what they assume, and the known limitations they do not address.
 ---
 
-This page states what the contracts enforce and what they do not. The [trust model](/resources/trust-model) covers the operational side — who holds which keys.
+This page states what the contracts enforce and what they do not. The [trust model](/resources/trust-model) covers the operational side: who holds which keys.
 
 ## Signature security
 
@@ -46,7 +46,7 @@ Median:         98000                    ← attacker's value has zero effect
 ```
 
 > [!WARNING]
-> This guarantee is a function of the signer *count*, not of the mechanism. At `requiredSigners = 1` — the live configuration — there is no median to speak of and no manipulation resistance at this layer. The property described above becomes real only once the signer set is expanded.
+> This guarantee is a function of the signer *count*, not of the mechanism. At `requiredSigners = 1`, the live configuration, there is no median to speak of and no manipulation resistance at this layer. The property described above becomes real only once the signer set is expanded.
 
 ## Timestamp security
 
@@ -94,7 +94,7 @@ Stated plainly, because a security page that lists only guarantees is not useful
 
 **No circuit breaker.** There is no maximum-deviation check between rounds. A colluding majority of signers could publish an extreme price and nothing on-chain would reject it. Consumers that need this protection must implement their own deviation bound.
 
-**Relayer availability is a liveness dependency.** If no relayer submits for more than 3 minutes, the on-chain price goes stale. Protocols enforcing staleness will halt — which is the correct failure, but it is a halt.
+**Relayer availability is a liveness dependency.** If no relayer submits for more than 3 minutes, the on-chain price goes stale. Protocols enforcing staleness will halt, which is the correct failure, but it is a halt.
 
 **No cross-chain verification.** Each chain's deployment is independent. A price on one chain is not checked against the same asset's price on another.
 
@@ -107,7 +107,7 @@ Stated plainly, because a security page that lists only guarantees is not useful
 The single most valuable thing a consumer can do is bound both staleness and health itself:
 
 ```solidity
-// Don't rely on the aggregator's own thresholds — set your own.
+// Don't rely on the aggregator's own thresholds; set your own.
 (int256 answer, uint256 freshestUpdatedAt, uint256 healthyCount) = aggregator.peek();
 
 require(answer > 0, "invalid price");

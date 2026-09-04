@@ -1,6 +1,6 @@
 ---
 title: Read prices on-chain
-description: Production-ready patterns for consuming Squidlor feeds from Solidity — including the staleness trap that catches most integrations.
+description: Production-ready patterns for consuming Squidlor feeds from Solidity, including the staleness trap that catches most integrations.
 ---
 
 Squidlor aggregators implement Chainlink's `AggregatorV3Interface`, so a migration is one address change. Getting it *right* takes a little more care, and this page is about the parts that are easy to get wrong.
@@ -30,7 +30,7 @@ interface IAggregatorV3 {
         returns (uint80, int256, uint256, uint256, uint80);
 }
 
-/// Squidlor's richer read — price plus the health data behind it.
+/// Squidlor's richer read: price plus the health data behind it.
 interface ISquidlorAggregator is IAggregatorV3 {
     function peek()
         external
@@ -65,7 +65,7 @@ require(block.timestamp - updatedAt <= 1 hours, "stale");
 You have written a staleness check that always passes, on a feed that might be reading a source that stopped updating days ago.
 
 > [!DANGER]
-> A staleness check against `latestRoundData().updatedAt` provides no protection unless you have verified that rounds are actually being committed on that feed. Check `latestRoundId()` — if it is `0`, no round has ever been committed.
+> A staleness check against `latestRoundData().updatedAt` provides no protection unless you have verified that rounds are actually being committed on that feed. Check `latestRoundId()`: if it is `0`, no round has ever been committed.
 
 ### The fix: use `peek()`
 
@@ -97,7 +97,7 @@ interface ISquidlorAggregator {
 contract SquidlorPriceReader {
     ISquidlorAggregator public immutable aggregator;
 
-    /// Maximum acceptable data age. Set per asset class — crypto and equities
+    /// Maximum acceptable data age. Set per asset class, since crypto and equities
     /// have very different natural cadences.
     uint256 public immutable maxAge;
 
@@ -127,7 +127,7 @@ contract SquidlorPriceReader {
             revert InsufficientSources(healthyCount, minHealthySources);
         }
 
-        // Guard against a source timestamped slightly ahead of this block —
+        // Guard against a source timestamped slightly ahead of this block;
         // the adapter tolerates up to a minute of clock drift, and unsigned
         // subtraction would underflow into an enormous "age".
         uint256 age = block.timestamp > freshestUpdatedAt
@@ -156,7 +156,7 @@ contract SquidlorPriceReader {
 
 ## Choosing `maxAge`
 
-There is no universal answer — it depends on the feed's cadence and on what a stale price would cost you.
+There is no universal answer; it depends on the feed's cadence and on what a stale price would cost you.
 
 | Feed type | Suggested `maxAge` | Why |
 | --- | --- | --- |
@@ -165,7 +165,7 @@ There is no universal answer — it depends on the feed's cadence and on what a 
 | Anything liquidating positions | As tight as the cadence allows | A stale price here costs users money. |
 
 > [!WARNING]
-> A too-tight `maxAge` is its own failure mode: your protocol halts during ordinary operation. A too-loose one lets you act on a price that no longer reflects reality. Pick from the feed's actual cadence — see [price feeds & assets](/oracle/feeds) — not from a number that feels safe.
+> A too-tight `maxAge` is its own failure mode: your protocol halts during ordinary operation. A too-loose one lets you act on a price that no longer reflects reality. Pick from the feed's actual cadence (see [price feeds & assets](/oracle/feeds)), not from a number that feels safe.
 
 ## Choosing `minHealthySources`
 
@@ -173,12 +173,13 @@ Read `sourceCount()` for the feed and set your floor relative to it:
 
 | Feed | Sources | Reasonable floor |
 | --- | --- | --- |
-| BTC/USD, ETH/USD | Chainlink + Squidlor | 2 — insist on agreement |
-| SOL/USD | Squidlor only | 1 — there is no second source |
-| Equity pairs | Chainlink only, today | 1 — with the caveat below |
+| Base: BTC/USD, ETH/USD, SOL/USD | Chainlink + Squidlor, both pushed | 2, insist on agreement |
+| Base: VIRTUAL/USD and the equity pairs | Chainlink + Squidlor, the Chainlink leg on a 24h heartbeat | 1, and read `updatedAt`; the pair itself runs at 1 |
+| Robinhood: every pair but SOL/USD | Chainlink + Squidlor, Squidlor's relay paused | 1 until the relay resumes |
+| Robinhood: SOL/USD | Squidlor only, paused | Unreadable today; `peek()` reverts |
 
 > [!IMPORTANT]
-> Demanding `healthyCount >= 2` on a single-source feed makes it permanently unreadable. Check `sourceCount()` before choosing your floor, and revisit it when a feed gains sources — the [equity aggregators are due a second source](/oracle/feeds).
+> Demanding `healthyCount >= 2` on a feed with one healthy source makes it permanently unreadable. Check `sourceCount()` and `peek()` before choosing your floor, and revisit it when a chain's relay state changes. The [price feeds](/oracle/feeds) page carries the per-chain table.
 
 ## Migrating from Chainlink
 
@@ -189,7 +190,7 @@ If you already read a Chainlink feed, the mechanical change is the address. Two 
 AggregatorV3Interface feed = AggregatorV3Interface(CHAINLINK_BTC_USD);
 (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
 
-// After — same interface, plus the health data Chainlink cannot give you
+// After: same interface, plus the health data Chainlink cannot give you
 ISquidlorAggregator feed = ISquidlorAggregator(SQUIDLOR_BTC_USD);
 (int256 answer, uint256 updatedAt, uint256 healthyCount) = feed.peek();
 ```
@@ -198,7 +199,7 @@ Both are 8 decimals, so no scaling changes. The upgrade is moving from `latestRo
 
 ## Committing rounds
 
-If your protocol needs a stable round ID to settle against — so you can prove *which* price you acted on — call `poke()` first:
+If your protocol needs a stable round ID to settle against, so you can prove *which* price you acted on, call `poke()` first:
 
 ```solidity
 (uint80 roundId, int256 answer) = aggregator.poke();
@@ -209,6 +210,6 @@ If your protocol needs a stable round ID to settle against — so you can prove 
 
 ## Reading the Squidlor feed alone
 
-To read Squidlor's own price without the cross-oracle layer, point at the pair's [`SquidPriceFeed`](/contracts/price-feed). There, `latestRoundData().updatedAt` *is* a genuine publish timestamp — the trap above does not apply, because a price feed proxy has no live-read mode.
+To read Squidlor's own price without the cross-oracle layer, point at the pair's [`SquidPriceFeed`](/contracts/price-feed). There, `latestRoundData().updatedAt` *is* a genuine publish timestamp; the trap above does not apply, because a price feed proxy has no live-read mode.
 
 You are also giving up Layer 3 protection entirely. Do this only when you specifically want the single source.

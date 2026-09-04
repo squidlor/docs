@@ -1,6 +1,6 @@
 ---
 title: Templates
-description: Five starter repos — agent, ACP offering, lending example, resolver, price widget — each runnable from its README.
+description: Five starter repos (agent, ACP offering, lending example, resolver, price widget), each runnable from its README.
 ---
 
 Working starting points rather than snippets. Each is a standalone repo with its own README, tests and a live-feed smoke check.
@@ -22,7 +22,7 @@ npm start
 
 ## `squidlor-virtuals-acp`
 
-Wraps Squidlor feeds as an [ACP](https://whitepaper.virtuals.io) offering so a Virtuals agent can sell oracle-powered services — price checks, cross-source verification, freshness attestations — to other agents.
+Wraps Squidlor feeds as an [ACP](https://whitepaper.virtuals.io) offering so a Virtuals agent can sell oracle-powered services (price checks, cross-source verification, freshness attestations) to other agents.
 
 **Use it for:** turning oracle access into an agent-to-agent revenue surface.
 

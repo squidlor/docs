@@ -174,7 +174,7 @@ export function SearchDialog({ open, onClose }: Props) {
                             {isSection ? section.heading : section.docTitle}
                           </span>
                           <span className="text-[0.7rem] text-[var(--fg-subtle)]">
-                            {/* Overview pages often share their group's name —
+                            {/* Overview pages often share their group's name;
                                 don't print "AI & Agents · AI & agents". */}
                             {[
                               section.group,

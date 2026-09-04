@@ -5,7 +5,7 @@ import { useLocation } from "react-router";
  * Owns scroll position across client-side navigations.
  *
  * react-router deliberately doesn't do this: a new path should start at the
- * top, and a `#hash` should land on its anchor — but the anchor may not be
+ * top, and a `#hash` should land on its anchor, but the anchor may not be
  * measurable on the first frame, since web fonts and syntax highlighting both
  * reflow the article after mount. So a hash target is retried for a few frames
  * before giving up.

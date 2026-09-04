@@ -3,13 +3,13 @@ title: Authentication
 description: The API works without a key. A free key raises your rate limit, unlocks usage stats, and makes your traffic count toward builder rewards.
 ---
 
-Squidlor's read API is open. You do not need a key to call it, and we have no plans to change that — the curl-first path stays open because it is how most people evaluate an oracle.
+Squidlor's read API is open. You do not need a key to call it, and we have no plans to change that: the curl-first path stays open because it is how most people evaluate an oracle.
 
 A key buys you three things:
 
-1. **A higher rate limit** — 300 requests/minute instead of 30, and 3,000 on Pro.
-2. **Usage visibility** — per-day, per-endpoint numbers for your project in the portal.
-3. **Credit for what you build** — [builder rewards](/build/rewards) are computed from metered usage, so anonymous traffic earns nothing.
+1. **A higher rate limit**: 300 requests/minute instead of 30, and 3,000 on Pro.
+2. **Usage visibility**: per-day, per-endpoint numbers for your project in the portal.
+3. **Credit for what you build**: [builder rewards](/build/rewards) are computed from metered usage, so anonymous traffic earns nothing.
 
 ## Get a key
 
@@ -27,7 +27,7 @@ sq_live_vYMCV3HLSOxy53kulCGzgxhTHmBnli45
 
 ## Use a key
 
-Preferred — an `Authorization` header:
+Preferred: an `Authorization` header:
 
 ```bash
 curl -H "Authorization: Bearer sq_live_..." \
@@ -77,12 +77,12 @@ Every `/v1` response carries:
 
 | Header | Meaning |
 |---|---|
-| `X-Squidlor-Tier` | `anon`, `free`, `pro` or `institutional` — the tier your request was served at |
+| `X-Squidlor-Tier` | `anon`, `free`, `pro` or `institutional`; the tier your request was served at |
 | `X-RateLimit-Limit` | Requests allowed in the current minute |
 | `X-RateLimit-Remaining` | Requests left in it |
 | `X-RateLimit-Reset` | Seconds until the window resets |
 
-`X-Squidlor-Tier` is the fastest way to confirm a key is actually being read. If you sent a key and see `anon`, the key did not arrive — check the header name and that you did not truncate the value.
+`X-Squidlor-Tier` is the fastest way to confirm a key is actually being read. If you sent a key and see `anon`, the key did not arrive; check the header name and that you did not truncate the value.
 
 ## Rotation and revocation
 
@@ -95,7 +95,7 @@ Each project allows 3 active keys, which is enough to run separate keys per envi
 
 | Status | `code` | Meaning |
 |---|---|---|
-| 401 | `INVALID_API_KEY` | The key does not exist or was revoked. Note this is an error, not a silent downgrade — a typo in a deploy should be loud. |
+| 401 | `INVALID_API_KEY` | The key does not exist or was revoked. Note this is an error, not a silent downgrade; a typo in a deploy should be loud. |
 | 429 | `RATE_LIMITED` | Over your per-minute allowance. See [rate limits](/build/rate-limits). |
 
 If our key-lookup path is degraded, a valid key is served at anonymous limits rather than rejected, and the response carries `X-Squidlor-Key-Unverified: true`. You will see slower limits, never a lockout.

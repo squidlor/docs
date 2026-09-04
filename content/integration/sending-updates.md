@@ -1,6 +1,6 @@
 ---
 title: Push price updates
-description: How the relayer builds a signed payload and publishes prices — for operators running a Squidlor deployment.
+description: How the relayer builds a signed payload and publishes prices, for operators running a Squidlor deployment.
 ---
 
 This page is for operators. Consuming prices requires none of it.
@@ -44,7 +44,7 @@ The magic marker the contract looks for:
 0x0000000000000000000000000000000000000000000000000002ed57011e0000
 ```
 
-Parsing backwards is what allows a variable number of packages to travel with a fixed function signature — the ABI never has to describe them.
+Parsing backwards is what allows a variable number of packages to travel with a fixed function signature: the ABI never has to describe them.
 
 ## Building the payload
 
@@ -74,7 +74,7 @@ type PricePoint = {
 /**
  * One signed package per feed, then the trailer the contract parses backwards.
  *
- * `timestampMs` must be identical across every package in a submission — the
+ * `timestampMs` must be identical across every package in a submission; the
  * contract compares each against the `dataPackagesTimestamp` argument and
  * reverts on any mismatch.
  */
@@ -123,7 +123,7 @@ async function submit(points: PricePoint[], signerKey: Hex) {
 ```
 
 > [!WARNING]
-> The exact byte layout is enforced by the contract and will revert on any mismatch — with `InvalidPayload`, `BadMetadataSize`, or `CalldataOverflow`. Treat the snippet above as an illustration of the shape, and the production `relay-pusher` service as the reference implementation. Verify against a testnet deployment before pointing a relayer at mainnet.
+> The exact byte layout is enforced by the contract and will revert on any mismatch, with `InvalidPayload`, `BadMetadataSize`, or `CalldataOverflow`. Treat the snippet above as an illustration of the shape, and the production `relay-pusher` service as the reference implementation. Verify against a testnet deployment before pointing a relayer at mainnet.
 
 ## What the contract enforces
 
@@ -157,7 +157,7 @@ await submit([
 ], signerKey);
 ```
 
-Five feeds in one transaction cost roughly 522k gas — about $0.05 — on the live deployment. Five separate transactions would cost several times that in base overhead alone, and would be non-atomic: a partial failure leaves some feeds updated and some not.
+Five feeds in one transaction cost roughly 522k gas (about $0.05) on the live deployment. Five separate transactions would cost several times that in base overhead alone, and would be non-atomic: a partial failure leaves some feeds updated and some not.
 
 ## Operational requirements
 
@@ -167,16 +167,16 @@ Five feeds in one transaction cost roughly 522k gas — about $0.05 — on the l
 
 **Clock discipline.** Timestamps are validated against `block.timestamp` with 3-minute and 1-minute bounds. A drifting relayer clock produces `PriceTooOld` or `PriceFromFuture` errors that look like network problems and are not.
 
-**Monotonic timestamps.** Each submission must be strictly newer than the last accepted one. Two relayers racing with the same timestamp means one reverts — worth coordinating.
+**Monotonic timestamps.** Each submission must be strictly newer than the last accepted one. Two relayers racing with the same timestamp means one reverts, so it is worth coordinating.
 
 **Redundancy.** Relayer downtime past the staleness window makes the feed unreadable for consumers that check freshness. Run more than one, and monitor `DataFeedsUpdated` rather than assuming your process is alive.
 
 **Gas price.** Some chains need an explicit gas price. On Robinhood Chain it is pinned at `0.1 gwei` in the deploy config, because automatic `maxFee` estimation underbids the base fee and stalls.
 
-**Key custody.** A signer key can publish prices that consumers will act on. Use a hardware wallet or HSM in production — see [security properties](/contracts/security#trust-assumptions).
+**Key custody.** A signer key can publish prices that consumers will act on. Use a hardware wallet or HSM in production; see [security properties](/contracts/security#trust-assumptions).
 
 ## Equity market hours
 
 The equity relay runs only during US market hours, 09:30–16:00 ET. Outside them there is nothing to publish, and Chainlink's 24-hour heartbeat carries the price.
 
-Consumers must account for this in their staleness bounds — see [price feeds & assets](/oracle/feeds#handling-market-hours-in-your-integration).
+Consumers must account for this in their staleness bounds; see [price feeds & assets](/oracle/feeds#handling-market-hours-in-your-integration).

@@ -1,6 +1,6 @@
 # Squidlor Docs
 
-The documentation site for [docs.squidlor.com](https://docs.squidlor.com) — a GitBook-style
+The documentation site for [docs.squidlor.com](https://docs.squidlor.com), a GitBook-style
 docs app with light and dark themes, client-side search, and content authored as plain markdown.
 
 React 19 + Vite 7 + Tailwind 4, matching the `landing/` stack.
@@ -42,7 +42,7 @@ title: Consumer interface
 description: One or two sentences. Shown under the page title, used as the meta description, and indexed for search.
 ---
 
-Body starts here. Don't repeat the title as an H1 — the page header renders it.
+Body starts here. Don't repeat the title as an H1; the page header renders it.
 ```
 
 `title` and `description` are the only fields the app reads. If `title` is omitted, a leading
@@ -50,7 +50,7 @@ Body starts here. Don't repeat the title as an H1 — the page header renders it
 
 ### Navigation
 
-[`src/lib/nav.ts`](./src/lib/nav.ts) is the table of contents — the equivalent of GitBook's
+[`src/lib/nav.ts`](./src/lib/nav.ts) is the table of contents, the equivalent of GitBook's
 `SUMMARY.md`. It is the single source of ordering for the sidebar, the previous/next footer,
 and breadcrumbs.
 
@@ -73,12 +73,12 @@ file missing from nav, so the two can't drift silently.
 Two mechanisms for content that exists but shouldn't be published yet. Both are reversible
 and both are enforced by `check-links`.
 
-**A whole page** — add `hidden: true` to its frontmatter and comment out its `nav.ts` entry:
+**A whole page**: add `hidden: true` to its frontmatter and comment out its `nav.ts` entry:
 
 ```markdown
 ---
 title: Some unreleased feature
-hidden: true # shelved — not launching yet; remove this line to publish
+hidden: true # shelved, not launching yet; remove this line to publish
 ---
 ```
 
@@ -86,17 +86,17 @@ A hidden page is not routable (the URL renders the not-found page), is excluded 
 and is expected to be absent from nav. `check-links` fails if a published page links to a
 hidden one, or if `nav.ts` still lists one.
 
-**A block inside a published page** — wrap it in an HTML comment:
+**A block inside a published page**: wrap it in an HTML comment:
 
 ```markdown
-<!-- Shelved — not announced yet.
+<!-- Shelved, not announced yet.
 | **some-repo** | Contracts that aren't public yet. |
 -->
 ```
 
 Comments are stripped from the source *before* parsing, so a shelved block is invisible on the
 page, in search, and in the on-this-page rail. Note this is not react-markdown's default
-behaviour — without the strip, remark passes comments through as literal text and they render
+behaviour; without the strip, remark passes comments through as literal text and they render
 verbatim. See `stripComments` in [`src/lib/markdown-text.ts`](./src/lib/markdown-text.ts).
 
 Nothing is shelved right now. Mark shelved blocks with a consistent phrase so
@@ -149,7 +149,7 @@ heading IDs, so a renamed heading can't leave a dead deep link behind.
 
 ### Code blocks
 
-Registered languages are listed in [`src/lib/languages.ts`](./src/lib/languages.ts) — Solidity,
+Registered languages are listed in [`src/lib/languages.ts`](./src/lib/languages.ts): Solidity,
 TypeScript, JS, JSON, bash, Python, YAML, TOML/INI, HTTP, XML, diff, and plaintext. Adding one
 is an import plus a map entry.
 
@@ -175,7 +175,7 @@ Notable details:
 
 - **Heading IDs are github-slugger-compatible** ([`src/lib/slug.ts`](./src/lib/slug.ts)) so the
   on-this-page rail's links match what `rehype-slug` renders. The slugger is deliberately not
-  "cleaned up" — it does not collapse runs of hyphens, because `rehype-slug` doesn't either.
+  "cleaned up"; it does not collapse runs of hyphens, because `rehype-slug` doesn't either.
 - **Search ships with the app.** The corpus is a few hundred KB, so queries run synchronously
   with no index server and work offline. Results deep-link to the matching heading.
 - **Theme is applied before first paint** by an inline script in `index.html`, so there is no
@@ -187,7 +187,7 @@ Notable details:
 
 ## Deploying
 
-Static output — build and serve `dist/`.
+Static output: build and serve `dist/`.
 
 ```bash
 npm run build

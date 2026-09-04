@@ -76,7 +76,7 @@ export function remarkCallouts() {
       firstInline.value = match[3] ?? "";
 
       // A paragraph left with nothing but whitespace would render as an empty
-      // line above the body — remove it.
+      // line above the body; remove it.
       const firstBlockIsEmpty =
         firstBlock.children.every(
           (child) => child.type === "text" && !child.value?.trim(),
@@ -152,7 +152,7 @@ const GITBOOK_HINT_STYLES: Record<string, string> = {
  * remarkCallouts understands, and drops any other `{% … %}` tags.
  *
  * The hint body isn't blockquoted in GitBook source, so every line has to be
- * prefixed on the way out — a plain tag-for-tag substitution would leave the
+ * prefixed on the way out; a plain tag-for-tag substitution would leave the
  * body as an ordinary paragraph outside the callout.
  */
 export function stripGitbookTags(markdown: string): string {

@@ -80,13 +80,13 @@ curl "https://api.squidlor.com/aggregator/v1/arbitrum/randomness?limit=2"
 
 1. A consumer pays `feeWei` and requests randomness, receiving a `sequenceNumber`.
 2. The contract records the request along with the commitment.
-3. After a reveal delay — 5 blocks in the live configuration — the provider reveals the value, which the contract verifies against the commitment.
+3. After a reveal delay (5 blocks in the live configuration), the provider reveals the value, which the contract verifies against the commitment.
 4. The consumer reads the revealed randomness.
 
 The reveal delay is what prevents the provider from choosing a favourable value after seeing the request's consequences. It also means randomness is **not** available in the same transaction as the request.
 
 > [!IMPORTANT]
-> A `fulfilled: false` request is not an error — it is a request still inside its reveal window. Any consumer that needs randomness must be written to handle the two-step flow. If your logic needs a value synchronously, commit-reveal is the wrong primitive.
+> A `fulfilled: false` request is not an error; it is a request still inside its reveal window. Any consumer that needs randomness must be written to handle the two-step flow. If your logic needs a value synchronously, commit-reveal is the wrong primitive.
 
 ## Errors
 

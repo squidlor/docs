@@ -2,7 +2,7 @@
  * Minimal YAML-frontmatter reader.
  *
  * Deliberately not gray-matter: that pulls a full YAML parser (and Buffer
- * shims) into the browser bundle for what our pages actually use — flat
+ * shims) into the browser bundle for what our pages actually use: flat
  * `key: value` pairs plus the occasional inline `[a, b]` list.
  */
 
@@ -21,7 +21,7 @@ const FM_RE = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/;
  *
  * YAML allows one, and `hidden: true # shelved for now` is a natural way to
  * record *why* a flag is set. Without this, the value parses as the string
- * "true # shelved for now" and a `=== true` check silently fails — the flag
+ * "true # shelved for now" and a `=== true` check silently fails; the flag
  * looks set in the file and does nothing.
  *
  * Only applies to unquoted values: a `#` inside quotes is content, and a `#`
@@ -87,7 +87,7 @@ export function parseFrontmatter(source: string): {
     const [, key, rawValue] = pair;
     pendingKey = key;
     if (rawValue.trim() === "") {
-      // Value is on the following lines (block list) — seed an empty list.
+      // Value is on the following lines (block list); seed an empty list.
       data[key] = [];
     } else {
       data[key] = coerce(rawValue);

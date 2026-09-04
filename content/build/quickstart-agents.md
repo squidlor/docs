@@ -3,13 +3,13 @@ title: Agent quickstart
 description: Give an AI agent live prices, history and cross-source verification as callable tools, over MCP.
 ---
 
-Most oracles give an agent a URL to scrape. Squidlor exposes its data as MCP tools, so a model can ask for a price, compare what every provider reports, and pull candles — without you writing an HTTP layer.
+Most oracles give an agent a URL to scrape. Squidlor exposes its data as MCP tools, so a model can ask for a price, compare what every provider reports, and pull candles, without you writing an HTTP layer.
 
 ## Connect a client
 
 The server speaks streamable HTTP at `https://api.squidlor.com/mcp`, live since 2026-08-07.
 
-**Claude Code / Claude Desktop** — add to your MCP config:
+**Claude Code / Claude Desktop**: add to your MCP config:
 
 ```json
 {
@@ -25,7 +25,7 @@ The server speaks streamable HTTP at `https://api.squidlor.com/mcp`, live since 
 
 The `Authorization` header is optional. Without it you get the anonymous rate limit and your usage earns no [rewards](/build/rewards); with it, tool calls are attributed to your project.
 
-**Local stdio** — for running the server yourself:
+**Local stdio**: for running the server yourself:
 
 ```json
 {
@@ -109,7 +109,7 @@ Equity feeds do not update when US markets are closed. An agent told only "NVDA 
 
 ## Ready-made
 
-[`squidlor-agent-starter`](/build/templates) is a working agent wired to the MCP server with a price-alert loop — clone it rather than starting from this page.
+[`squidlor-agent-starter`](/build/templates) is a working agent wired to the MCP server with a price-alert loop; clone it rather than starting from this page.
 
 ## Earning from agent traffic
 

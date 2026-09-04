@@ -117,7 +117,7 @@ const components: Components = {
     const className = child?.props?.className ?? "";
     const language = /language-([\w-]+)/.exec(className)?.[1];
 
-    // ```cards fences are navigation, not code — see CardGrid.
+    // ```cards fences are navigation, not code; see CardGrid.
     if (language === "cards") {
       const cards = parseCards(toText(child?.props?.children));
       if (cards) return <CardGrid cards={cards} />;
@@ -141,7 +141,7 @@ const REHYPE_PLUGINS = [rehypeSlug, rehypeHighlightCode];
 export function Markdown({ content, slug }: { content: string; slug: string }) {
   // Comments are removed from the source string rather than filtered out of the
   // parsed tree. remark hands `<!-- … -->` through as an html node and, without
-  // rehype-raw, react-markdown renders it as literal text — so a block shelved
+  // rehype-raw, react-markdown renders it as literal text, so a block shelved
   // with comments would show up verbatim on the page. Stripping pre-parse also
   // matches how search and heading extraction treat comments, which keeps a
   // shelved section invisible in all three places rather than just one.

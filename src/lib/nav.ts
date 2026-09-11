@@ -1,10 +1,10 @@
 /**
- * The site's table of contents — the equivalent of GitBook's SUMMARY.md.
+ * The site's table of contents: the equivalent of GitBook's SUMMARY.md.
  *
  * This is the single source of ordering: the sidebar, the previous/next footer,
  * and breadcrumbs all derive from it. A markdown file under content/ that isn't
  * listed here is still routable but won't appear in navigation (dev builds warn
- * about it — see `orphanedDocs`).
+ * about it; see `orphanedDocs`).
  */
 
 import { docs, normalizeSlug } from "./content";
@@ -35,6 +35,17 @@ export const nav: NavGroup[] = [
     ],
   },
   {
+    title: "Products",
+    icon: "trending",
+    items: [
+      { title: "Overview", slug: "/products" },
+      { title: "Hub", slug: "/products/hub" },
+      { title: "Prediction markets", slug: "/products/markets" },
+      { title: "Stock-paired tokens", slug: "/products/trade" },
+      { title: "Clippers", slug: "/products/clippers" },
+    ],
+  },
+  {
     title: "Squidlor Oracle",
     icon: "activity",
     items: [
@@ -42,8 +53,9 @@ export const nav: NavGroup[] = [
       { title: "Aggregation architecture", slug: "/oracle/architecture" },
       { title: "Consumer interface", slug: "/oracle/interface" },
       { title: "Price feeds & assets", slug: "/oracle/feeds" },
-      { title: "Resolver oracles", slug: "/oracle/resolver-oracles", badge: "Soon" },
+      { title: "Resolver oracles", slug: "/oracle/resolver-oracles", badge: "Pilot" },
       { title: "How it compares", slug: "/oracle/comparison" },
+      { title: "Measured performance", slug: "/oracle/evidence" },
     ],
   },
   {
@@ -73,6 +85,7 @@ export const nav: NavGroup[] = [
       { title: "Realtime prices", slug: "/api/realtime" },
       { title: "History & OHLC", slug: "/api/history" },
       { title: "Daily prices", slug: "/api/daily" },
+      { title: "Scorecards & proofs", slug: "/api/providers" },
       { title: "Events", slug: "/api/events" },
       { title: "Randomness", slug: "/api/randomness" },
       { title: "Errors & limits", slug: "/api/errors" },
@@ -114,8 +127,10 @@ export const nav: NavGroup[] = [
     icon: "network",
     items: [
       { title: "Supported networks", slug: "/networks" },
+      { title: "Base", slug: "/networks/base" },
       { title: "Robinhood Chain", slug: "/networks/robinhood-chain" },
       { title: "Deployed addresses", slug: "/networks/addresses" },
+      { title: "Bring Squidlor to your chain", slug: "/networks/for-chains" },
     ],
   },
   {
@@ -148,7 +163,7 @@ export function getNavContext(slug: string) {
   };
 }
 
-/** Content files missing from `nav` — surfaced as a console warning in dev. */
+/** Content files missing from `nav`, surfaced as a console warning in dev. */
 export const orphanedDocs = docs
   .filter((doc) => !navIndex.has(doc.slug))
   .map((doc) => doc.sourcePath);

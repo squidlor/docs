@@ -6,8 +6,8 @@
  * strips punctuation (keeping `-` and `_`), turns whitespace into hyphens, and
  * suffixes `-1`, `-2`, … for repeats within a single document.
  *
- * Note it does NOT collapse runs of hyphens: "Product 1 — Squidlor" becomes
- * "product-1--squidlor", because the em dash is removed and both surrounding
+ * Note it does NOT collapse runs of hyphens: "Product 1 & Squidlor" becomes
+ * "product-1--squidlor", because the ampersand is removed and both surrounding
  * spaces still become hyphens.
  */
 

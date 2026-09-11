@@ -11,7 +11,7 @@ If you are sizing risk for a protocol that will hold real money, this is the pag
 
 ### 1. A single key controls every contract
 
-One address — `0x34f54E0Ca7f18DB6F088297d3a34D67B57B443Cb` — is the deployer and owner of every live Robinhood Chain contract, and `superAdmin` of the registry.
+One address per chain is the deployer and owner of every live contract and `superAdmin` of the registry: `0x34f54E0Ca7f18DB6F088297d3a34D67B57B443Cb` on Robinhood Chain and `0xB57BBda48C33fF725E93D604023D56D9C5b00e2a` on Base. The Base key also owns the prediction market's contracts and mints sqUSD.
 
 That address can:
 
@@ -26,19 +26,19 @@ That address can:
 
 ### 2. The signer set is one key
 
-`SquidlorAdapterV2` runs `requiredSigners = 1` with a single authorized signer.
+`SquidlorAdapterV2` runs `requiredSigners = 1` on every chain. Base has several authorized signer keys, one per relay process, but they are all operated by Squidlor, so for trust purposes it is one signer.
 
 The M-of-N machinery is real and enforced on-chain. With N=1, it provides no protection. Whoever holds the signer key can publish any price into Squidlor's own feed.
 
-The mitigation that partially holds today: for BTC/USD and ETH/USD, the aggregator medians the Squidlor feed **with** Chainlink. A compromised Squidlor signer moves the median only as far as the median voter — with two sources, it can pull the answer but not set it freely.
+The mitigation that partially holds today: on Base every pair medians the Squidlor feed **with** Chainlink, and on Robinhood Chain every pair except SOL/USD is wired the same way. A compromised Squidlor signer moves the median only as far as the median voter: with two sources, it can pull the answer but not set it freely.
 
-For SOL/USD there is no second source, and for the four equity pairs the Squidlor feed is not wired in at all.
+Two places where that does not hold. SOL/USD on Robinhood Chain has no second source. And the [prediction market](/products/markets) settles against the adapter's own round through `SquidlorPriceResolver`, not against the aggregator, so a market's outcome is decided by Squidlor's signer alone. That is by design (settlement needs a fixed cadence the aggregator does not have) and it is the sharpest consequence of the single-signer configuration.
 
 **What closes it:** independent signers with independent key custody and `requiredSigners ≥ 3`.
 
 ### 3. The relayer decides what "the price" is
 
-The relayer reads several venues, medians them off-chain, and signs the result. It could sign something else. On-chain verification proves the value was signed by an authorized key — not that the value is correct.
+The relayer reads several venues, medians them off-chain, and signs the result. It could sign something else. On-chain verification proves the value was signed by an authorized key, not that the value is correct.
 
 Layer 1 of the [aggregation architecture](/oracle/architecture) defends against a bad *venue*. It does not defend against a bad *relayer*. That is Layer 2's job, and Layer 2 currently has one signer.
 
@@ -48,17 +48,17 @@ Layer 1 of the [aggregation architecture](/oracle/architecture) defends against 
 
 Squidlor is a push oracle. If the relayer stops, the price stops updating, and consumers enforcing staleness will halt.
 
-Halting is the correct failure — far better than serving a stale price as if it were fresh — but it is a liveness dependency on a single operator.
+Halting is the correct failure (far better than serving a stale price as if it were fresh), but it is a liveness dependency on a single operator.
 
 **What closes it:** redundant relayers with independent infrastructure.
 
 ### 5. Chainlink, where it is a source
 
-Where an aggregator wires `ChainlinkSource`, you inherit Chainlink's trust model for that source. For the four equity pairs, which are Chainlink-only, **you are trusting Chainlink and Squidlor's configuration of it** — not a Squidlor-independent price.
+Where an aggregator wires `ChainlinkSource`, you inherit Chainlink's trust model for that source. On Robinhood Chain, where Squidlor's relay is paused, every pair currently reads Chainlink alone, so there **you are trusting Chainlink and Squidlor's configuration of it**, not a Squidlor-independent price. On Base the equity legs are Coinbase's B20 total-return feeds published through Chainlink.
 
 ### 6. The chain itself
 
-Robinhood Chain has a single Robinhood sequencer and permissioned validators. Deployment is permissionless; block production is not. Chain-level liveness and censorship-resistance are Robinhood's, not Squidlor's.
+Robinhood Chain has a single Robinhood sequencer and permissioned validators. Deployment is permissionless; block production is not. Chain-level liveness and censorship-resistance are Robinhood's, not Squidlor's. Base is an OP Stack rollup with a single Coinbase-operated sequencer; the same statement applies.
 
 ## What you do not have to trust
 
@@ -74,7 +74,7 @@ Worth stating, because it is the part that is actually strong.
 
 Honestly: **low, today.** Lower than Chainlink and lower than Pyth on operator decentralization. A project claiming otherwise at this stage would be misrepresenting itself.
 
-What is genuinely different is that the *architecture* is built for decentralization and the *configuration* has not caught up. M-of-N verification, the signer bitmap, and median aggregation are all built, tested, and enforced on-chain — they are running with N=1. Expanding the signer set is an operational task, not a rewrite.
+What is genuinely different is that the *architecture* is built for decentralization and the *configuration* has not caught up. M-of-N verification, the signer bitmap, and median aggregation are all built, tested, and enforced on-chain; they are running with N=1. Expanding the signer set is an operational task, not a rewrite.
 
 That distinction is real, and it is also not the same as being decentralized. Both things are true.
 
@@ -82,25 +82,29 @@ That distinction is real, and it is also not the same as being decentralized. Bo
 
 Concretely, given the above:
 
-**Bound staleness and health yourself.** Do not rely on the aggregator's `minHealthySources = 1`. Read `peek()` and enforce your own floor — see [read prices on-chain](/integration/reading-prices).
+**Bound staleness and health yourself.** On Base, BTC, ETH and SOL run `minHealthySources = 2` and revert unless both legs are fresh; VIRTUAL and the four equities run 1. On Robinhood Chain everything runs 1. Whatever the aggregator's floor, read `peek()` and enforce your own; see [read prices on-chain](/integration/reading-prices).
 
-**Check how many sources back your pair.** BTC and ETH have two. SOL has one. Equities have one, and it is Chainlink. Size your exposure accordingly.
+**Check how many sources back your pair, on the chain you read.** On Base every pair has two legs, Chainlink and Squidlor, and the majors refuse to answer with fewer. On Robinhood Chain BTC, ETH and the equities are wired for two but the Squidlor relay is paused, so they read as Chainlink alone; SOL there has only Squidlor. The [measured performance](/oracle/evidence) page shows each leg's fresh rate over the last 30 days. Size your exposure accordingly.
 
 **Monitor ownership and configuration events.** `OwnershipTransferred`, `SignerAdded`, `RequiredSignersChanged`, and source changes on the aggregators you read. A change in who controls the oracle is a change in your risk.
 
 **Add your own circuit breaker if you need one.** There is no maximum-deviation check on-chain. A colliding signer majority could publish an extreme price and nothing would reject it. If a sudden 40% move should pause your protocol, implement that yourself.
 
-**Consider Squidlor a second opinion for equities, not a first.** Until the equity aggregators get their second source, they do not deliver Squidlor's core value proposition.
+**Consider which chain you are reading.** On Base the equity aggregators deliver the two-source guarantee. On Robinhood Chain, with the relay paused, they do not; treat those as Chainlink with a wrapper until the relay resumes.
 
-## Roadmap for closing these
+## The hardening ladder
 
-In the order they matter:
+Each rung has a trigger rather than a date. The order does not change; dates appear here when a rung is scheduled, and chain programs move the ladder because their validators are the signers it needs.
 
-1. **Multisig ownership** of the adapter and aggregators, then a timelock.
-2. **Independent M-of-N signers** with independent key custody.
-3. **Equity aggregators wired to a second source.**
-4. **Redundant relayers.**
-5. **Per-source health monitoring and alerting**, beyond the current admin panel.
-6. **A deviation circuit breaker** at the contract level.
+| Rung | Trigger | What it closes |
+| --- | --- | --- |
+| Dedicated relay key per chain, published | Done on Base | The key that signs a chain's feeds does nothing else |
+| Feed freshness and relayer wallet-balance alerting, every chain | Before the next chain deployment | Gap 4, relayer liveness, stops being discovered by consumers |
+| Owner multisig, then a timelock | First partner chain in production, or first third-party protocol holding value on the feeds | Gap 1, the single owner key |
+| Independent signers, `requiredSigners` 2-of-3 | Three external signers onboarded, expected to be a partner chain's validators | Gaps 2 and 3, the single signer and the relayer deciding the price alone |
+| Robinhood Chain relay resumed | Dedicated funded key plus the alerting rung, then a shadow run | Every 4663 pair back to two sources |
+| Redundant relayers | Follows the signer rung; each signer runs its own | Gap 4 for good |
+| `requiredSigners` 5-of-9 with stake-backed slashing | Nine signers onboarded | Collusion becomes expensive |
+| Contract-level deviation circuit breaker | Scoped with the first partner chain's risk team | The missing on-chain maximum-spread guard |
 
-See the [roadmap](/resources/roadmap) for the full picture.
+How chains supply the signers is on [bring Squidlor to your chain](/networks/for-chains). What the deployment has actually done so far, including the rounds it refused, is on [measured performance](/oracle/evidence). The full product roadmap is on [roadmap](/resources/roadmap).

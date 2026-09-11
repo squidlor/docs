@@ -102,6 +102,10 @@ Stated plainly, because a security page that lists only guarantees is not useful
 
 **Source `name()` is unauthenticated.** An adapter self-reports its label. A source named `chainlink` is one the owner wired and named that way; the name is not proof of provenance. Verify the adapter address if provenance matters.
 
+## Reporting a vulnerability
+
+Email **build@squidlor.com** with `SECURITY` in the subject. We acknowledge within two business days, keep you informed while we work, and credit you in the changelog unless you ask us not to. Please give us a reasonable window to ship a fix before publishing. There is no funded public bug bounty yet and no third-party audit is published; both are stated here rather than in a footnote because a security page that hides them is not useful.
+
 ## Defensive integration
 
 The single most valuable thing a consumer can do is bound both staleness and health itself:

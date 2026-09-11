@@ -1,9 +1,9 @@
 ---
 title: Oracle SDK
-description: '@squidlor/oracle-sdk — a thin viem wrapper that resolves feed addresses per chain and reads them with one call.'
+description: '@squidlor/oracle-sdk: a thin viem wrapper that resolves feed addresses per chain and reads them with one call.'
 ---
 
-`@squidlor/oracle-sdk` is a small read-only SDK. It resolves a feed address from a `(chain, pair)` pair and reads it on-chain via viem, and it wraps the REST API for the things the chain does not store — history, candles, per-source audit.
+`@squidlor/oracle-sdk` (0.4.0 on npm) is a small read-only SDK. It resolves a feed address from a `(chain, pair)` pair and reads it on-chain via viem, and it wraps the REST API for the things the chain does not store: history, candles, per-source audit.
 
 It stays deliberately thin: the feeds are Chainlink-compatible, so anything that can read a Chainlink feed can read these without an SDK at all.
 
@@ -18,13 +18,17 @@ npm install @squidlor/oracle-sdk viem
 ```typescript
 import { getFeed } from "@squidlor/oracle-sdk";
 
-const feed = getFeed("robinhood", "BTC/USD");
+// BTC/USD aggregator on Base (8453)
+const feed = getFeed(8453, "BTC/USD", {
+  address: "0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345",
+  rpcUrl: "https://mainnet.base.org",
+});
 const { formatted, price, decimals, updatedAt, roundId } = await feed.read();
 
-console.log(formatted);  // "63434.90498170"
-console.log(price);      // 6343490498170n  — raw bigint
+console.log(formatted);  // "77016.42057129"
+console.log(price);      // 7701642057129n, a raw bigint
 console.log(decimals);   // 8
-console.log(updatedAt);  // 1785243053 (unix seconds)
+console.log(updatedAt);  // 1789152685 (unix seconds)
 ```
 
 `getFeed` resolves the address **synchronously** from a static map; `read()` is what hits the chain.
@@ -38,6 +42,19 @@ console.log(updatedAt);  // 1785243053 (unix seconds)
 
 Chain IDs work in place of slugs: `getFeed(4663, "BTC/USD")`.
 
+**Base (8453) is not in the static map yet** as of 0.4.0. Read it with an explicit address from [deployed addresses](/networks/addresses#base-8453), which works on any chain viem knows:
+
+```typescript
+import { getFeed } from "@squidlor/oracle-sdk";
+
+const nvda = getFeed(8453, "NVDA/USD", {
+  address: "0xd4e034215222F327F08f4067805d055Ec3c1aD89",
+  rpcUrl: "https://mainnet.base.org",
+});
+```
+
+The REST client has no such gap: `api.getValue("base", "NVDA/USD")` works today.
+
 ```typescript
 import { knownPairs, supportedChains } from "@squidlor/oracle-sdk";
 
@@ -45,14 +62,16 @@ knownPairs("robinhood");  // ['BTC/USD', 'ETH/USD', ...]
 supportedChains();        // [{ key: 'robinhood', chainId: 4663, pairs: 7 }, ...]
 ```
 
-Anything outside that map needs an explicit address or a registry lookup — see [address resolution](#address-resolution).
+Anything outside that map needs an explicit address or a registry lookup; see [address resolution](#address-resolution).
 
 ## Read the health of a feed
 
 `health()` calls the aggregator's `peek()`, which returns the answer alongside how many sources were fresh and in-bounds for it. Use it anywhere being wrong is expensive:
 
 ```typescript
-const { formatted, healthyCount } = await getFeed("robinhood", "BTC/USD").health();
+const { formatted, healthyCount } = await getFeed(8453, "BTC/USD", {
+  address: "0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345",
+}).health();
 if (healthyCount < 2) throw new Error("too few healthy sources to act on");
 ```
 
@@ -65,7 +84,7 @@ try {
   await getFeed("robinhood", "BTC/USD").read();
 } catch (e) {
   if (e instanceof StaleFeedError) {
-    console.warn(`only ${e.healthy}/${e.required} sources fresh — falling back`);
+    console.warn(`only ${e.healthy}/${e.required} sources fresh, falling back`);
   } else throw e;
 }
 ```
@@ -88,31 +107,31 @@ const flagged = await api.getAudit("robinhood", "BTC/USD", { flagged: true });
 
 Standalone equivalents are exported too: `listFeedsRest`, `getFeedRest`, `getValue`, `getHistory`, `getOhlc`, `getAudit`, `getConstituents`. Failures throw `SquidlorApiError` with `status`, `code` and `retryAfterSec`.
 
-A key is optional but raises your rate limit — see [authentication](/build/authentication).
+A key is optional but raises your rate limit; see [authentication](/build/authentication).
 
 ## Address resolution
 
 Three ways, in the order the SDK tries them:
 
-1. **`opts.address`** — an explicit override, skipping everything else.
+1. **`opts.address`**: an explicit override, skipping everything else.
 2. **`opts.registry`** or the chain's known registry, read on-chain via `getFeedViaRegistry`.
 3. **The built-in static map**.
 
 ```typescript
-// 1. Explicit address — the escape hatch for any chain or pair the SDK
+// 1. Explicit address: the escape hatch for any chain or pair the SDK
 //    doesn't know about yet.
 const feed = getFeed("robinhood", "SOMETHING/USD", {
   address: "0x7D8E02C7d2Ee80c75EFF199B8AD64522C4a88b91",
 });
 
-// 2. Resolve through the on-chain registry — async, because it reads a contract.
+// 2. Resolve through the on-chain registry: async, because it reads a contract.
 //    The Robinhood registry ships in the SDK, so no address is needed.
 import { getFeedViaRegistry } from "@squidlor/oracle-sdk";
 
 const resolved = await getFeedViaRegistry("robinhood", "NVDA/USD");
 ```
 
-Resolving through the registry adds the registry admin to your trust surface — see the [trade-off table](/contracts/registry#trade-off-registry-lookup-versus-a-hardcoded-address).
+Resolving through the registry adds the registry admin to your trust surface; see the [trade-off table](/contracts/registry#trade-off-registry-lookup-versus-a-hardcoded-address).
 
 ## Options
 
@@ -125,23 +144,27 @@ interface GetFeedOptions {
 }
 ```
 
-Passing `client` is the right move in an application that already has one — you get connection reuse, your own transport configuration, and consistent retry behaviour:
+Passing `client` is the right move in an application that already has one: you get connection reuse, your own transport configuration, and consistent retry behaviour:
 
 ```typescript
 import { createPublicClient, http } from "viem";
-import { arbitrum } from "viem/chains";
+import { base } from "viem/chains";
 import { getFeed } from "@squidlor/oracle-sdk";
 
 const client = createPublicClient({
-  chain: arbitrum,
-  transport: http(process.env.ARBITRUM_RPC_URL),
+  chain: base,
+  transport: http(process.env.BASE_RPC_URL),
 });
 
-const feed = getFeed("arbitrum", "BTC/USD", { client });
+// Base is read by explicit address until it lands in the static map.
+const feed = getFeed(8453, "BTC/USD", {
+  client,
+  address: "0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345",
+});
 ```
 
 > [!NOTE]
-> The default RPCs are public endpoints — `https://arb1.arbitrum.io/rpc` for Arbitrum. Fine for a script, rate-limited for anything in production. Pass `rpcUrl` or `client` with your own provider.
+> The default RPCs are public endpoints. Fine for a script, rate-limited for anything in production. Pass `rpcUrl` or `client` with your own provider.
 
 ## Types
 
@@ -183,14 +206,14 @@ Being clear about the boundaries, since they are easy to assume away:
 - **No health data.** `healthyCount` is not exposed. Use `peek()` or the API.
 
 > [!IMPORTANT]
-> For a protocol making financial decisions, the SDK's `read()` is not enough on its own. It gives you a price without telling you how old it is or how many sources stand behind it. Use `peek()` — see [read prices off-chain](/integration/reading-offchain#via-direct-rpc-with-viem).
+> For a protocol making financial decisions, the SDK's `read()` is not enough on its own. It gives you a price without telling you how old it is or how many sources stand behind it. Use `peek()`; see [read prices off-chain](/integration/reading-offchain#via-direct-rpc-with-viem).
 
 ## Errors
 
 ```typescript
 try {
   // XAU/USD isn't in the SDK's built-in map, so this throws before any
-  // network call — the most common error you'll hit in practice.
+  // network call, the most common error you'll hit in practice.
   const feed = getFeed("arbitrum", "XAU/USD");
   const reading = await feed.read();
 } catch (error) {

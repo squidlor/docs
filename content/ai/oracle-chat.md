@@ -1,9 +1,9 @@
 ---
 title: Oracle Chat
-description: Five persona desks and a router over live oracle state, wallet reads and Virtuals agent tokens, where every number in a reply comes from a tool call made in that session.
+description: Seven persona desks and a router over live oracle state, wallets, Virtuals agent tokens, prediction markets and stock-paired launches, where every number in a reply comes from a tool call made in that session.
 ---
 
-Oracle Chat is a web chat UI at [chat.squidlor.com](https://chat.squidlor.com). Five persona desks answer questions about oracle state, wallets and agent tokens in plain English, and a router desk picks between them. The hard rule holds everywhere: **every number in a reply comes from a live tool call made in that session.**
+Oracle Chat is a web chat UI at [chat.squidlor.com](https://chat.squidlor.com). Seven persona desks answer questions about oracle state, wallets, agent tokens, prediction markets and token launches in plain English, and a router desk picks between them. The [hub](/products/hub) streams the same answers in place at app.squidlor.com. The hard rule holds everywhere: **every number in a reply comes from a live tool call made in that session.**
 
 Ask the chat what its roster is and it answers from the same endpoint this page documents:
 
@@ -18,13 +18,17 @@ Each desk has its own system prompt and its own tool loadout, so it is competent
 | Desk | Role | Focus | Tools |
 | --- | --- | --- | --- |
 | **AUTO** | Router | Reads your question and hands the turn to the desk that owns it. Default in the composer. | 0 |
-| **KRAKEN** | Alpha desk | Live prices, cross-oracle reads, exchange arbitrage, wallets, swap and send quotes | 38 |
-| **INK** | Chartist | History, OHLC candles, ranges, volatility | 22 |
-| **ABYSS** | Auditor | Audit-trail forensics: deviations in bps, stale feeds, flagged rounds | 21 |
-| **PEARL** | Stocks desk | Tokenized equities on Robinhood Chain: NVDA, TSLA, AAPL, GOOGL | 23 |
-| **REEF** | Agent-token desk | Virtuals Protocol movers, project deep-dives, pool history | 23 |
+| **KRAKEN** | Alpha desk | Live prices, cross-oracle reads, exchange arbitrage, wallets, swap and send quotes | 41 |
+| **INK** | Chartist | History, OHLC candles, ranges, volatility | 25 |
+| **ABYSS** | Auditor | Audit-trail forensics: deviations in bps, stale feeds, flagged rounds | 24 |
+| **PEARL** | Stocks desk | Tokenized equities: NVDA, TSLA, AAPL, GOOGL | 26 |
+| **REEF** | Agent-token desk | Virtuals Protocol movers, project deep-dives, pool history | 26 |
+| **GEYSER** | Launch desk | Launch a token on Base paired with a tokenized stock, the board, buy and sell | 23 |
+| **TIDE** | Prediction desk | Squidlor prediction markets on Base: odds, positions, contest standing, orders | 32 |
 
-AUTO routes on keyword scoring, not an LLM call. A ticker means PEARL, audit language means ABYSS, candles and history mean INK, agent tokens mean REEF, and anything live means KRAKEN. The answer streams back wearing the chosen desk's name and glyph, and a `routed` event tells the UI which desk took the turn. Routing this way costs no extra model round trip before the first token.
+AUTO routes on keyword scoring, not an LLM call. A ticker means PEARL, audit language means ABYSS, candles and history mean INK, agent tokens mean REEF, "launch" with a coin means GEYSER, "odds" or "market" means TIDE, and anything live means KRAKEN. The desk that already holds the thread gets a bonus, so a one-word overlap ("NVIDIA" in the middle of naming a launch) no longer moves you off the desk that has the tools. The answer streams back wearing the chosen desk's name and glyph, and a `routed` event tells the UI which desk took the turn. Routing this way costs no extra model round trip before the first token.
+
+`/?desk=geyser&ask=Launch a token paired with NVDA` opens the chat on a desk with the question already asked. The hub and the trade page use that deep link.
 
 ABYSS is still the one worth knowing about. Audit forensics is the hardest question to answer from raw JSON and the easiest to phrase in a sentence:
 
@@ -33,7 +37,9 @@ Which BTC sources deviated more than 50 bps in the last 24 hours,
 and did any of them go stale at the same time?
 ```
 
-REEF is the exception to "same oracle underneath". It reads Virtuals Protocol's own API and a pool index, not the Squidlor aggregator, and its prompt carries the rules that keep the two sources apart. Squidlor operates no price feed for any agent token, so REEF never calls one of those numbers an oracle reading.
+REEF and TIDE are the exceptions to "same oracle underneath". REEF reads Virtuals Protocol's own API and a pool index, not the Squidlor aggregator, and its prompt carries the rules that keep the two sources apart. Squidlor operates no price feed for any agent token, so REEF never calls one of those numbers an oracle reading. TIDE reads the [prediction market](/products/markets) API, where prices are probabilities in cents and balances are sqUSD contest collateral, and its prompt forbids writing either with a dollar sign.
+
+GEYSER is the one desk that builds transactions for a living. It never invents a name or a symbol, calls the launch tool once when it has all three inputs, and after that says only what will be created and "review it in the panel". Nothing is live until you sign.
 
 ## Tools
 
@@ -45,14 +51,20 @@ Oracle reads come from `@squidlor/oracle-tools`, the package the [MCP server](/a
 
 **Virtuals Protocol.** `virtuals_top_movers`, `virtuals_project`, `virtuals_history`, `virtuals_leaderboard`, `virtuals_search`, `virtuals_ecosystem`. REEF holds all six. INK holds `virtuals_history` alone, because it is a chart tool and charts are INK's job.
 
+**DEX market data.** `get_trending_tokens`, `find_dex_token`, `get_trending_coins`, on every desk. They read GeckoTerminal, cover any chain it indexes, and every row carries turnover (24h volume over liquidity) with anything over 20x flagged, because DEX volume is partly fake. Trending windows are 5m, 1h, 6h and 24h; 7d is an upstream error, not an empty list.
+
+**Prediction markets.** TIDE only. `list_markets`, `get_market`, `get_market_odds`, `get_my_positions`, `get_contest_standing`, `create_market`, `check_market_creation`, and when the netting relay is configured, `place_market_order`, `sell_position`, `place_limit_order`, `list_limit_orders` and `cancel_limit_order`. `list_markets` always comes first, because a question id is 32 bytes of hex that cannot be recalled or guessed. A pool that cannot be read returns no odds rather than 50%, since a fabricated 50/50 is indistinguishable from a real one. See [prediction markets](/products/markets).
+
+**Stock-paired launches.** GEYSER only. `launch_stock_paired_token` returns the unsigned Doppler create transaction as a `signable`; `list_stock_paired_launches` draws the board (scopes `active`, `new`, `mine`); `get_stock_paired_launch` confirms a launch and returns its links; `trade_stock_paired_token` quotes a buy or sell by simulating the exact Uniswap v4 swap and returns one to three ordered steps to sign. Buys are paid in the stock token. See [stock-paired tokens](/products/trade).
+
 **Accounts, keys and alerts.** Every desk carries all 14: `builder_login_start`, `builder_login_complete`, `whoami`, `list_my_projects`, `create_project`, `create_api_key`, `get_my_usage`, `create_price_alert`, `list_price_alerts`, `test_price_alert`, `delete_price_alert`, `get_my_rewards`, `list_bounties`, `list_showcase`. "Give me an API key" or "alert me when NVDA moves" can land on any desk, and a desk missing the tool is a dead end the user experiences as the product refusing them. Sign-in is email plus a six-digit code, so no desk ever asks for a password, and a minted key reaches the user in a copy-once panel that the model itself never sees in full.
 
-**Wallets and tokens.** `get_wallet_overview`, `scan_token_safety`, `get_wallet_card`, `get_transaction`. KRAKEN only. These read a separate engine covering Ethereum, BNB Chain, Polygon, Arbitrum, Optimism and zkSync, which is a different chain set from the oracle's two. A balance on Ethereum is in scope even though no feed lives there. A balance on Robinhood Chain is out of scope, because that engine does not index it, and KRAKEN says so rather than reporting an empty wallet.
+**Wallets and tokens.** `get_wallet_overview`, `scan_token_safety`, `get_wallet_card`, `get_transaction`. KRAKEN only. These read a separate engine covering Ethereum, BNB Chain, Polygon, Arbitrum, Optimism, zkSync and Base among thirteen chains, which is a different chain set from the oracle's three. A balance on Ethereum is in scope even though no feed lives there. A balance on Robinhood Chain is out of scope, because that engine does not index it, and KRAKEN says so rather than reporting an empty wallet.
 
 **Quotes, tasks and memory.** `quote_swap` and `quote_send` return an unsigned transaction with an expiry. `watch_price`, `create_twap`, `list_tasks` and `cancel_task` leave standing instructions behind. `remember_preference`, `get_preferences` and `forget_preference` store preferences across conversations. Three separate env gates control these three groups, all off by default, because answering questions is a different product from signing, scheduling and remembering.
 
 > [!IMPORTANT]
-> No tool signs anything. A quote comes back unsigned and expires, and the user signs it in their own wallet. A TWAP slice produces a quote that still needs a signature, which is why `list_tasks` reports `executed: false` on every slice.
+> No tool signs anything. A quote, a launch or a trade comes back unsigned and expires, and the user signs it in their own wallet. A TWAP slice produces a quote that still needs a signature, which is why `list_tasks` reports `executed: false` on every slice. Every desk carries the same rule: never claim a transaction is waiting unless a tool built one this turn, and never say a trade executed.
 
 ## Access and daily limits
 
@@ -146,6 +158,8 @@ npm run dev
 | `ORACLE_CHAT_WALLET_AUTH_SECRET` | Signs wallet session tokens. Unset disables wallet sign-in. |
 | `ORACLE_CHAT_ANON_DAILY`, `ORACLE_CHAT_WALLET_DAILY`, `ORACLE_CHAT_AUTHED_DAILY` | Daily message allowances (15, 60, 100) |
 | `DEFI_AGENT_URL`, `DEFI_AGENT_KEY_CHAT` | The engine behind the wallet and token tools. Unset means those tools are not offered. |
+| `LAUNCHPAD_ENABLED`, `LAUNCHPAD_TREASURY`, `BASE_RPC_URL` | The GEYSER desk. Unset, the desk is not listed. |
+| `MARKET_API_URL` and the netting relay settings | The TIDE desk. Unset, the desk is dropped; without the relay it reads markets but offers no orders. |
 | `DEFI_AGENT_QUOTES`, `DEFI_AGENT_TASKS`, `DEFI_AGENT_MEMORY` | Three independent gates for quotes, scheduled tasks and stored preferences |
 | `ORACLE_CHAT_X402_PAY_TO` | Destination address for paid credits. Unset disables the paywall. |
 | `ORACLE_CHAT_ADMIN_KEY` | Guards provider switching and the admin panel |
@@ -159,8 +173,9 @@ Provider switching, key testing, quota headroom and the daily allowances all liv
 
 ## What it cannot do
 
-- **No trading and no signing.** Quotes come back unsigned and expire. The chat holds no keys, cannot broadcast a transaction, and cannot resolve an event.
+- **No signing.** Quotes, launches, trades and market orders come back unsigned and expire. The chat holds no keys, cannot broadcast a transaction, and cannot resolve a market.
 - **No privileged data.** Every oracle tool wraps the public [API](/api). Anything a desk can see, `curl` can see.
-- **No feed for agent tokens.** Squidlor prices the majors and the tokenized equities. REEF reports Virtuals' own numbers and says whose they are.
+- **No feed for agent tokens or launched tokens.** Squidlor prices the majors and the tokenized equities. REEF reports Virtuals' own numbers and GEYSER reports DEX pool prints, and both say whose they are.
+- **No Base feeds through the oracle tools yet.** The published tool package knows `arbitrum` and `robinhood`. Base feeds are on the [HTTP API](/api) and the [hub](/products/hub) reads them from there.
 - **No wallet-level Virtuals data.** Virtuals exposes no holder endpoint, so "which wallets bought early" is not answerable, and REEF says that rather than substituting a token's price change for it.
 - **No unsourced numbers.** By construction. A figure with no tool call behind it is a bug, not a feature.

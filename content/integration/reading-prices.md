@@ -160,7 +160,8 @@ There is no universal answer; it depends on the feed's cadence and on what a sta
 
 | Feed type | Suggested `maxAge` | Why |
 | --- | --- | --- |
-| Crypto | 1–3 hours | The relay pushes hourly; a tighter bound will trip on normal operation. |
+| Crypto, Base | 15–30 minutes | The relay pushes on a 0.5% move or a 300 s heartbeat, and the Squidlor leg's on-chain window is 600 s. A bound under 10 minutes will trip on normal operation; one over an hour is looser than the feed. |
+| Crypto, Robinhood Chain | 1–3 hours | The relay there runs a 1-hour heartbeat when active, and is paused as of September 2026, so the Chainlink leg (1-hour heartbeat) sets the cadence. |
 | Tokenized equity | 48–72 hours | No updates overnight or at weekends. Chainlink's 24h heartbeat backs the feed. |
 | Anything liquidating positions | As tight as the cadence allows | A stale price here costs users money. |
 

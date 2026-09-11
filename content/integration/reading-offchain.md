@@ -73,7 +73,7 @@ No dependency on Squidlor's servers, just an RPC endpoint:
 
 ```typescript
 import { createPublicClient, http, parseAbi, formatUnits } from "viem";
-import { arbitrum } from "viem/chains";
+import { base } from "viem/chains";
 
 const AGGREGATOR_ABI = parseAbi([
   "function peek() view returns (int256 answerValue, uint256 freshestUpdatedAt, uint256 healthyCount)",
@@ -83,11 +83,11 @@ const AGGREGATOR_ABI = parseAbi([
 ]);
 
 const client = createPublicClient({
-  chain: arbitrum,
-  transport: http("https://arb1.arbitrum.io/rpc"),
+  chain: base,
+  transport: http("https://mainnet.base.org"),
 });
 
-const BTC_USD = "0x71aF698Ad533fb0e3f93a68096E1e25b3283f773";
+const BTC_USD = "0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345"; // BTC/USD aggregator, Base
 
 // One multicall instead of four round trips.
 const [peek, decimals, sourceCount] = await client.multicall({

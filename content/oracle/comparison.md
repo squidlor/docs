@@ -3,14 +3,14 @@ title: How it compares
 description: Squidlor Oracle against Chainlink, Pyth, API3, UMA, and Chronicle, including where the competition genuinely wins.
 ---
 
-The useful version of this comparison names the losses as well as the wins. Squidlor is younger and less decentralized than the incumbents; it is also structurally different in ways that matter for some integrations and not others.
+The useful version of this comparison names the losses as well as the wins. Squidlor is younger and less decentralized than the incumbents; it is also structurally different in ways that matter for some integrations and not others. Cadence figures were measured on 2026-09-11; the method is on [measured performance](/oracle/evidence).
 
 ## Side by side
 
 | Property | **Squidlor** | Chainlink | Pyth | API3 | UMA | Chronicle |
 | --- | --- | --- | --- | --- | --- | --- |
 | Settlement model | Push (relayer pays) | Push | Pull (user pays) | Push (first-party) | Optimistic, dispute-based | Push |
-| Latency for new pushes | ~3s floor | ~5–60 min | Sub-second (on pull) | ~minutes | 24–48h dispute window | ~minutes |
+| Update cadence | 0.5% deviation or 300 s heartbeat on Base; contracts accept a push every 3 s | 0.05% to 2% deviation or 20 min to 24 h heartbeat by chain and pair; ETH/USD measured at 30 updates a day on Ethereum, 153 on Base, 615 on Arbitrum | Sub-second (on pull) | ~minutes | 24–48h dispute window | ~minutes |
 | Multi-asset per transaction | One tx, N feeds | One per feed | Per-pull | Per-publisher | n/a | On-chain median |
 | Chainlink-interface compatible | Yes | Yes (it is the standard) | Wrapper needed | Yes | No | Custom |
 | Custom event outcomes | Roadmap | Functions / Any-API | No | No | Yes, its core use case | No |
@@ -24,13 +24,13 @@ The useful version of this comparison names the losses as well as the wins. Squi
 
 **A real second source for single-oracle asset classes.** Tokenized equities are the clearest case: most chains have exactly one stock oracle, which makes it a single point of failure by construction. Squidlor runs its own independent equity source, so a second opinion exists at all.
 
-**Cheap multi-asset updates.** One transaction updates every feed. Five feeds landed for about $0.05 on the live deployment. Per-feed transactions do not scale to a wide asset list on a chain with meaningful gas.
+**Cheap multi-asset updates.** One transaction updates every feed. Four feeds land for about 289,000 gas on Base, a fraction of a cent per push. Per-feed transactions do not scale to a wide asset list on a chain with meaningful gas.
 
-**Push cadence as a product knob.** Because Squidlor operates its own relayer, update frequency is a decision rather than a vendor parameter. A 3-second floor is available where it is worth the gas.
+**Push cadence as a product knob.** Because Squidlor operates its own relayer, update frequency is a decision rather than a vendor parameter. Base runs 300 seconds today; the contracts accept a push every 3 seconds, and both triggers change live without a restart.
 
 **One stack for price *and* event data.** Most systems need a price oracle from one vendor and an outcome oracle from another. See [resolver oracles](/oracle/resolver-oracles).
 
-**Zero-dependency chain expansion.** No node software, no validator onboarding, no bridge. A single contract set and an environment file.
+**Zero-dependency chain expansion.** No node software and no bridge: a single contract set and an environment file, live in about a week. A chain's validators can then join as signers, which is how the signer set grows; see [bring Squidlor to your chain](/networks/for-chains).
 
 ## Where competitors win
 

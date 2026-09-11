@@ -1,9 +1,9 @@
 ---
 title: API overview
-description: The public read API — base URL, chain addressing, pair formatting, caching, and what authentication is required (none).
+description: The public read API. Base URL, chain addressing, pair formatting, caching, and the optional API key.
 ---
 
-The `aggregator-api` service exposes Squidlor's on-chain oracle state as JSON over HTTPS. It is read-only, unauthenticated, and reads the same contract state your own `eth_call` would.
+The `aggregator-api` service exposes Squidlor's on-chain oracle state as JSON over HTTPS. It is read-only, works without a key, and reads the same contract state your own `eth_call` would. It serves Base, Robinhood Chain and Arbitrum.
 
 ## Base URL
 
@@ -17,7 +17,7 @@ Running the service yourself, it listens on port `5010` by default and the base 
 
 ## Authentication
 
-**Optional.** Every endpoint works without a key — the data is public on-chain state and the API is a convenience layer over it. That path is supported and is not going away.
+**Optional.** Every endpoint works without a key: the data is public on-chain state and the API is a convenience layer over it. That path is supported and is not going away.
 
 A key raises your limits and lets you see your own usage:
 
@@ -36,30 +36,31 @@ Get one at [build.squidlor.com](https://build.squidlor.com). Full detail in [aut
 
 ## Two ways to address a chain
 
-**Chain-scoped paths** — preferred. The chain is part of the path:
+**Chain-scoped paths** (preferred). The chain is part of the path:
 
 ```bash
-curl https://api.squidlor.com/aggregator/v1/arbitrum/feeds
-curl https://api.squidlor.com/aggregator/v1/42161/feeds
+curl https://api.squidlor.com/aggregator/v1/base/feeds
+curl https://api.squidlor.com/aggregator/v1/8453/feeds
 ```
 
 `:chain` accepts either a slug or a numeric chain ID:
 
 | Slug | Chain ID |
 | --- | --- |
-| `arbitrum` | 42161 |
+| `base` | 8453 |
 | `robinhood` | 4663 |
+| `arbitrum` | 42161 |
 
-**Legacy query-string paths** — still mounted for backwards compatibility:
+**Legacy query-string paths**, still mounted for backwards compatibility:
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/feeds?chainId=42161"
+curl "https://api.squidlor.com/aggregator/v1/feeds?chainId=8453"
 ```
 
 These default to chain 42161 when `chainId` is omitted. New integrations should use the chain-scoped form: a feed is then addressable as `(chain, pair)` with no query string, which is what the SDK and frontends use.
 
-> [!WARNING]
-> The production instance currently serves **Arbitrum only**. Robinhood Chain (4663) support exists in the service's source but is not live on `api.squidlor.com` yet — requesting `/v1/robinhood/…` there falls back to Arbitrum rather than erroring, and `/v1/4663/…` returns `chain not supported`. Until that deploy lands, read Robinhood Chain feeds [directly on-chain](/integration/reading-prices).
+> [!NOTE]
+> An unrecognised slug returns `404`. Earlier builds fell back to Arbitrum silently, so a typo returned another chain's prices with that chain's `chainId`; checking `chainId` in the response is still a good habit. The events and randomness endpoints exist on Arbitrum only.
 
 ## Pair formatting
 
@@ -82,6 +83,12 @@ Pairs are case-insensitive on the way in and normalized to uppercase in response
 | `GET /v1/:chain/feeds/:pair/history` | [Sampled median series](/api/history#history) |
 | `GET /v1/:chain/feeds/:pair/ohlc` | [OHLC candles](/api/history#ohlc-candles) |
 | `GET /v1/:chain/feeds/:pair/audit` | [Per-source audit trail](/api/history#audit-trail) |
+| `GET /v1/:chain/feeds/:pair/constituents` | The live quotes behind Squidlor's own equity leg, and what it would publish now |
+| `GET /v1/:chain/providers`, `/providers/:provider` | [Provider scorecards](/api/providers#provider-scorecards): fresh rate and deviation per source over any window |
+| `GET /v1/:chain/feeds/:pair/at` | [Point-in-time read](/api/providers#point-in-time-reads), nearest recorded observation with its distance |
+| `GET /v1/:chain/feeds/:pair/at/proof` | [Merkle proof](/api/providers#proofs) of a past observation against an on-chain root |
+| `GET /v1/prices`, `/v1/prices/:symbol`, `/v1/prices/stream` | [Realtime off-chain medians](/api/realtime), 200 symbols, one tick a second |
+| `GET /v1/daily…` | [Daily price book](/api/daily), one price per asset per 00:00 UTC, permanent |
 | `GET /v1/:chain/events` | [Event-outcome aggregator state](/api/events) |
 | `GET /v1/:chain/events/:eventId` | [One event, per source](/api/events#get-one-event) |
 | `GET /v1/:chain/randomness` | [Commit-reveal randomness state](/api/randomness) |
@@ -94,20 +101,20 @@ Responses are served from an in-memory TTL cache, **10 seconds by default**. Eve
 
 This matters for how you interpret the two timestamps in a response:
 
-- **`cachedAt`** — when the API last read the chain.
-- **`updatedAt`** / **`freshestUpdatedAt`** — when the underlying *data* was last published on-chain by a source.
+- **`cachedAt`**: when the API last read the chain.
+- **`updatedAt`** / **`freshestUpdatedAt`**: when the underlying *data* was last published on-chain by a source.
 
 They answer different questions. A response can be freshly cached (`cachedAt` one second ago) and carry data that is hours old (`updatedAt`), which is exactly what you would see on an equity feed over a weekend.
 
 > [!IMPORTANT]
-> Never use this API as the price input to on-chain logic. It is an HTTP endpoint, it can be cached, and it can be man-in-the-middled — none of which is true of an `eth_call`. For contracts, [read the aggregator directly](/integration/reading-prices). This API is for dashboards, bots, analytics, and agents.
+> Never use this API as the price input to on-chain logic. It is an HTTP endpoint, it can be cached, and it can be man-in-the-middled, none of which is true of an `eth_call`. For contracts, [read the aggregator directly](/integration/reading-prices). This API is for dashboards, bots, analytics, and agents.
 
 ## History requires a database
 
 The `history`, `ohlc`, and `audit` endpoints only work when the API instance is configured with MongoDB. Without it, the service runs in pure live-read mode and those three endpoints return `503`:
 
 ```json
-{ "message": "history not enabled — set MONGODB_URI for the aggregator-api" }
+{ "message": "history not enabled: set MONGODB_URI for the aggregator-api" }
 ```
 
 The live-read endpoints work either way. See [history & OHLC](/api/history).

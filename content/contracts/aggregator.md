@@ -99,18 +99,19 @@ All admin functions are `onlyOwner`, with `Ownable2Step` ownership.
 
 ### Live configuration
 
-Every aggregator in the live deployment runs:
+Every live aggregator runs `decimals = 8` and `selectionMode = MEDIAN`. The health floor differs by pair and chain:
 
-| Parameter | Value |
-| --- | --- |
-| `decimals` | 8 |
-| `selectionMode` | `MEDIAN` |
-| `minHealthySources` | 1 |
+| Chain | Pairs | `minHealthySources` | Effect |
+| --- | --- | --- | --- |
+| Base | BTC/USD, ETH/USD, SOL/USD | **2** | Reverts `InsufficientHealthySources` unless Chainlink and Squidlor are both fresh. A successful read is a two-source median. |
+| Base | VIRTUAL/USD, NVDA, TSLA, AAPL, GOOGL | 1 | Serves the surviving leg when the other ages out (Chainlink's 24h equity heartbeat overnight, VIRTUAL's quiet periods). |
+| Robinhood Chain | all | 1 | With the Squidlor relay paused, reads are Chainlink alone. |
+| Arbitrum hub | all | 2, or `PRIMARY_WITH_FALLBACK` | See [aggregation architecture](/oracle/architecture) for what the hub actually contributes. |
 
 > [!WARNING]
-> `minHealthySources = 1` means an aggregator will happily serve a price derived from a single surviving source. That is the right default for availability (the alternative is reverting and halting every consumer), but it means **a successful read does not prove multi-source agreement**.
+> Where `minHealthySources = 1`, an aggregator will serve a price derived from a single surviving source. That is the right default for availability on feeds with a slow second leg, but it means **a successful read does not by itself prove multi-source agreement**. Where it is 2, the revert is the guarantee: the Base BTC/USD aggregator refused 209 of 12,757 sampled rounds since go-live rather than answer from one leg, see [measured performance](/oracle/evidence).
 >
-> If your protocol needs that guarantee, read `peek()` and enforce your own minimum on `healthyCount`. See [read prices on-chain](/integration/reading-prices).
+> If your protocol needs the guarantee on a pair that runs 1, read `peek()` and enforce your own minimum on `healthyCount`. See [read prices on-chain](/integration/reading-prices).
 
 ## Monitoring
 

@@ -32,7 +32,7 @@ Error bodies carry a single `message` field:
 ```json
 {
   "pair": "BTC/USD",
-  "chainId": 42161,
+  "chainId": 8453,
   "error": "minHealthySources not met"
 }
 ```

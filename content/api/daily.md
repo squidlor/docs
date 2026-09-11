@@ -77,7 +77,7 @@ GET /v1/daily
 | --- | --- | --- |
 | `day` | latest day held | `YYYY-MM-DD`, an ISO timestamp, or a unix time. |
 | `class` | all | `crypto`, `equity` or `onchain`. |
-| `chain` | all | For `class=onchain`: `arbitrum`, `robinhood`, `qubetics`, or a chain id. |
+| `chain` | all | For `class=onchain`: `base`, `robinhood`, `arbitrum`, or a chain id. |
 | `symbols` | all | Comma-separated, e.g. `BTC,ETH,NVDA`. |
 | `limit` | `1000` | Maximum rows. |
 
@@ -162,7 +162,7 @@ A pair published on several chains returns **400** `AMBIGUOUS_CHAIN` listing the
 GET /v1/daily/:symbol/:day
 ```
 
-The settlement shape: exact day in, one price out, **404** `NO_SNAPSHOT` when nothing is stored for it. It never substitutes a neighbouring day; a settlement that silently used the wrong day is worse than one that failed. When you want the nearest observation with the distance attached instead, use [`/at`](/api/history).
+The settlement shape: exact day in, one price out, **404** `NO_SNAPSHOT` when nothing is stored for it. It never substitutes a neighbouring day; a settlement that silently used the wrong day is worse than one that failed. When you want the nearest observation with the distance attached instead, use [`/at`](/api/providers#point-in-time-reads).
 
 ```bash
 curl "https://api.squidlor.com/aggregator/v1/daily/NVDA/2026-08-27"

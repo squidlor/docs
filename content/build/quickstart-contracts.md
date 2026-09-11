@@ -20,9 +20,9 @@ interface IAggregatorV3 {
 }
 
 contract PriceConsumer {
-    // NVDA/USD on Robinhood Chain (4663)
+    // NVDA/USD on Base (8453): median of Chainlink (Coinbase B20) and Squidlor
     IAggregatorV3 public constant NVDA_USD =
-        IAggregatorV3(0x7D8E02C7d2Ee80c75EFF199B8AD64522C4a88b91);
+        IAggregatorV3(0xd4e034215222F327F08f4067805d055Ec3c1aD89);
 
     error StalePrice(uint256 updatedAt, uint256 maxAge);
     error BadPrice(int256 answer);
@@ -53,7 +53,7 @@ interface ISquidlorAggregator {
 
 contract LendingMarket {
     ISquidlorAggregator constant FEED =
-        ISquidlorAggregator(0x94800f5Cebb5677F1855e9C9024b1Bc9685b60AF); // BTC/USD, 4663
+        ISquidlorAggregator(0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345); // BTC/USD, Base
 
     uint256 constant MIN_SOURCES = 2;
     uint256 constant MAX_AGE = 30 minutes;
@@ -85,7 +85,7 @@ interface IAggregatorRegistry {
 
 contract DynamicConsumer {
     IAggregatorRegistry constant REGISTRY =
-        IAggregatorRegistry(0xbbCf13b4A9AFf2Ef444dE83751B280ccEB57349a); // 4663
+        IAggregatorRegistry(0x65af89Cf250FcC7627e53Ce0c892B65d6dBbB5eF); // Base
 
     function priceOf(string calldata pair) external view returns (int256) {
         address feed = REGISTRY.getAggregatorByName(pair);
@@ -100,18 +100,19 @@ The registry is admin-gated for writes, so a pair cannot be repointed by anyone 
 
 ## Addresses
 
-Full list on [deployed addresses](/networks/addresses). Robinhood Chain (4663):
+Full list on [deployed addresses](/networks/addresses). Base (8453):
 
-| Pair | Aggregator |
+| Pair | Aggregator (Base, 8453) |
 |---|---|
-| BTC/USD | `0x94800f5Cebb5677F1855e9C9024b1Bc9685b60AF` |
-| ETH/USD | `0xc0B5AEb320Cb31fB51F17c823157aCECeF225b6E` |
-| SOL/USD | `0xf3B44eDd2Dd256179C79f5772d68Ca943645F38d` |
-| NVDA/USD | `0x7D8E02C7d2Ee80c75EFF199B8AD64522C4a88b91` |
-| TSLA/USD | `0x7d3A942f0Ac45d5B78e5cDFC8fF99D0CdaD1e059` |
-| AAPL/USD | `0xB7227458A404EfaE56FC9A830C8Ca7Ff5aa0140e` |
-| GOOGL/USD | `0xf6EB4A09Dff938cA857DB11E9B331abBdDdef1B8` |
-| Registry | `0xbbCf13b4A9AFf2Ef444dE83751B280ccEB57349a` |
+| BTC/USD | `0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345` |
+| ETH/USD | `0x98bc4A5Da6AE2cAc688eb9b75eBb36649E2F65c4` |
+| SOL/USD | `0x5f8D593C0C5Fd59D209eA618b7F211310057c6D7` |
+| VIRTUAL/USD | `0x9E83e182b8f1b464D5Ee9818818AA31A0118F9d5` |
+| NVDA/USD | `0xd4e034215222F327F08f4067805d055Ec3c1aD89` |
+| TSLA/USD | `0xE8C828ee3C284B6e5c8dC1963827e524F80c90f9` |
+| AAPL/USD | `0x111A875F39C69a1E429a3D612c33123E69339a74` |
+| GOOGL/USD | `0x7786f77D50Be682bDd7bA78D39c15Ccf15Ee1197` |
+| Registry | `0x65af89Cf250FcC7627e53Ce0c892B65d6dBbB5eF` |
 
 All feeds are 8 decimals.
 

@@ -1,9 +1,9 @@
 ---
 title: Build with Squidlor
-description: Everything you need to ship on Squidlor price feeds — quickstarts by persona, API keys, templates, and the builder rewards program.
+description: Everything you need to ship on Squidlor price feeds: quickstarts by persona, API keys, templates, and the builder rewards program.
 ---
 
-Squidlor is a multi-source price oracle running on Robinhood Chain and Arbitrum. Feeds implement Chainlink's `AggregatorV3Interface`, so if your contract already reads a Chainlink feed, you change one address.
+Squidlor is a multi-source price oracle running on Base, Robinhood Chain and Arbitrum, and the oracle behind a [prediction market](/products/markets) and a [stock-paired launchpad](/products/trade) on Base. Feeds implement Chainlink's `AggregatorV3Interface`, so if your contract already reads a Chainlink feed, you change one address.
 
 This section is for people building **on** Squidlor rather than operating it.
 
@@ -53,16 +53,16 @@ Nothing requires a key to start. A [free key](/build/authentication) raises your
 
 Season 0 of the builder program rewards verifiable work: metered API usage, registered on-chain consumers, agent integrations, templates and content. Points settle on-chain through the same `RewardDistributor` that pays validators.
 
-- [Builder rewards](/build/rewards) — how points are earned and settled
-- [Bounties](/build/bounties) — specific things we will pay cash for
-- [Showcase](/build/showcase) — list what you built
+- [Builder rewards](/build/rewards): how points are earned and settled
+- [Bounties](/build/bounties): specific things we will pay cash for
+- [Showcase](/build/showcase): list what you built
 
 ## Reference
 
-- [Authentication](/build/authentication) — keys, headers, rotation
-- [Rate limits & plans](/build/rate-limits) — the numbers, and what happens at the ceiling
-- [API reference](/api) — endpoint-by-endpoint
-- [Deployed addresses](/networks/addresses) — every aggregator, every chain
-- [Changelog](/build/changelog) — what shipped when
+- [Authentication](/build/authentication): keys, headers, rotation
+- [Rate limits & plans](/build/rate-limits): the numbers, and what happens at the ceiling
+- [API reference](/api): endpoint-by-endpoint
+- [Deployed addresses](/networks/addresses): every aggregator, every chain
+- [Changelog](/build/changelog): what shipped when
 
 Questions, or something missing? <build@squidlor.com>

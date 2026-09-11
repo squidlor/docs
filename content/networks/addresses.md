@@ -3,15 +3,80 @@ title: Deployed addresses
 description: Every live Squidlor contract address, per chain and per component.
 ---
 
-All Robinhood Chain contracts were deployed 2026-07-13. Verify any address on the chain's explorer before using it in production.
+Robinhood Chain contracts were deployed 2026-07-13; Base contracts between 2026-08-30 and 2026-09-02. Verify any address on the chain's explorer before using it in production.
 
-## Robinhood Chain — 4663
+## Base (8453)
+
+Explorer: `https://basescan.org`
+
+Deployer and owner of every contract below: `0xB57BBda48C33fF725E93D604023D56D9C5b00e2a`
+
+### Aggregators (read these)
+
+Each address is a `SquidlorOracleAggregator` implementing Chainlink's `AggregatorV3Interface` at 8 decimals, `MEDIAN` mode, two sources.
+
+| Pair | Aggregator | `minHealthySources` |
+| --- | --- | --- |
+| BTC/USD | `0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345` | 2 |
+| ETH/USD | `0x98bc4A5Da6AE2cAc688eb9b75eBb36649E2F65c4` | 2 |
+| SOL/USD | `0x5f8D593C0C5Fd59D209eA618b7F211310057c6D7` | 2 |
+| VIRTUAL/USD | `0x9E83e182b8f1b464D5Ee9818818AA31A0118F9d5` | 1 |
+| NVDA/USD | `0xd4e034215222F327F08f4067805d055Ec3c1aD89` | 1 |
+| TSLA/USD | `0xE8C828ee3C284B6e5c8dC1963827e524F80c90f9` | 1 |
+| AAPL/USD | `0x111A875F39C69a1E429a3D612c33123E69339a74` | 1 |
+| GOOGL/USD | `0x7786f77D50Be682bDd7bA78D39c15Ccf15Ee1197` | 1 |
+
+### Source adapters per aggregator
+
+| Pair | Chainlink source | Squidlor source |
+| --- | --- | --- |
+| BTC/USD | `0x49707860769dB9f662f429713ba9C11B1437BC38` | `0xe1f9fe8FA22D49B7345AF0Cc78149759A4B1F8c7` |
+| ETH/USD | `0x80182bfe4405B0101Fa56ea112d08b54EcD33e5e` | `0xE6727b1eE47e3056A29ECeDc82EDDd1161Ca6c21` |
+| SOL/USD | `0x0995c64eE3d3AA01B2e581CbcAed601A53E1deB0` | `0x805976F8b82d2A0B66747ec08039D3a796FF3Ed6` |
+| VIRTUAL/USD | `0x8A371202195DA3575bf6Ba17bE8a213a8003B66F` | `0xD3EBa74F2DF29253A1475B270D746071a3B33bB2` |
+| NVDA/USD | `0x240456f0b18361c9382daCBdd78fc2A894245539` | `0xBCfd729810DDAC91AE787Fc2A3DEcc79b9De9AAf` |
+| TSLA/USD | `0xf0372175D39FA26F719d0A77c3D63508b8c76437` | `0xa9e5Fef09E3612c652b4E54C64a57590afE08cf5` |
+| AAPL/USD | `0x8391af423Ce130A01c1923CC3caD55754BcDA151` | `0xcE3A4241e3fD8D79E22CD7AC53fB748768ee217D` |
+| GOOGL/USD | `0x11A080dbCd31e9E597591f958B4BED49C83FB24d` | `0xD37958Ac12E51EACAE641537572e40eD0354a204` |
+
+The Chainlink equity legs wrap Coinbase's B20 total-return feeds on Base: NVDA `0x04689a41629776563E6822F76f2e57D148d28513`, TSLA `0xFaf869185383a24F8cb00e27BdA6b63B9905DCb4`, AAPL `0x787f13dEa48Db0897CbCDD985de77809D837F988`, GOOGL `0x5bF49E0ffA937CE2FfF033c739aD7C634c4D34F2`. The VIRTUAL leg wraps Chainlink's `0xEaf310161c9eF7c813A14f8FEF6Fb271434019F7`.
+
+### Oracle core
+
+| Contract | Address |
+| --- | --- |
+| SquidlorAdapterV2 | `0x0e674eeaaDB0213DE29C72aeFfD3d85E592024Bb` |
+| BTC SquidPriceFeed | `0x16d03D6414c7aE8a1D2a63B1602557C1BAfFB91d` |
+| ETH SquidPriceFeed | `0x01f21cc69674Ecd40a847257c405C6Dce8dEf0B9` |
+| SOL SquidPriceFeed | `0x23637E2DBfe6B4c040b57F66FD043cB74B58B10E` |
+| VIRTUAL SquidPriceFeed | `0x6386BB62B3D19100735f39482a49e1ef1FEc0AD8` |
+| NVDA SquidPriceFeed | `0x1c0E3FdF32a174A73bc1a5f63bC17B999568C1d6` |
+| TSLA SquidPriceFeed | `0x5AAbE5810fa59F55fd11b44E572593fD06dadAC8` |
+| AAPL SquidPriceFeed | `0xe7662d69ebdDC4a3f2a0Fe6B0F351cadeeE66502` |
+| GOOGL SquidPriceFeed | `0x22A60B79ffFc4FC33ed2C6bF4aed549406c67e13` |
+
+`SquidlorAdapterV2` on Base runs `requiredSigners = 1` with the owner plus one authorised signer per relay process. The prediction market's resolver reads this adapter directly, by feed id, not the aggregators above.
+
+### Registry
+
+| Contract | Address |
+| --- | --- |
+| AggregatorRegistry (UUPS proxy) | `0x65af89Cf250FcC7627e53Ce0c892B65d6dBbB5eF` |
+| AggregatorRegistry implementation | `0x473c2bdCf237c009EcEFBad7a8cE6e6A7eA8b628` |
+
+`superAdmin` is the deployer. All eight pairs are registered.
+
+### Prediction market and launchpad
+
+The market contracts (`MarketFactory`, `ConditionalTokens`, `SquidlorPriceResolver`, sqUSD, the netting relay) are listed on [prediction markets](/products/markets#contracts-on-base). The Doppler and Uniswap v4 addresses the launchpad uses are on [stock-paired tokens](/products/trade#contracts-on-base).
+
+## Robinhood Chain (4663)
 
 Explorer: `https://robinhoodchain.blockscout.com`
 
 Deployer and owner of every contract below: `0x34f54E0Ca7f18DB6F088297d3a34D67B57B443Cb`
 
-### Aggregators — read these
+### Aggregators (read these)
 
 This is the table most integrations need. Each address is a `SquidlorOracleAggregator` implementing Chainlink's `AggregatorV3Interface` at 8 decimals.
 
@@ -31,14 +96,14 @@ This is the table most integrations need. Each address is a `SquidlorOracleAggre
 | --- | --- | --- |
 | BTC/USD | `0x15CEa6611568464e768C8810e4E9873d9D6bDF08` | `0xd79d9997F49a14b0b74dA4085b95ddAD18F1482e` |
 | ETH/USD | `0xCbd8c8d721ffe2C8EBa9FBFc99eC6BA2f2a99F2f` | `0xEC4c77Af927a9fDC1D5693A3656C8f07aE7c473D` |
-| SOL/USD | — (no Chainlink SOL feed on 4663) | `0x9021CfBF1cb6f42393cafEa9EF70c564eb531688` |
-| NVDA/USD | `0xccC9011353C860639073480FE6Aceb1530856e2f` | not wired |
-| TSLA/USD | `0x033F60366fE7Ca60636B545784F6167Ac1258b37` | not wired |
-| AAPL/USD | `0xeFb3bAE78042398E63B8AA591756915712791177` | not wired |
-| GOOGL/USD | `0x22c432CE3b40270A6f4f338761Aa26D45C7F2464` | not wired |
+| SOL/USD | none (no Chainlink SOL feed on 4663) | `0x9021CfBF1cb6f42393cafEa9EF70c564eb531688` |
+| NVDA/USD | `0xccC9011353C860639073480FE6Aceb1530856e2f` | wired; read `sources(1)` on the aggregator |
+| TSLA/USD | `0x033F60366fE7Ca60636B545784F6167Ac1258b37` | wired; read `sources(1)` on the aggregator |
+| AAPL/USD | `0xeFb3bAE78042398E63B8AA591756915712791177` | wired; read `sources(1)` on the aggregator |
+| GOOGL/USD | `0x22c432CE3b40270A6f4f338761Aa26D45C7F2464` | wired; read `sources(1)` on the aggregator |
 
 > [!WARNING]
-> The four equity pairs read Chainlink alone. The Squidlor equity price feeds below exist on-chain but have not been added as a second source on those aggregators, so cross-oracle aggregation is not in effect for equities today.
+> Every Robinhood Chain aggregator now has two sources, but Squidlor's own relay on 4663 is paused as of September 2026. Every pair there reads its Chainlink leg alone (`healthyCount` 1 of 2), and SOL/USD, which has no Chainlink leg, has no healthy source. Read `peek()` before you trust a Robinhood round.
 
 ### Oracle core
 
@@ -57,7 +122,7 @@ This is the table most integrations need. Each address is a `SquidlorOracleAggre
 
 `SquidlorAdapterV2` runs with `signers = [deployer]`, `required = 1`.
 
-BNB/USD and XRP/USD have price feeds but no aggregator — read the feed proxy directly, accepting that there is no cross-oracle layer for those two.
+BNB/USD and XRP/USD have price feeds but no aggregator; read the feed proxy directly, accepting that there is no cross-oracle layer for those two.
 
 ### Registry
 
@@ -66,7 +131,7 @@ BNB/USD and XRP/USD have price feeds but no aggregator — read the feed proxy d
 | AggregatorRegistry (UUPS proxy) | `0xbbCf13b4A9AFf2Ef444dE83751B280ccEB57349a` |
 | AggregatorRegistry implementation | `0x35D92492d1b3991e7cd07A739590A81aeA71b07b` |
 
-`superAdmin` is the deployer. All seven pairs are registered — see [aggregator registry](/contracts/registry).
+`superAdmin` is the deployer. All seven pairs are registered; see [aggregator registry](/contracts/registry).
 
 ### Economics and randomness
 
@@ -78,9 +143,9 @@ BNB/USD and XRP/USD have price feeds but no aggregator — read the feed proxy d
 
 Treasury is the deployer; `treasuryBps` 3000; `epochDuration` 86,400s; `revealDelayBlocks` 5.
 
-## Arbitrum One — 42161
+## Arbitrum One (42161)
 
-The chain the public API currently serves, and the source of the "Arbitrum hub" prices the relay medians.
+The source of the "Arbitrum hub" prices the relay medians, and the only chain with the events and randomness endpoints.
 
 ### Aggregators
 
@@ -102,7 +167,7 @@ The chain the public API currently serves, and the source of the "Arbitrum hub" 
 | EventOracleAggregator | `0x67ff83c40B0338518B0781466EA3cB092002BbB4` |
 | Event resolver | `0xD79AA11e81c9d3013B30DD71d9cba8977a9518BF` |
 
-Arbitrum carries two pairs Robinhood Chain does not — EUR/USD (FX) and XAU/USD (gold) — plus `FBTC/POR`, a proof-of-reserve feed.
+Arbitrum carries two pairs Robinhood Chain does not, EUR/USD (FX) and XAU/USD (gold), plus `FBTC/POR`, a proof-of-reserve feed.
 
 ## Verifying an address
 
@@ -123,4 +188,4 @@ cast call 0x94800f5Cebb5677F1855e9C9024b1Bc9685b60AF \
 Or resolve through the [registry](/contracts/registry) so discovery happens on-chain rather than from a copied string.
 
 > [!IMPORTANT]
-> Addresses change when contracts are redeployed or upgraded. This page reflects the 2026-07-13 deployment. For automated systems, resolve from the registry or the [API's feed list](/api/feeds#list-feeds) rather than pinning what you read here.
+> Addresses change when contracts are redeployed or upgraded. This page reflects the 2026-07-13 Robinhood deployment and the 2026-08-30 to 2026-09-02 Base deployments. For automated systems, resolve from the registry or the [API's feed list](/api/feeds#list-feeds) rather than pinning what you read here.

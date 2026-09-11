@@ -52,19 +52,37 @@ The recorded median series for a feed.
 | `limit` | - | Maximum points returned. |
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/arbitrum/feeds/BTC_USD/history?interval=1h&limit=3"
+curl "https://api.squidlor.com/aggregator/v1/base/feeds/BTC_USD/history?interval=1h&limit=3"
 ```
 
 ```json
 {
-  "chainId": 42161,
+  "chainId": 8453,
   "pair": "BTC/USD",
   "interval": "1h",
   "count": 3,
   "points": [
-    { "ts": "2026-07-28T10:00:00.000Z", "median": "63102.44000000", "medianNum": 63102.44, "healthyCount": 2 },
-    { "ts": "2026-07-28T11:00:00.000Z", "median": "63288.10000000", "medianNum": 63288.10, "healthyCount": 2 },
-    { "ts": "2026-07-28T12:00:00.000Z", "median": "63434.90498170", "medianNum": 63434.90, "healthyCount": 1 }
+    {
+      "ts": "2026-09-11T16:59:24.755Z",
+      "median": "77891.64392423",
+      "medianNum": 77891.64392423,
+      "healthyCount": 2,
+      "bucket": "2026-09-11T16:00:00.000Z"
+    },
+    {
+      "ts": "2026-09-11T17:59:24.700Z",
+      "median": "77531.09160608",
+      "medianNum": 77531.09160608,
+      "healthyCount": 2,
+      "bucket": "2026-09-11T17:00:00.000Z"
+    },
+    {
+      "ts": "2026-09-11T18:55:33.264Z",
+      "median": "77016.42057129",
+      "medianNum": 77016.42057129,
+      "healthyCount": 2,
+      "bucket": "2026-09-11T18:00:00.000Z"
+    }
   ]
 }
 ```
@@ -97,18 +115,32 @@ Candles computed over the recorded samples.
 | `limit` | - | Maximum candles. |
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/arbitrum/feeds/ETH_USD/ohlc?interval=4h&limit=2"
+curl "https://api.squidlor.com/aggregator/v1/base/feeds/ETH_USD/ohlc?interval=4h&limit=2"
 ```
 
 ```json
 {
-  "chainId": 42161,
+  "chainId": 8453,
   "pair": "ETH/USD",
   "interval": "4h",
   "count": 2,
   "candles": [
-    { "t": "2026-07-28T04:00:00.000Z", "open": 1871.22, "high": 1894.05, "low": 1868.40, "close": 1889.77, "samples": 240 },
-    { "t": "2026-07-28T08:00:00.000Z", "open": 1889.77, "high": 1901.13, "low": 1880.02, "close": 1886.07, "samples": 238 }
+    {
+      "open": 2457.98015158,
+      "high": 2648.4824623,
+      "low": 2436.51,
+      "close": 2564.51,
+      "samples": 235,
+      "t": "2026-09-11T12:00:00.000Z"
+    },
+    {
+      "open": 2560.84242947,
+      "high": 2580.03516738,
+      "low": 2535.7852253,
+      "close": 2535.7852253,
+      "samples": 171,
+      "t": "2026-09-11T16:00:00.000Z"
+    }
   ]
 }
 ```
@@ -134,22 +166,48 @@ The per-source forensic record: what each source reported at each sample, how fa
 | `flagged` | `false` | `true` returns only rounds flagged for deviation or staleness. |
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/arbitrum/feeds/BTC_USD/audit?flagged=true&limit=1"
+curl "https://api.squidlor.com/aggregator/v1/base/feeds/BTC_USD/audit?flagged=true&limit=1"
 ```
 
 ```json
 {
-  "chainId": 42161,
+  "chainId": 8453,
   "pair": "BTC/USD",
   "count": 1,
   "rounds": [
     {
-      "ts": "2026-07-28T09:14:00.000Z",
-      "median": "63180.00000000",
-      "healthyCount": 2,
+      "chainId": 8453,
+      "pair": "BTC/USD",
+      "ts": "2026-09-09T12:21:00.852Z",
+      "decimals": 8,
+      "selectionMode": "MEDIAN",
+      "peekError": "The contract function \"peek\" reverted with the following signature:\n0x1f4d5e9b",
+      "flagged": true,
+      "flagReasons": [
+        "squidlor:BTC/USD: stale",
+        "peek: The contract function \"peek\" reverted with the following signature:\n0x1f4d5e9b"
+      ],
       "sources": [
-        { "name": "chainlink", "price": "63180.00000000", "deviationBps": 0, "isStale": false, "flagged": false },
-        { "name": "squidlor", "price": "64520.00000000", "deviationBps": 212, "isStale": false, "flagged": true }
+        {
+          "index": 0,
+          "adapter": "0x49707860769dB9f662f429713ba9C11B1437BC38",
+          "name": "chainlink:BTC/USD",
+          "enabled": true,
+          "price": "79350.45021471",
+          "priceNum": 79350.45021471,
+          "updatedAt": 1788955249,
+          "isStale": false
+        },
+        {
+          "index": 1,
+          "adapter": "0xe1f9fe8FA22D49B7345AF0Cc78149759A4B1F8c7",
+          "name": "squidlor:BTC/USD",
+          "enabled": true,
+          "price": "79320.3",
+          "priceNum": 79320.3,
+          "updatedAt": 1788955125,
+          "isStale": true
+        }
       ]
     }
   ]

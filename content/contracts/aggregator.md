@@ -101,15 +101,12 @@ All admin functions are `onlyOwner`, with `Ownable2Step` ownership.
 
 Every live aggregator runs `decimals = 8` and `selectionMode = MEDIAN`. The health floor differs by pair and chain:
 
-| Chain | Pairs | `minHealthySources` | Effect |
-| --- | --- | --- | --- |
-| Base | BTC/USD, ETH/USD, SOL/USD | **2** | Reverts `InsufficientHealthySources` unless Chainlink and Squidlor are both fresh. A successful read is a two-source median. |
-| Base | VIRTUAL/USD, NVDA, TSLA, AAPL, GOOGL | 1 | Serves the surviving leg when the other ages out (Chainlink's 24h equity heartbeat overnight, VIRTUAL's quiet periods). |
-| Robinhood Chain | all | 1 | With the Squidlor relay paused, reads are Chainlink alone. |
-| Arbitrum hub | all | 2, or `PRIMARY_WITH_FALLBACK` | See [aggregation architecture](/oracle/architecture) for what the hub actually contributes. |
+| Chain | Pairs | Sources wired | `minHealthySources` | Effect |
+| --- | --- | --- | --- | --- |
+| Arc | all seven | Squidlor (1) | 1 | Serves Squidlor's feed while it is inside its staleness window; reverts `InsufficientHealthySources` once it ages out. Equity pairs age out overnight and at weekends by design. |
 
 > [!WARNING]
-> Where `minHealthySources = 1`, an aggregator will serve a price derived from a single surviving source. That is the right default for availability on feeds with a slow second leg, but it means **a successful read does not by itself prove multi-source agreement**. Where it is 2, the revert is the guarantee: the Base BTC/USD aggregator refused 209 of 12,757 sampled rounds since go-live rather than answer from one leg, see [measured performance](/oracle/evidence).
+> Where `minHealthySources = 1`, an aggregator will serve a price derived from a single source. On Arc that is every pair today, so **a successful read does not by itself prove multi-source agreement**; the off-chain median across exchanges is inside the one leg you read. Where it is 2, the revert is the guarantee: on the previous deployment the BTC/USD aggregator refused 209 of 12,757 sampled rounds rather than answer from one leg, see [measured performance](/oracle/evidence). Arc moves to 2 on a pair when a second oracle network publishes there and is added as a source.
 >
 > If your protocol needs the guarantee on a pair that runs 1, read `peek()` and enforce your own minimum on `healthyCount`. See [read prices on-chain](/integration/reading-prices).
 

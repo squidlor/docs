@@ -28,14 +28,14 @@ Wraps Squidlor feeds as an [ACP](https://whitepaper.virtuals.io) offering so a V
 
 ## `squidlor-lending-example`
 
-A Foundry project implementing stock-collateral lending on Robinhood Chain against `NVDA/USD`, with fork tests running on live feeds.
+A Foundry project implementing stock-collateral lending against `NVDA/USD`, with fork tests running on live feeds.
 
 Demonstrates the checks a real market needs, not the minimum that compiles: `peek()` for healthy-source count, a staleness bound tuned to equity market hours, and explicit handling of the aggregator's `InsufficientHealthySources` revert.
 
 ```bash
 git clone https://github.com/squidlor/squidlor-lending-example
 cd squidlor-lending-example && forge install
-forge test --fork-url https://rpc.mainnet.chain.robinhood.com
+forge test --fork-url https://rpc.testnet.arc.io
 ```
 
 **Use it for:** lending, perps, collateralised anything. Also the reference for [the on-chain consumer bounties](/build/bounties).
@@ -54,7 +54,7 @@ An embeddable price widget in vanilla JS and React. Themeable, no build step req
 <div id="squidlor-btc"></div>
 <script src="https://unpkg.com/@squidlor/price-widget"></script>
 <script>
-  SquidlorWidget.mount('#squidlor-btc', { chain: 'robinhood', pair: 'BTC/USD' });
+  SquidlorWidget.mount('#squidlor-btc', { chain: 'arc', pair: 'BTC/USD' });
 </script>
 ```
 

@@ -1,11 +1,11 @@
 ---
 title: Prediction markets
-description: markets.squidlor.com. Gasless Yes/No markets on where a price settles, priced by an AMM and resolved by the Squidlor oracle on Base. Season 1 points.
+description: markets.squidlor.com. Gasless Yes/No markets on where a price settles, priced by an AMM and resolved by the Squidlor oracle on Arc. Season 1 points.
 ---
 
-[markets.squidlor.com](https://markets.squidlor.com) runs binary prediction markets on **Base (8453)**. A market is a question of the form "Will BTC be above $81,400 at 14:30 UTC?", with a Yes and a No outcome. Trading costs the user no gas, and the outcome is read from the Squidlor oracle rather than decided by anyone.
+[markets.squidlor.com](https://markets.squidlor.com) runs binary prediction markets on **Arc**, Circle's USDC-gas L1. A market is a question of the form "Will BTC be above $81,400 at 14:30 UTC?", with a Yes and a No outcome. Trading costs the user no gas, and the outcome is read from the Squidlor oracle rather than decided by anyone.
 
-The market has been live on Base with trading since 2026-09-01.
+The market went live in September 2026 and runs on Arc.
 
 ## How a market works
 
@@ -67,21 +67,24 @@ curl "https://api.squidlor.com/quest/points/leaderboard?limit=10"
 
 `status: "pending"` does not mean tradeable. It means "not yet settled on chain", and a market can be past its expiry, closed to orders and still pending while the resolution watcher catches up. Trading is open when the status is pending **and** the expiry is in the future.
 
-## Contracts on Base
+## Contracts
 
-| Contract | Address |
+| Contract | Address (Arc Testnet) |
 | --- | --- |
-| `MarketFactory` | `0x12AeA54771C43CB6A0d393B930c642F28389210B` |
-| `ConditionalTokens` | `0xAa5b50D3eB93FcDFb48E26bAa4F9315E878e422d` |
-| `FPMMFactory` | `0x9a4e4d5f83e3ad9568Ee2919cc0A4Ba7a4c0F735` |
-| `SquidlorPriceResolver` | `0x3c8552764DC0f8719cC6cedab81C4659E18D9574` |
-| `AdminResolver` | `0x7DADEEC6665D330b35e38C18bdF270ABd34d92be` |
-| `SquidlorUSD` (sqUSD) | `0x05292d70254f9309D731B5Ba93AE7a53710d469B` |
-| `SubsidyVault` | `0x9764A728Aa5524C0845e0a945843760654a1553D` |
-| Netting relay (proxy) | `0xa3F54e9963185819Db7DC166181b9977c834b607` |
-| `SquidlorRegistry` | `0x3F898b06764686d49b602967fB00610d0A05E6E8` |
+| `MarketFactory` | `0xb64a411dF119E1E2a8b18812fD1512b48CF29Bb2` |
+| `ConditionalTokens` | `0x0bC4E8dCe77e25A8219EA7794281a2E355484fA5` |
+| `FPMMFactory` | `0x870DdB6F14B5926C56DB74F52Ce06800A8795909` |
+| `SquidlorPriceResolver` | `0xEcd3Da639CDbD837350ebd580F6dF388573E1418` |
+| `AdminResolver` | `0xa3F54e9963185819Db7DC166181b9977c834b607` |
+| `SquidlorUSD` (sqUSD) | `0xFaCe2ABF0C7CCDa15252F7020fAA24FC65c15540` |
+| `SubsidyVault` | `0x3F898b06764686d49b602967fB00610d0A05E6E8` |
+| Netting relay (proxy) | `0xE4CA129bCB8Dd050d7892b165615f54A1652bd75` |
+| `SquidlorRegistry` | `0x3D03C75f76dd90505aA2061B95aDB9b74216Dd30` |
 
-The resolver reads the same `SquidlorAdapterV2` listed on [Base](/networks/base). It does not read the cross-oracle aggregators: those serve the price board and the public API, and they are deliberately not wired to settlement.
+Mainnet addresses land on [deployed addresses](/networks/addresses), which is generated from the
+deployment manifest rather than typed.
+
+The resolver reads the same `SquidlorAdapterV2` listed on [Arc](/networks/arc). It does not read the cross-oracle aggregators: those serve the price board and the public API, and they are deliberately not wired to settlement.
 
 ## In Oracle Chat
 

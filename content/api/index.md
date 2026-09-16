@@ -1,11 +1,11 @@
 ---
 title: API overview
-description: The public read API. Base URL, chain addressing, pair formatting, caching, and the optional API key.
+description: The public read API. API root, chain addressing, pair formatting, caching, and the optional API key.
 ---
 
-The `aggregator-api` service exposes Squidlor's on-chain oracle state as JSON over HTTPS. It is read-only, works without a key, and reads the same contract state your own `eth_call` would. It serves Base, Robinhood Chain and Arbitrum.
+The `aggregator-api` service exposes Squidlor's on-chain oracle state as JSON over HTTPS. It is read-only, works without a key, and reads the same contract state your own `eth_call` would. It serves one chain, Arc; see [supported networks](/networks).
 
-## Base URL
+## API root
 
 ```text
 https://api.squidlor.com/aggregator
@@ -13,7 +13,7 @@ https://api.squidlor.com/aggregator
 
 Every path below is relative to that. So `/v1/feeds` means `https://api.squidlor.com/aggregator/v1/feeds`.
 
-Running the service yourself, it listens on port `5010` by default and the base URL is just the host.
+Running the service yourself, it listens on port `5010` by default and the root is just the host.
 
 ## Authentication
 
@@ -29,7 +29,7 @@ A key raises your limits and lets you see your own usage:
 
 ```bash
 curl -H "Authorization: Bearer sq_live_..." \
-  https://api.squidlor.com/aggregator/v1/robinhood/feeds/BTC_USD/value
+  https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/value
 ```
 
 Get one at [build.squidlor.com](https://build.squidlor.com). Full detail in [authentication](/build/authentication) and [rate limits](/build/rate-limits); error codes in [errors & limits](/api/errors).
@@ -39,28 +39,26 @@ Get one at [build.squidlor.com](https://build.squidlor.com). Full detail in [aut
 **Chain-scoped paths** (preferred). The chain is part of the path:
 
 ```bash
-curl https://api.squidlor.com/aggregator/v1/base/feeds
-curl https://api.squidlor.com/aggregator/v1/8453/feeds
+curl https://api.squidlor.com/aggregator/v1/arc/feeds
+curl https://api.squidlor.com/aggregator/v1/5042002/feeds
 ```
 
-`:chain` accepts either a slug or a numeric chain ID:
+`:chain` accepts either the slug or the numeric chain ID of the configured network:
 
 | Slug | Chain ID |
 | --- | --- |
-| `base` | 8453 |
-| `robinhood` | 4663 |
-| `arbitrum` | 42161 |
+| `arc` | 5042002 on Arc Testnet; the mainnet id once the API serves mainnet |
 
 **Legacy query-string paths**, still mounted for backwards compatibility:
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/feeds?chainId=8453"
+curl "https://api.squidlor.com/aggregator/v1/feeds?chainId=5042002"
 ```
 
-These default to chain 42161 when `chainId` is omitted. New integrations should use the chain-scoped form: a feed is then addressable as `(chain, pair)` with no query string, which is what the SDK and frontends use.
+These default to the configured chain when `chainId` is omitted. New integrations should use the chain-scoped form: a feed is then addressable as `(chain, pair)` with no query string, which is what the SDK and frontends use.
 
 > [!NOTE]
-> An unrecognised slug returns `404`. Earlier builds fell back to Arbitrum silently, so a typo returned another chain's prices with that chain's `chainId`; checking `chainId` in the response is still a good habit. The events and randomness endpoints exist on Arbitrum only.
+> An unrecognised slug returns `404`. Earlier multi-chain builds fell back to a default chain silently, so a typo returned another chain's prices with that chain's `chainId`; checking `chainId` in the response is still a good habit.
 
 ## Pair formatting
 
@@ -89,9 +87,6 @@ Pairs are case-insensitive on the way in and normalized to uppercase in response
 | `GET /v1/:chain/feeds/:pair/at/proof` | [Merkle proof](/api/providers#proofs) of a past observation against an on-chain root |
 | `GET /v1/prices`, `/v1/prices/:symbol`, `/v1/prices/stream` | [Realtime off-chain medians](/api/realtime), 200 symbols, one tick a second |
 | `GET /v1/daily…` | [Daily price book](/api/daily), one price per asset per 00:00 UTC, permanent |
-| `GET /v1/:chain/events` | [Event-outcome aggregator state](/api/events) |
-| `GET /v1/:chain/events/:eventId` | [One event, per source](/api/events#get-one-event) |
-| `GET /v1/:chain/randomness` | [Commit-reveal randomness state](/api/randomness) |
 | `GET /health` | Service liveness |
 | `GET /` | Endpoint index |
 

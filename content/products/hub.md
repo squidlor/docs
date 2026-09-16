@@ -11,9 +11,8 @@ The layout is a deck: an identity card and six numbered chapters on the left, on
 
 | Route | Chapter | What is on it |
 | --- | --- | --- |
-| `/chat` | Chat | The seven desks, a live ticker of the Base feeds, and a question box. Answers stream in place from the chat API; rich results such as sign panels open in [Oracle Chat](/ai/oracle-chat). |
+| `/chat` | Chat | The six desks, a live ticker of the Arc feeds, and a question box. Answers stream in place from the chat API; rich results such as sign panels open in [Oracle Chat](/ai/oracle-chat). |
 | `/markets` | Markets | Open [prediction markets](/products/markets), and your positions, points and rank when signed in. |
-| `/trade` | Trade | The GEYSER board: the most active [stock-paired tokens](/products/trade) on Base. |
 | `/build` | Build | The [builder portal](/build), keys and the [MCP server](/ai/mcp). |
 | `/clippers` | Clippers | The current [clip contest](/products/clippers). |
 | `/docs` | Docs | Where to start reading on this site. |
@@ -46,4 +45,4 @@ The proxying is what makes the hub work with **zero backend changes**. The chat 
 
 ## Built from what already existed
 
-The hub shares its theme, connect modal and wallet stack with [squidlor.trade](/products/trade), and the same squid splash every Squidlor frontend shows before first paint. It is deployed like the trade page and the portal: build, copy the static output to the box, nginx serves it.
+The hub shares its theme, connect modal and wallet stack with every other Squidlor frontend, and the same squid splash they all show before first paint. It is deployed like the portal: build, copy the static output to the box, nginx serves it.

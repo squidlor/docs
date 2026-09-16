@@ -47,7 +47,7 @@ async function getPrice(chain: string, pair: string): Promise<FeedValue> {
   return response.json();
 }
 
-const btc = await getPrice("arbitrum", "BTC/USD");
+const btc = await getPrice("arc", "BTC/USD");
 console.log(`${btc.pair} = ${btc.value} (${btc.healthyCount} healthy sources)`);
 ```
 
@@ -72,8 +72,14 @@ Format for display at the very end. Keep everything in `bigint` until then.
 No dependency on Squidlor's servers, just an RPC endpoint:
 
 ```typescript
-import { createPublicClient, http, parseAbi, formatUnits } from "viem";
-import { base } from "viem/chains";
+import { createPublicClient, http, parseAbi, formatUnits, defineChain } from "viem";
+
+const arc = defineChain({
+  id: 5042002,
+  name: "Arc Testnet",
+  nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
+  rpcUrls: { default: { http: ["https://rpc.testnet.arc.io"] } },
+});
 
 const AGGREGATOR_ABI = parseAbi([
   "function peek() view returns (int256 answerValue, uint256 freshestUpdatedAt, uint256 healthyCount)",
@@ -83,11 +89,11 @@ const AGGREGATOR_ABI = parseAbi([
 ]);
 
 const client = createPublicClient({
-  chain: base,
-  transport: http("https://mainnet.base.org"),
+  chain: arc,
+  transport: http("https://rpc.testnet.arc.io"),
 });
 
-const BTC_USD = "0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345"; // BTC/USD aggregator, Base
+const BTC_USD = "0xE6727b1eE47e3056A29ECeDc82EDDd1161Ca6c21"; // BTC/USD aggregator, Arc Testnet; see /networks/addresses
 
 // One multicall instead of four round trips.
 const [peek, decimals, sourceCount] = await client.multicall({

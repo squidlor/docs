@@ -52,12 +52,12 @@ The recorded median series for a feed.
 | `limit` | - | Maximum points returned. |
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/base/feeds/BTC_USD/history?interval=1h&limit=3"
+curl "https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/history?interval=1h&limit=3"
 ```
 
 ```json
 {
-  "chainId": 8453,
+  "chainId": 5042002,
   "pair": "BTC/USD",
   "interval": "1h",
   "count": 3,
@@ -115,12 +115,12 @@ Candles computed over the recorded samples.
 | `limit` | - | Maximum candles. |
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/base/feeds/ETH_USD/ohlc?interval=4h&limit=2"
+curl "https://api.squidlor.com/aggregator/v1/arc/feeds/ETH_USD/ohlc?interval=4h&limit=2"
 ```
 
 ```json
 {
-  "chainId": 8453,
+  "chainId": 5042002,
   "pair": "ETH/USD",
   "interval": "4h",
   "count": 2,
@@ -166,17 +166,17 @@ The per-source forensic record: what each source reported at each sample, how fa
 | `flagged` | `false` | `true` returns only rounds flagged for deviation or staleness. |
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/base/feeds/BTC_USD/audit?flagged=true&limit=1"
+curl "https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/audit?flagged=true&limit=1"
 ```
 
 ```json
 {
-  "chainId": 8453,
+  "chainId": 5042002,
   "pair": "BTC/USD",
   "count": 1,
   "rounds": [
     {
-      "chainId": 8453,
+      "chainId": 5042002,
       "pair": "BTC/USD",
       "ts": "2026-09-09T12:21:00.852Z",
       "decimals": 8,

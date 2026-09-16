@@ -18,11 +18,8 @@ npm install @squidlor/oracle-sdk viem
 ```typescript
 import { getFeed } from "@squidlor/oracle-sdk";
 
-// BTC/USD aggregator on Base (8453)
-const feed = getFeed(8453, "BTC/USD", {
-  address: "0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345",
-  rpcUrl: "https://mainnet.base.org",
-});
+// BTC/USD aggregator on Arc
+const feed = getFeed("arc", "BTC/USD");
 const { formatted, price, decimals, updatedAt, roundId } = await feed.read();
 
 console.log(formatted);  // "77016.42057129"
@@ -37,29 +34,20 @@ console.log(updatedAt);  // 1789152685 (unix seconds)
 
 | Chain | ID | Built-in aggregators |
 | --- | --- | --- |
-| `robinhood` | 4663 | BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL (all /USD) |
-| `arbitrum` | 42161 | BTC, ETH, SOL, EUR, XAU, TSLA (/USD), FBTC/POR |
+| `arc` | 5042002 (testnet) | BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL (all /USD) |
 
-Chain IDs work in place of slugs: `getFeed(4663, "BTC/USD")`.
+Squidlor publishes on one chain, so `chain` has a default and you can leave it out. Chain IDs work
+in place of slugs: `getFeed(5042002, "BTC/USD")`.
 
-**Base (8453) is not in the static map yet** as of 0.4.0. Read it with an explicit address from [deployed addresses](/networks/addresses#base-8453), which works on any chain viem knows:
-
-```typescript
-import { getFeed } from "@squidlor/oracle-sdk";
-
-const nvda = getFeed(8453, "NVDA/USD", {
-  address: "0xd4e034215222F327F08f4067805d055Ec3c1aD89",
-  rpcUrl: "https://mainnet.base.org",
-});
-```
-
-The REST client has no such gap: `api.getValue("base", "NVDA/USD")` works today.
+The table is generated from the deployment manifest at publish time, so an SDK release always
+matches the chain it shipped for. Mainnet ships as its own release; read
+[deployed addresses](/networks/addresses) for what is live now.
 
 ```typescript
 import { knownPairs, supportedChains } from "@squidlor/oracle-sdk";
 
-knownPairs("robinhood");  // ['BTC/USD', 'ETH/USD', ...]
-supportedChains();        // [{ key: 'robinhood', chainId: 4663, pairs: 7 }, ...]
+knownPairs("arc");  // ['BTC/USD', 'ETH/USD', ...]
+supportedChains();  // [{ key: 'arc', chainId: 5042002, pairs: 7 }]
 ```
 
 Anything outside that map needs an explicit address or a registry lookup; see [address resolution](#address-resolution).
@@ -69,10 +57,8 @@ Anything outside that map needs an explicit address or a registry lookup; see [a
 `health()` calls the aggregator's `peek()`, which returns the answer alongside how many sources were fresh and in-bounds for it. Use it anywhere being wrong is expensive:
 
 ```typescript
-const { formatted, healthyCount } = await getFeed(8453, "BTC/USD", {
-  address: "0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345",
-}).health();
-if (healthyCount < 2) throw new Error("too few healthy sources to act on");
+const { formatted, healthyCount } = await getFeed("arc", "BTC/USD").health();
+if (healthyCount < 1) throw new Error("no healthy source to act on");
 ```
 
 If too few sources are fresh, the aggregator reverts rather than serve a number it does not stand behind. The SDK decodes that into a typed error:
@@ -81,7 +67,7 @@ If too few sources are fresh, the aggregator reverts rather than serve a number 
 import { getFeed, StaleFeedError } from "@squidlor/oracle-sdk";
 
 try {
-  await getFeed("robinhood", "BTC/USD").read();
+  await getFeed("arc", "BTC/USD").read();
 } catch (e) {
   if (e instanceof StaleFeedError) {
     console.warn(`only ${e.healthy}/${e.required} sources fresh, falling back`);
@@ -100,9 +86,9 @@ import { createClient } from "@squidlor/oracle-sdk";
 
 const api = createClient({ apiKey: process.env.SQUIDLOR_API_KEY }); // key optional
 
-const btc = await api.getValue("robinhood", "BTC/USD");
-const candles = await api.getOhlc("robinhood", "BTC/USD", { interval: "1h", limit: 24 });
-const flagged = await api.getAudit("robinhood", "BTC/USD", { flagged: true });
+const btc = await api.getValue("arc", "BTC/USD");
+const candles = await api.getOhlc("arc", "BTC/USD", { interval: "1h", limit: 24 });
+const flagged = await api.getAudit("arc", "BTC/USD", { flagged: true });
 ```
 
 Standalone equivalents are exported too: `listFeedsRest`, `getFeedRest`, `getValue`, `getHistory`, `getOhlc`, `getAudit`, `getConstituents`. Failures throw `SquidlorApiError` with `status`, `code` and `retryAfterSec`.
@@ -120,15 +106,15 @@ Three ways, in the order the SDK tries them:
 ```typescript
 // 1. Explicit address: the escape hatch for any chain or pair the SDK
 //    doesn't know about yet.
-const feed = getFeed("robinhood", "SOMETHING/USD", {
-  address: "0x7D8E02C7d2Ee80c75EFF199B8AD64522C4a88b91",
+const feed = getFeed("arc", "SOMETHING/USD", {
+  address: "0xa5dDb1FAaf09D6bCaFDDa13AFed239056EE5417E",
 });
 
 // 2. Resolve through the on-chain registry: async, because it reads a contract.
-//    The Robinhood registry ships in the SDK, so no address is needed.
+//    The registry address ships in the SDK, so no address is needed.
 import { getFeedViaRegistry } from "@squidlor/oracle-sdk";
 
-const resolved = await getFeedViaRegistry("robinhood", "NVDA/USD");
+const resolved = await getFeedViaRegistry("arc", "NVDA/USD");
 ```
 
 Resolving through the registry adds the registry admin to your trust surface; see the [trade-off table](/contracts/registry#trade-off-registry-lookup-versus-a-hardcoded-address).
@@ -147,20 +133,22 @@ interface GetFeedOptions {
 Passing `client` is the right move in an application that already has one: you get connection reuse, your own transport configuration, and consistent retry behaviour:
 
 ```typescript
-import { createPublicClient, http } from "viem";
-import { base } from "viem/chains";
+import { createPublicClient, http, defineChain } from "viem";
 import { getFeed } from "@squidlor/oracle-sdk";
 
-const client = createPublicClient({
-  chain: base,
-  transport: http(process.env.BASE_RPC_URL),
+const arc = defineChain({
+  id: 5042002,
+  name: "Arc Testnet",
+  nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
+  rpcUrls: { default: { http: ["https://rpc.testnet.arc.io"] } },
 });
 
-// Base is read by explicit address until it lands in the static map.
-const feed = getFeed(8453, "BTC/USD", {
-  client,
-  address: "0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345",
+const client = createPublicClient({
+  chain: arc,
+  transport: http(process.env.ARC_RPC_URL),
 });
+
+const feed = getFeed("arc", "BTC/USD", { client });
 ```
 
 > [!NOTE]
@@ -190,8 +178,8 @@ interface Feed {
 ```typescript
 import { knownPairs, CHAINS } from "@squidlor/oracle-sdk";
 
-knownPairs("arbitrum");  // ["BTC/USD", "ETH/USD", "SOL/USD"]
-CHAINS.arbitrum.chainId; // 42161
+knownPairs("arc");  // ["BTC/USD", "ETH/USD", "SOL/USD", …]
+CHAINS.arc.chainId; // 5042002
 ```
 
 `knownPairs` reads the static map, so it will not list pairs that exist on-chain but are not compiled into the SDK. For live discovery, use the [API's feed list](/api/feeds#list-feeds).
@@ -214,11 +202,11 @@ Being clear about the boundaries, since they are easy to assume away:
 try {
   // XAU/USD isn't in the SDK's built-in map, so this throws before any
   // network call, the most common error you'll hit in practice.
-  const feed = getFeed("arbitrum", "XAU/USD");
+  const feed = getFeed("arc", "XAU/USD");
   const reading = await feed.read();
 } catch (error) {
   // getFeed throws synchronously for an unsupported chain or unknown pair:
-  //   "No known aggregator for XAU/USD on chain 42161. Pass opts.address, …"
+  //   "No known aggregator for XAU/USD on chain 5042002. Pass opts.address, …"
   // read() throws on RPC failure, or if the aggregator reverts.
   console.error(error);
 }

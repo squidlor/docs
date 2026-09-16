@@ -1,18 +1,26 @@
 ---
 title: Measured performance
-description: What the Base deployment has actually done since 30 August 2026, read from the public audit trail, including the rounds where it refused to answer. Reproduce every number with the calls on this page.
+description: Historical evidence from a two-leg deployment, 30 August to 11 September 2026, read from the public audit trail. Kept as a dated record until Arc has a comparable window.
 ---
 
-Everything on this page comes from the public read API against the Base (8453) deployment. Nothing is quoted from a design document. Every table names the call that produced it, so you can rerun it and get today's numbers instead of ours.
+> [!NOTE]
+> **This page is dated evidence, not current state.** Every number below was measured between
+> 30 August and 11 September 2026, on an earlier deployment where each pair ran two on-chain legs.
+> Squidlor now publishes on [Arc](/networks/arc) with one on-chain leg per pair, so the
+> leg-agreement tables here describe a configuration that is not live. It stays up because the
+> method is the point and because deleting measurements when they stop flattering you is how
+> evidence pages become marketing. It is replaced once Arc has a comparable window.
 
-Window: **2026-08-30 (Base go-live) to 2026-09-11**, 12,757 sampled rounds per pair, one sample roughly every 80 seconds.
+Everything on this page came from the public read API. Nothing is quoted from a design document. Every table names the call that produced it, so you can rerun the method against the current chain.
+
+Window: **2026-08-30 to 2026-09-11**, 12,757 sampled rounds per pair, one sample roughly every 80 seconds.
 
 ## Freshness and agreement between legs
 
-Every Base pair is a two-leg median: Chainlink and Squidlor. The provider scorecard replays every recorded round and reports, per leg, how often it was fresh inside its staleness window and how far it sat from the round median.
+Every pair in that window was a two-leg median: Chainlink and Squidlor. The provider scorecard replays every recorded round and reports, per leg, how often it was fresh inside its staleness window and how far it sat from the round median.
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/base/providers?pair=BTC_USD"
+curl "https://api.squidlor.com/aggregator/v1/arc/providers?pair=BTC_USD"
 ```
 
 | Pair | Leg | Fresh rate | Deviation from round median, median / p95 / max |
@@ -35,7 +43,7 @@ Equity pairs are deliberately absent from the table. Squidlor's equity leg publi
 A Squidlor aggregator with `minHealthySources = 2` reverts rather than returning a price when either leg is stale. The API surfaces those rounds as `peekError` and flags them.
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/base/feeds/BTC_USD/audit?flagged=true&limit=1000"
+curl "https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/audit?flagged=true&limit=1000"
 ```
 
 | Pair | Rounds sampled | Rounds refused | Share | Episodes |
@@ -48,42 +56,42 @@ All 209 refusals had the same cause: the Squidlor leg went stale, which means th
 What those three episodes were:
 
 - **2 September, 22 rounds.** Deployment day. The relay's staleness window was tightened from 25,200 seconds to 600 while the crypto relay was being moved to its dedicated signer key.
-- **3 September, 174 rounds (about 4 hours).** A public Base RPC endpoint began throttling the relay's simulation call on roughly 60% of attempts, so pushes failed silently while the process reported healthy. The fix, shipped the same day, is an ordered RPC pool with per-endpoint cooldowns and the `--slow` broadcast path; the incident is written up on [trust model](/resources/trust-model#4-relayer-liveness) and the pool on [roadmap](/resources/roadmap).
+- **3 September, 174 rounds (about 4 hours).** A public RPC endpoint began throttling the relay's simulation call on roughly 60% of attempts, so pushes failed silently while the process reported healthy. The fix, shipped the same day, is an ordered RPC pool with per-endpoint cooldowns and the `--slow` broadcast path; the incident is written up on [trust model](/resources/trust-model#4-relayer-liveness) and the pool on [roadmap](/resources/roadmap).
 - **9 September, 13 rounds (about 17 minutes).** A relay restart during a deploy. Recovered without intervention.
 
 Total time the BTC/USD aggregator refused to answer since go-live: about 4.7 hours out of 12 days. Total time it returned a stale or single-source price as if it were a two-source median: zero.
 
 ## Cost per update
 
-Read from the transactions the crypto relay lands on Base, four feeds per transaction:
+Read from the transactions the crypto relay lands, several feeds per transaction:
 
-| Chain | Feeds per tx | Gas per tx | Trigger |
-| --- | --- | --- | --- |
-| Base (8453) | 4 | about 289,000 | 0.5% deviation or 300 s heartbeat |
-| Robinhood Chain (4663) | 5 | 351,000 steady state, 522,000 first push | 0.5% deviation or 3,600 s heartbeat |
+| Feeds per tx | Gas per tx | Trigger |
+| --- | --- | --- |
+| 4 | about 289,000 | 0.5% deviation or 300 s heartbeat |
+| 5 | 351,000 steady state, 522,000 first push | 0.5% deviation or 3,600 s heartbeat |
 
 The marginal feed costs about 35,000 gas, against roughly 150,000 fixed per transaction, which is why every feed past half its heartbeat rides along whenever any feed fires. Adding a pair does not add a transaction.
 
 ## How this compares to the incumbents' cadence
 
-Measured on 11 September 2026 by walking rounds backwards from `latestRoundData` on each chain's public RPC, and read from Chainlink's own reference data:
+Chainlink's own cadence, measured on 11 September 2026 by walking rounds backwards from `latestRoundData` on each chain's public RPC, and read from Chainlink's reference data:
 
 | Feed | Trigger | Updates in 24 h | Average gap |
 | --- | --- | --- | --- |
 | Chainlink ETH/USD, Ethereum | 0.5% or 1 h | 30 | 48 min |
 | Chainlink ETH/USD, Base | 0.15% or 20 min | 153 | 9.4 min |
 | Chainlink ETH/USD, Arbitrum | 0.05% or about 29 min | 615 | 2.3 min |
-| Squidlor ETH/USD, Base | 0.5% or 5 min | 288 minimum | 5 min or less |
+| Squidlor ETH/USD | 0.5% or 5 min | 288 minimum | 5 min or less |
 
-Chainlink tunes tightest on the cheapest chains. Squidlor's cadence is an operator setting, changeable live, and the same on every chain it runs on.
+Chainlink tunes tightest on the cheapest chains. Squidlor's cadence is an operator setting, changeable live.
 
 ## Reproduce it
 
 Every number above is one of these calls, with no key required at 30 requests a minute:
 
-- `GET /v1/base/providers` and `?pair=` for the scorecards, `?from=` and `?to=` for any window.
-- `GET /v1/base/feeds/:pair/audit?flagged=true` for every refused or divergent round with per-leg prices and timestamps.
-- `GET /v1/base/feeds/:pair/at?timestamp=` for the recorded observation nearest any moment, and `/at/proof` for the same observation with a Merkle proof against a root committed on-chain once its period closes.
-- `GET /v1/base/feeds/:pair/history?interval=1d` for the daily series.
+- `GET /v1/arc/providers` and `?pair=` for the scorecards, `?from=` and `?to=` for any window.
+- `GET /v1/arc/feeds/:pair/audit?flagged=true` for every refused or divergent round with per-leg prices and timestamps.
+- `GET /v1/arc/feeds/:pair/at?timestamp=` for the recorded observation nearest any moment, and `/at/proof` for the same observation with a Merkle proof against a root committed on-chain once its period closes.
+- `GET /v1/arc/feeds/:pair/history?interval=1d` for the daily series.
 
 If you run these and get numbers that disagree with this page, the API is right and the page is stale. Tell us.

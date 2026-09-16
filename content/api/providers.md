@@ -15,12 +15,12 @@ GET /v1/:chain/providers/:provider
 Grades every source wired into a chain's aggregators by replaying recorded rounds. Default window is the last 7 days; `?from=` and `?to=` (ISO timestamps or Unix seconds) set any window, `?pair=BTC_USD` restricts to one pair.
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/base/providers?pair=BTC_USD"
+curl "https://api.squidlor.com/aggregator/v1/arc/providers?pair=BTC_USD"
 ```
 
 ```json
 {
-  "chainId": 8453,
+  "chainId": 5042002,
   "window": { "from": "2026-08-12T18:49:34Z", "to": "2026-09-11T18:49:34Z", "days": 30 },
   "roundsScanned": 12757,
   "providers": [
@@ -77,12 +77,12 @@ GET /v1/:chain/feeds/:pair/at?timestamp=<unix seconds or ISO>
 Returns the recorded observation nearest the requested moment, with the distance attached. Recording is sampled, so an exact-timestamp answer does not exist and the endpoint never pretends it does.
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/base/feeds/ETH_USD/at?timestamp=1789145378"
+curl "https://api.squidlor.com/aggregator/v1/arc/feeds/ETH_USD/at?timestamp=1789145378"
 ```
 
 ```json
 {
-  "chainId": 8453,
+  "chainId": 5042002,
   "pair": "ETH/USD",
   "requestedAt": "2026-09-11T17:49:38Z",
   "observedAt": "2026-09-11T17:49:26Z",

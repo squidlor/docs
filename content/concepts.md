@@ -15,7 +15,7 @@ Feeds carry a fixed number of **decimals**: 8 across the whole Squidlor deployme
 
 A **source** is one independent origin of a price. Sources come in two flavours:
 
-- **Off-chain sources**: the venues and data providers a relayer reads before it publishes: Binance, Coinbase, Gate.io, Bybit, the Arbitrum oracle hub for crypto; Yahoo Finance and Nasdaq (optionally Finnhub and Twelve Data) for equities.
+- **Off-chain sources**: the venues and data providers a relayer reads before it publishes: Coinbase, Binance, Bybit, Gate.io, Kraken and OKX for crypto; Yahoo Finance and Nasdaq (optionally Finnhub and Twelve Data) for equities.
 - **On-chain sources**: other oracle networks already publishing on the host chain, chiefly Chainlink, plus Squidlor's own published feed.
 
 The distinction matters because they are aggregated at different layers. See [aggregation architecture](/oracle/architecture).

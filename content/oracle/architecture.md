@@ -14,7 +14,7 @@ Each layer is independently optional. A deployment can run any subset; the live 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
 │ LAYER 1: OFF-CHAIN SOURCE AGGREGATION                                   │
-│   Binance · Coinbase · Gate.io · Bybit · Arbitrum hub (crypto)         │
+│   Coinbase · Binance · Bybit · Gate.io · Kraken · OKX (crypto)         │
 │   Yahoo Finance · Nasdaq (+ Finnhub / Twelve Data) (equities)          │
 │                        │  relayer medians, signs {feedId, price, ts}   │
 └────────────────────────┼───────────────────────────────────────────────┘
@@ -47,19 +47,15 @@ For crypto, the sources medianed per pair in the live deployment:
 
 | Pair | Sources |
 | --- | --- |
-| BTC/USD, ETH/USD, SOL/USD | Arbitrum hub + Binance + Coinbase + Gate.io + Bybit (5) |
-| BNB/USD | Binance + Gate.io + Bybit (3) |
-| XRP/USD | Binance + Coinbase + Gate.io + Bybit (4) |
+| BTC/USD, ETH/USD, SOL/USD | Coinbase + Binance + Bybit + Gate.io + Kraken + OKX (6) |
 
-For equities, the relay medians free market-data APIs and pushes during US market hours only.
+For equities, the relay medians four market-data APIs (Yahoo Finance, Nasdaq, Finnhub, Twelve Data) and pushes during US market hours only.
 
-**What the Arbitrum hub actually contributes.** The hub is a `SquidlorOracleAggregator` of the same kind described in Layer 3, and it is frequently described as a Chainlink + Pyth + DIA median. Measured on 2026-08-05, that overstates it. BTC/USD runs in `PRIMARY_WITH_FALLBACK` mode, so it returns its first healthy source (Chainlink) and never medians at all. Its Pyth source is enabled but 25.8 h behind, and DIA, RedStone, API3, Chronicle and Stork are all disabled on-chain. ETH/USD does median, but only Chainlink and the Uniswap V3 TWAP were inside their windows at read time; SOL/USD reduced to Chainlink alone. So the hub reads today as **Chainlink, with a TWAP cross-check on two pairs**, one venue in the relay's five, not a pre-medianed composite of three oracle networks.
-
-That is not fatal to Layer 1: the four CEX reads are independent of it, and the median only needs the hub to be *a* source, not a good one. But nothing should be described as defended by cross-oracle aggregation on the strength of the hub. The per-source measurements, and the two configuration bugs behind them, are recorded in `aggregator-contract/docs/HUB_SOURCE_STATE.md`.
+Every venue in the crypto list is an exchange read directly over its own WebSocket. None of them is another oracle network, so nothing in Layer 1 should be described as cross-oracle aggregation; that is Layer 3's job, and on Arc Layer 3 has one source today.
 
 **How the price is computed.** A dedicated `price-stream` service holds live WebSocket connections to the venues and publishes a fresh median **every second**. The relay reads that same number, so the price a chart shows and the price a contract stores cannot disagree about what the market did, only about when it was last published. See [realtime prices](/api/realtime) for the consumer side. The relay keeps a REST fallback and does not hard-depend on the stream: it is the process that keeps the oracle alive.
 
-**When it publishes.** Off-chain updates every second; on-chain updates only on a trigger, the same rule every production push oracle uses. A feed goes on-chain when it has moved **≥ 0.5%** from its stored value, or when that value reaches the heartbeat: **300 seconds on Base**, 1 hour on Robinhood Chain when its relay runs. Both are measured against the adapter's own state, not against what the relay last attempted, so the numbers mean what a consumer reads. Feeds already past half their heartbeat ride along in a transaction another feed has already paid for. Both triggers are changeable live from the operator panel without restarting the relay.
+**When it publishes.** Off-chain updates every second; on-chain updates only on a trigger, the same rule every production push oracle uses. A feed goes on-chain when it has moved **≥ 0.5%** from its stored value, or when that value reaches the heartbeat, **300 seconds** on Arc. Both are measured against the adapter's own state, not against what the relay last attempted, so the numbers mean what a consumer reads. Feeds already past half their heartbeat ride along in a transaction another feed has already paid for. Both triggers are changeable live from the operator panel without restarting the relay.
 
 **What this layer buys you:** a single venue printing a bad tick (a thin-book wick, a stuck API) does not become the on-chain price. The median absorbs it.
 
@@ -86,9 +82,9 @@ Two bounds are enforced here regardless of any other configuration: a packet old
 
 `SquidlorOracleAggregator` (one instance per pair) treats every oracle network as just another source behind a uniform adapter interface. It reads them all, drops the unhealthy ones, and medians the rest.
 
-On Base, all eight pairs combine a `ChainlinkSource` with a `SquidSource`, the four equity pairs included. On Robinhood Chain every pair except SOL/USD is wired the same way (chain 4663 has no Chainlink SOL feed), but Squidlor's relay there is paused as of September 2026, so those pairs read Chainlink alone until it resumes. See [price feeds](/oracle/feeds) for the per-chain table.
+On Arc every pair has a single `SquidSource` today, because no other oracle network has published Arc feed addresses yet. The previous deployment combined a `ChainlinkSource` with the `SquidSource` on every pair, equities included, and the [measured performance](/oracle/evidence) page records how the two legs agreed. On Arc, a second leg is one `addSource` call the day a provider publishes; until then this layer is a pass-through and `healthyCount` is at most 1. See [price feeds](/oracle/feeds) for the table.
 
-**What this layer buys you:** an entire oracle network can halt, stall, or go wrong without taking your price with it. The aggregator's worst case is falling back to a single healthy source, so it can never be worse than its best constituent.
+**What this layer buys you, once two sources are wired:** an entire oracle network can halt, stall, or go wrong without taking your price with it. The aggregator's worst case is falling back to a single healthy source, so it can never be worse than its best constituent. With one source wired, it buys you the uniform interface and nothing more.
 
 ## Design decisions worth knowing
 

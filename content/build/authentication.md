@@ -31,13 +31,13 @@ Preferred: an `Authorization` header:
 
 ```bash
 curl -H "Authorization: Bearer sq_live_..." \
-  https://api.squidlor.com/aggregator/v1/robinhood/feeds/BTC_USD/value
+  https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/value
 ```
 
 Query parameter, for contexts where you cannot set headers (a browser `<img>`, a webhook config, a spreadsheet):
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/robinhood/feeds/BTC_USD/value?apiKey=sq_live_..."
+curl "https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/value?apiKey=sq_live_..."
 ```
 
 Keys in URLs land in server logs, browser history and referrer headers. Prefer the header wherever you have the choice.
@@ -48,7 +48,7 @@ Keys in URLs land in server logs, browser history and referrer headers. Prefer t
 import { createClient } from '@squidlor/oracle-sdk';
 
 const api = createClient({ apiKey: process.env.SQUIDLOR_API_KEY });
-const btc = await api.getValue('robinhood', 'BTC/USD');
+const btc = await api.getValue('arc', 'BTC/USD');
 ```
 
 ### With the MCP server

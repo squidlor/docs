@@ -1,15 +1,15 @@
 ---
 title: AI & agents
-description: Two interfaces over the same oracle and product data. A chat UI with seven desks, and an MCP server any agent can call.
+description: Two interfaces over the same oracle and product data. A chat UI with six desks, and an MCP server any agent can call.
 ---
 
-Both of these sit as thin layers over the [aggregator API](/api) and the product APIs behind [markets](/products/markets) and [launches](/products/trade). Neither is a separate source of truth: every number they state comes from state you could read yourself.
+Both of these sit as thin layers over the [aggregator API](/api) and the product API behind [markets](/products/markets). Neither is a separate source of truth: every number they state comes from state you could read yourself.
 
 ```cards
 [
   {
     "title": "Oracle Chat",
-    "description": "Seven persona desks and a router, over live feeds, wallets, agent tokens, prediction markets and stock-paired launches.",
+    "description": "Six persona desks and a router, over live feeds, wallets, agent tokens and prediction markets.",
     "href": "/ai/oracle-chat",
     "icon": "bot"
   },
@@ -32,8 +32,8 @@ Both of these sit as thin layers over the [aggregator API](/api) and the product
 
 | System | State |
 | --- | --- |
-| **Oracle Chat** | Live at [chat.squidlor.com](https://chat.squidlor.com). Seven desks plus a router. Signs builders in, mints API keys, sets up price alerts, reads wallets, quotes swaps, generates integration code, launches and trades stock-paired tokens, and reads and trades prediction markets. |
-| **MCP server** | Live at `api.squidlor.com/mcp`, 20 tools including signed webhooks and usage. The market and launch tools are chat-only. |
+| **Oracle Chat** | Live at [chat.squidlor.com](https://chat.squidlor.com). Six desks plus a router. Signs builders in, mints API keys, sets up price alerts, reads wallets, quotes swaps, generates integration code, and reads and trades prediction markets. |
+| **MCP server** | Live at `api.squidlor.com/mcp`, 20 tools including signed webhooks and usage. The market tools are chat-only. |
 | **X agent** | Live as [@Squidlor_Agent](https://x.com/Squidlor_Agent), answering mentions with live prices and Virtuals agent-token data. Replies are drafted for review before posting. |
 | **The hub** | [app.squidlor.com](https://app.squidlor.com) streams chat answers in place through the same API. See [Hub](/products/hub). |
 
@@ -55,11 +55,11 @@ Every desk's instructions name three data scopes and forbid blending them:
 
 | Scope | What it covers | Chains |
 | --- | --- | --- |
-| **Oracle feeds** | Squidlor medians and their sources | Arbitrum, Robinhood Chain, and Base on the HTTP API |
-| **Wallet engine** | Balances, holdings, transactions, swap quotes | Ethereum, BNB Chain, Polygon, Arbitrum, Optimism, zkSync and seven more |
+| **Oracle feeds** | Squidlor medians and their sources | Arc |
+| **Wallet engine** | Balances, holdings, transactions, swap quotes | A third-party engine's own chain set, which does not include Arc |
 | **DEX market data** | Trending tokens, token lookup, pool prints | Any chain GeckoTerminal indexes |
 
-"What is trending on Base" is a DEX question and gets the DEX tools. "What is BTC" is an oracle question and gets a median with its source count. A desk that reaches for the feed list to answer a trending question is a bug, and there is a test for it.
+"What is trending on <some chain>" is a DEX question and gets the DEX tools. "What is BTC" is an oracle question and gets a median with its source count. A desk that reaches for the feed list to answer a trending question is a bug, and there is a test for it.
 
 ## Shared tool surface
 
@@ -80,15 +80,12 @@ The thirteen oracle reads, each a thin wrapper over an API endpoint:
 | `get_audit_trail` | [`/feeds/{PAIR}/audit`](/api/history#audit-trail) |
 | `list_flagged` | Anomalous rounds across every feed on a chain |
 | `get_realtime_prices` | [Off-chain 1-second median](/api/realtime) across venues |
-| `list_events` | [`/events`](/api/events) |
+| `list_events` | `/events` |
 | `generate_integration` | Ready-to-run code for six integration shapes |
 
-Each side then adds what only makes sense there. Oracle Chat has the drawn widgets (`render_live_chart`, `render_arb_board`), exchange arbitrage, the Virtuals agent-token tools, the DEX market-data tools, the prediction-market tools on TIDE, the launch and trade tools on GEYSER, and account tools on every desk. The MCP server has signed webhooks, which let an agent react to a move instead of polling for one. Wallet reads and swap quotes are defined once and served by chat today, off by default over MCP.
+Each side then adds what only makes sense there. Oracle Chat has the drawn widgets (`render_live_chart`, `render_arb_board`), exchange arbitrage, the Virtuals agent-token tools, the DEX market-data tools, the prediction-market tools on TIDE, and account tools on every desk. The MCP server has signed webhooks, which let an agent react to a move instead of polling for one. Wallet reads and swap quotes are defined once and served by chat today, off by default over MCP.
 
 Because the oracle tools are all wrappers, an agent's data capabilities are exactly the API's capabilities. There is no privileged path, and nothing an agent can see that you cannot fetch with `curl`.
-
-> [!NOTE]
-> The oracle tools' chain list is `arbitrum` and `robinhood` in the published package. Base is on the HTTP API but not yet in that list, so an agent asking `list_feeds` for `base` gets "unknown chain" today. It is on the [roadmap](/resources/roadmap).
 
 ## Why an agent interface at all
 

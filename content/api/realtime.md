@@ -12,7 +12,7 @@ Squidlor runs two feeds at two cadences, on purpose.
 | Cost per update | zero | gas |
 | Use it for | charts, tickers, alerts, UI | liquidations, settlement, anything a contract reads |
 
-This is the same split Chainlink and Pyth use (continuous computation off-chain, threshold-gated publication on-chain), because latency is free off-chain and costs gas on-chain. Measured on Robinhood Chain 4663, publishing every second instead of on a trigger costs ~$17.6/day against ~$0.33/day for the same information.
+This is the same split Chainlink and Pyth use (continuous computation off-chain, threshold-gated publication on-chain), because latency is free off-chain and costs gas on-chain. Measured on an earlier deployment, publishing every second instead of on a trigger cost about 50 times more gas than the trigger for the same information; on Arc, at about 0.007 USDC a push, every second would be about 600 USDC a day against about 2 USDC on the trigger.
 
 > [!WARNING]
 > Do not price a liquidation off this feed. A contract reads the on-chain value, so a liquidation decided against a 1-second price that has not been published yet can be wrong at the moment it executes. Use `/v1/feeds` for anything that must agree with a contract, and this feed for anything a human looks at.
@@ -150,9 +150,10 @@ Delivery is retried three times with exponential backoff. A 4xx (other than 408/
 | Binance | USDT | |
 | Bybit | USDT | |
 | Gate.io | USDT | |
-| Arbitrum hub | USD | one venue, *not* a pre-medianed composite; see [aggregation architecture](/oracle/architecture) |
+| Kraken | USD | the second USD-quoted venue |
+| OKX | USDT | |
 
-USDT-quoted venues are medianed together with the USD-quoted one. The peg risk is bounded: a depegging USDT moves at most two of five inputs, and a median only moves if the median voter moves.
+USDT-quoted venues are medianed together with the USD-quoted ones. The peg risk is bounded: a median only moves if the median voter moves, and a venue whose print drifts from the rest is an outlier the median ignores.
 
 A venue whose socket drops ages out of the median within 10 seconds and reconnects with backoff. A symbol with no live venue publishes nothing and emits `stale`; you will see absence, never a frozen price presented as current.
 

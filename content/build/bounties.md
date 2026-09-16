@@ -31,11 +31,11 @@ Amounts are the budgeted range; the board is authoritative.
 
 | Bounty | Reward |
 |---|---|
-| First lending market using an equity feed as collateral on Robinhood Chain | $3,000–5,000 |
+| First lending market using an equity feed as collateral on Arc | $3,000–5,000 |
 | First perps or synthetic market consuming a Squidlor aggregator | $3,000–5,000 |
 | An index or basket product over 2+ Squidlor feeds | $2,000 |
 
-These are the highest-value bounties because a live consumer contract is the strongest evidence the oracle is useful. Robinhood Chain's own docs invite third parties to build price-aware contracts, and there is no competing grants program there.
+These are the highest-value bounties because a live consumer contract is the strongest evidence the oracle is useful. Arc is new, its gas is a dollar stablecoin, and there is no competing price-oracle grants program there yet.
 
 ### Oracle layer
 

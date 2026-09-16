@@ -79,7 +79,7 @@ The last row is the one that matters. Resolving through the registry means the r
 
 ## Live deployment
 
-On Robinhood Chain the registry registers all seven live pairs. Proxy and implementation addresses are in [deployed addresses](/networks/addresses).
+On Arc the registry registers all seven live pairs. Proxy and implementation addresses are in [deployed addresses](/networks/addresses).
 
 `superAdmin` is the deployer address, the same account that owns the aggregators.
 

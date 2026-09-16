@@ -16,7 +16,7 @@ description: Every status code the API returns, what each one actually means, an
 Error bodies carry a single `message` field:
 
 ```json
-{ "message": "Feed not found: XAU/USD on chain 4663" }
+{ "message": "Feed not found: XAU/USD on chain 5042002" }
 ```
 
 ## The two failure modes worth distinguishing
@@ -24,7 +24,7 @@ Error bodies carry a single `message` field:
 **`404`: nothing is misconfigured on your end necessarily, but nothing will change.** The chain has no aggregator map on this instance, or the pair genuinely does not exist. Retrying is pointless. This is also what you get for a chain the instance does not know at all:
 
 ```json
-{ "message": "chain not supported: 4663" }
+{ "message": "chain not supported: 1" }
 ```
 
 **`503` on a value endpoint: the feed exists but has no usable answer right now.** Too few healthy sources. This is transient and worth retrying, and it is also worth alerting on, because it means the feed is degraded.
@@ -32,7 +32,7 @@ Error bodies carry a single `message` field:
 ```json
 {
   "pair": "BTC/USD",
-  "chainId": 8453,
+  "chainId": 5042002,
   "error": "minHealthySources not met"
 }
 ```
@@ -57,7 +57,7 @@ Two cases return `200` while carrying bad news in the body.
 **A low `healthyCount`.** This is the subtle one: the request succeeded, a price came back, and it is technically valid. But `healthyCount: 1` of `totalSources: 8` means the multi-source guarantee is not currently holding for that feed.
 
 ```typescript
-const feed = await fetchFeed("arbitrum", "BTC_USD");
+const feed = await fetchFeed("arc", "BTC_USD");
 
 if (feed.peekError) {
   throw new Error(`aggregate unavailable: ${feed.peekError}`);

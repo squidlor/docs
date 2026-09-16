@@ -7,10 +7,9 @@ Squidlor started as a price oracle. The products on this page are what got built
 
 | Product | Where | What it does | Chain |
 | --- | --- | --- | --- |
-| **Hub** | [app.squidlor.com](https://app.squidlor.com) | One wallet sign-in, six chapters, every product one click away. | Base |
-| **Oracle Chat** | [chat.squidlor.com](https://chat.squidlor.com) | Seven desks and a router over live feeds, wallets, agent tokens, markets and launches. | Base for markets, launches and wallets; feed tools follow the [tool chain list](/ai#shared-tool-surface) |
-| **Prediction markets** | [markets.squidlor.com](https://markets.squidlor.com) | Gasless Yes/No markets on where a price settles, resolved by the oracle. Season 1 points. | Base |
-| **Stock-paired tokens** | [squidlor.trade](https://squidlor.trade) | Launch and trade tokens priced in tokenized US stocks instead of ETH. | Base |
+| **Hub** | [app.squidlor.com](https://app.squidlor.com) | One wallet sign-in, six chapters, every product one click away. | Arc |
+| **Oracle Chat** | [chat.squidlor.com](https://chat.squidlor.com) | Six desks and a router over live feeds, wallets, agent tokens and markets. | Arc |
+| **Prediction markets** | [markets.squidlor.com](https://markets.squidlor.com) | Gasless Yes/No markets on where a price settles, resolved by the oracle. Season 1 points. | Arc |
 | **Builder portal** | [build.squidlor.com](https://build.squidlor.com) | API keys, projects, usage, showcase, builder rewards. | all |
 | **Clippers** | [squidlor.com/clippers](https://squidlor.com/clippers) | Clip contests: submit a video, get reviewed, get paid. | none |
 | **X agent** | [@Squidlor_Agent](https://x.com/Squidlor_Agent) | Replies to mentions with live oracle prices and Virtuals agent-token data. | none |
@@ -30,12 +29,6 @@ Squidlor started as a price oracle. The products on this page are what got built
     "icon": "trending"
   },
   {
-    "title": "Stock-paired tokens",
-    "description": "The GEYSER desk and squidlor.trade: launch a token against NVDAc, trade it on Uniswap v4.",
-    "href": "/products/trade",
-    "icon": "coins"
-  },
-  {
     "title": "Clippers",
     "description": "Clip contests on the marketing site, run through the platform wallet sign-in.",
     "href": "/products/clippers",
@@ -49,9 +42,8 @@ Squidlor started as a price oracle. The products on this page are what got built
 Every product reads the same oracle. Nothing on this page has a private price path.
 
 - **The oracle** publishes medians on-chain through `SquidlorAdapterV2` and the per-pair aggregators. See [Squidlor Oracle](/oracle).
-- **Prediction markets** settle against the adapter's rounds on Base through `SquidlorPriceResolver`. A market cannot be created for a symbol the adapter has never published, and it cannot resolve without a round inside the 30 minutes before expiry.
-- **Stock-paired tokens** are priced in Coinbase's tokenized stocks (NVDAc and twelve more). The oracle's equity feeds are what the trade page and the GEYSER desk quote the underlying stock from, and a prediction market on the paired stock is one click from every token page.
-- **Oracle Chat** carries a desk for each product: TIDE for markets, GEYSER for launches, PEARL for equities, REEF for Virtuals agent tokens, and KRAKEN, INK and ABYSS for the oracle itself. See [Oracle Chat](/ai/oracle-chat).
+- **Prediction markets** settle against the adapter's rounds through `SquidlorPriceResolver`. A market cannot be created for a symbol the adapter has never published, and it cannot resolve without a round inside the 30 minutes before expiry.
+- **Oracle Chat** carries a desk for each product: TIDE for markets, PEARL for equities, REEF for Virtuals agent tokens, and KRAKEN, INK and ABYSS for the oracle itself. See [Oracle Chat](/ai/oracle-chat).
 - **The hub** adds no backend. It proxies the platform API and the chat API on its own origin and signs you into the platform once.
 
 ## One sign-in, with a caveat

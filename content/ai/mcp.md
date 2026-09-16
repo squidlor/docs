@@ -60,7 +60,7 @@ The shared package also defines wallet reads (`get_wallet_overview`, `get_wallet
 
 Run your own server with `DEFI_AGENT_URL` and `DEFI_AGENT_KEY_MCP` set and the wallet and token tools appear. The quote tools stay behind a second switch, `DEFI_AGENT_QUOTES=true`, because an MCP client is an autonomous agent and an operator should decide to hand it transactions rather than discover that it has them. Quotes come back unsigned with an expiry either way, and the engine enforces what the surface key is entitled to whatever a tool definition asks for.
 
-The prediction-market tools (TIDE) and the launch and trade tools (GEYSER) exist only in [Oracle Chat](/ai/oracle-chat): both build transactions for a browser wallet to sign, and an autonomous MCP client has no such panel. Read the market through its [HTTP API](/products/markets#read-it-yourself) instead.
+The prediction-market tools (TIDE) exist only in [Oracle Chat](/ai/oracle-chat): they build transactions for a browser wallet to sign, and an autonomous MCP client has no such panel. Read the market through its [HTTP API](/products/markets#read-it-yourself) instead.
 
 `compare_oracles` and `get_audit_trail` are the two that justify the integration. Both answer questions that are tedious to assemble by hand and natural to ask in a sentence: "are Chainlink and Squidlor disagreeing on ETH right now, and by how much?"
 
@@ -127,7 +127,7 @@ Restart Claude Desktop afterwards.
 | `DEFI_AGENT_URL`, `DEFI_AGENT_KEY_MCP` | The engine behind the wallet and token tools. Both required, or neither is advertised. |
 | `DEFI_AGENT_QUOTES` | `true` also advertises the swap and send quote tools. |
 
-Point `AGGREGATOR_API_URL` at your own instance to query a chain the public API does not serve. Note that the tools validate the chain slug against `arbitrum` and `robinhood`; Base feeds are on the [public API](/api#two-ways-to-address-a-chain) but not yet in that list.
+Point `AGGREGATOR_API_URL` at your own instance to query a chain the public API does not serve. The tools validate the chain slug against `arc`; anything else is rejected as an unknown chain.
 
 ## What it can and cannot do
 

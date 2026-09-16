@@ -14,20 +14,20 @@ GET /v1/:chain/feeds
 Returns a summary of every aggregator configured for the chain.
 
 ```bash
-curl https://api.squidlor.com/aggregator/v1/base/feeds
+curl https://api.squidlor.com/aggregator/v1/arc/feeds
 ```
 
 ```json
 {
-  "chainId": 8453,
+  "chainId": 5042002,
   "count": 8,
   "feeds": [
     {
-      "chainId": 8453,
+      "chainId": 5042002,
       "pair": "BTC/USD",
       "aggregator": "0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345",
       "kind": "aggregator",
-      "description": "BTC/USD (Squidlor aggregated, Base)",
+      "description": "BTC/USD (Squidlor aggregated, Arc)",
       "median": "77016.42057129",
       "healthyCount": 2,
       "totalSources": 2,
@@ -61,16 +61,16 @@ GET /v1/:chain/feeds/:pair
 The full state of one aggregator, including a per-source breakdown. This is the endpoint to use when you want to know *why* a price is what it is.
 
 ```bash
-curl https://api.squidlor.com/aggregator/v1/base/feeds/BTC_USD
+curl https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD
 ```
 
 ```json
 {
-  "chainId": 8453,
+  "chainId": 5042002,
   "pair": "BTC/USD",
   "aggregator": "0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345",
   "kind": "aggregator",
-  "description": "BTC/USD (Squidlor aggregated, Base)",
+  "description": "BTC/USD (Squidlor aggregated, Arc)",
   "decimals": 8,
   "owner": "0xB57BBda48C33fF725E93D604023D56D9C5b00e2a",
   "selectionMode": "MEDIAN",
@@ -146,13 +146,13 @@ GET /v1/:chain/feeds/:pair/value
 For consumers that only want the number: cron jobs, indexers, dashboards, spreadsheet formulas.
 
 ```bash
-curl https://api.squidlor.com/aggregator/v1/base/feeds/BTC_USD/value
+curl https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/value
 ```
 
 ```json
 {
   "pair": "BTC/USD",
-  "chainId": 8453,
+  "chainId": 5042002,
   "value": "77016.42057129",
   "valueRaw": "7701642057129",
   "decimals": 8,
@@ -164,13 +164,13 @@ curl https://api.squidlor.com/aggregator/v1/base/feeds/BTC_USD/value
 The legacy query-string route additionally returns `ok`, `totalSources`, and `mode`:
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/feeds/BTC_USD/value?chainId=8453"
+curl "https://api.squidlor.com/aggregator/v1/feeds/BTC_USD/value?chainId=5042002"
 ```
 
 ```json
 {
   "pair": "BTC/USD",
-  "chainId": 8453,
+  "chainId": 5042002,
   "ok": true,
   "value": "77016.42057129",
   "valueRaw": "7701642057129",
@@ -189,7 +189,7 @@ If `peek()` reverts, typically because too few sources are healthy, this endpoin
 ```json
 {
   "pair": "BTC/USD",
-  "chainId": 8453,
+  "chainId": 5042002,
   "error": "minHealthySources not met"
 }
 ```
@@ -198,7 +198,7 @@ Handle the 503. A consumer that only checks for a 200 and reads `value` will get
 
 ```typescript
 const response = await fetch(
-  "https://api.squidlor.com/aggregator/v1/base/feeds/BTC_USD/value",
+  "https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/value",
 );
 
 if (!response.ok) {

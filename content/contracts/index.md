@@ -113,4 +113,4 @@ Each subclass supplies just a `dataFeedId()` and a `description()`. All of them 
 
 ## Verification
 
-Contracts are deployed and verifiable on the host chain's explorer. On Robinhood Chain that is Blockscout; see [deployed addresses](/networks/addresses) for links.
+Contracts are deployed and verified on Arc's explorer, which is Blockscout; see [deployed addresses](/networks/addresses) for links.

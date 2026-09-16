@@ -86,7 +86,7 @@ export const getPriceTool = {
   description: 'Current aggregated USD price of a crypto or equity pair',
   parameters: { pair: 'string' },
   execute: async ({ pair }: { pair: string }) => {
-    const { value, healthyCount, updatedAt } = await api.getValue('robinhood', pair);
+    const { value, healthyCount, updatedAt } = await api.getValue('arc', pair);
     return { price: value, healthySources: healthyCount, asOf: new Date(updatedAt * 1000).toISOString() };
   },
 };
@@ -99,7 +99,7 @@ The single most common agent bug we see is treating a price as current because i
 Always pass `updatedAt` and `healthyCount` into the model's context alongside the value:
 
 ```ts
-const { value, updatedAt, healthyCount } = await api.getValue('robinhood', 'NVDA/USD');
+const { value, updatedAt, healthyCount } = await api.getValue('arc', 'NVDA/USD');
 const ageMinutes = Math.round((Date.now() / 1000 - updatedAt) / 60);
 
 const context = `NVDA/USD = $${value}, published ${ageMinutes} min ago, ${healthyCount} healthy source(s).`;

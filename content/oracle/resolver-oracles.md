@@ -8,11 +8,11 @@ A price oracle answers one question: what is X worth right now? Plenty of on-cha
 Resolver oracles are that expansion. One is in production, one runs as a pilot, and the rest are designed.
 
 > [!NOTE]
-> The **price resolver** settles every [prediction market](/products/markets) on Base. Sports resolution runs via the `sports-pusher` service and an `EventOracleAggregator` on Arbitrum, and the [events API](/api/events) reads its state. The other resolver types below are designed but not built.
+> The **price resolver** settles every [prediction market](/products/markets) on Arc. Sports resolution ran as a pilot via the `sports-pusher` service and an `EventOracleAggregator` on an earlier deployment; it is not deployed on Arc and has no public API today. The other resolver types below are designed but not built.
 
 ## The price resolver, in production
 
-The simplest event is "was the price of X above Y at time T?", and it needs no new data source: the oracle already publishes X. `SquidlorPriceResolver` on Base (`0x3c8552764DC0f8719cC6cedab81C4659E18D9574`) answers it for the prediction market.
+The simplest event is "was the price of X above Y at time T?", and it needs no new data source: the oracle already publishes X. `SquidlorPriceResolver` on Arc (address on [deployed addresses](/networks/addresses#prediction-market)) answers it for the prediction market.
 
 - A market is created with a feed id, a strike and an expiry.
 - After expiry, anyone calls `resolve()`. It is permissionless.
@@ -45,12 +45,12 @@ Aggregation modes parallel the price side: `MAJORITY`, `UNANIMOUS`, and `PRIMARY
 
 ## The sports pilot
 
-`sports-pusher` is the working proof of the design. It polls TheSportsDB, computes a YES/NO outcome, and submits it on-chain by one of two paths:
+`sports-pusher` is the working proof of the design, run as a pilot on an earlier deployment. It polls TheSportsDB, computes a YES/NO outcome, and submits it on-chain by one of two paths:
 
 - **Fast path**: submits directly through `OperatorSignedEventSource`. No bond, resolution is immediate, and it trusts the operator.
 - **Bonded path**: submits through UMA's Optimistic Oracle. Slower, because it carries a dispute window, but an incorrect outcome can be challenged economically.
 
-Both land in an `EventOracleAggregator`, which is what the [events API](/api/events) reads.
+Both land in an `EventOracleAggregator`. The pilot's contracts are not deployed on Arc, and redeploying them there is a decision for after the oracle's own second source lands.
 
 That two-path design is the interesting part: it lets a consumer choose its own trade-off between resolution speed and dispute resistance, per event, rather than forcing one answer for the whole system.
 
@@ -62,7 +62,7 @@ That difference compounds. Once resolver oracles ship, what Squidlor can attest 
 
 ## Current limitations
 
-- Only price and sports resolve today. Weather, elections, and custom resolvers are unbuilt.
+- Only the price resolver is in production. Sports resolved in the pilot and is not deployed on Arc. Weather, elections, and custom resolvers are unbuilt.
 - The price resolver inherits the [trust model](/resources/trust-model) of the adapter's signer set: today, keys Squidlor operates.
 - The fast path trusts a single operator signature, with the same caveat as the [price signer set](/resources/trust-model).
 - The bonded path inherits UMA's dispute window (typically 24–48 hours), which rules it out for anything needing prompt settlement.
@@ -72,10 +72,10 @@ That difference compounds. Once resolver oracles ship, what Squidlor can attest 
 ```cards
 [
   {
-    "title": "Events API",
-    "description": "Read live event-outcome state, per source and aggregated.",
-    "href": "/api/events",
-    "icon": "code"
+    "title": "Prediction markets",
+    "description": "The product the price resolver settles, and how a market is created, traded and resolved.",
+    "href": "/products/markets",
+    "icon": "trending"
   },
   {
     "title": "Aggregation architecture",

@@ -20,9 +20,9 @@ interface IAggregatorV3 {
 }
 
 contract PriceConsumer {
-    // NVDA/USD on Base (8453): median of Chainlink (Coinbase B20) and Squidlor
+    // NVDA/USD on Arc: Squidlor's signed median, published during US market hours
     IAggregatorV3 public constant NVDA_USD =
-        IAggregatorV3(0xd4e034215222F327F08f4067805d055Ec3c1aD89);
+        IAggregatorV3(0xa5dDb1FAaf09D6bCaFDDa13AFed239056EE5417E);
 
     error StalePrice(uint256 updatedAt, uint256 maxAge);
     error BadPrice(int256 answer);
@@ -53,15 +53,15 @@ interface ISquidlorAggregator {
 
 contract LendingMarket {
     ISquidlorAggregator constant FEED =
-        ISquidlorAggregator(0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345); // BTC/USD, Base
+        ISquidlorAggregator(0xE6727b1eE47e3056A29ECeDc82EDDd1161Ca6c21); // BTC/USD, Arc
 
-    uint256 constant MIN_SOURCES = 2;
+    uint256 constant MIN_SOURCES = 1; // raise to 2 once a second source is added on Arc
     uint256 constant MAX_AGE = 30 minutes;
 
     error InsufficientSources(uint256 healthy, uint256 required);
     error StalePrice(uint256 age);
 
-    /// @dev Use this in a liquidation path. One source agreeing with itself is not consensus.
+    /// @dev Use this in a liquidation path, and raise MIN_SOURCES the day a pair gains a second source.
     function priceForLiquidation() public view returns (uint256) {
         (int256 answer, uint256 updatedAt, uint256 healthyCount) = FEED.peek();
         if (healthyCount < MIN_SOURCES) revert InsufficientSources(healthyCount, MIN_SOURCES);
@@ -72,7 +72,7 @@ contract LendingMarket {
 }
 ```
 
-Note that `peek()` itself reverts with `InsufficientHealthySources(healthy, required)` when the aggregator's own minimum is not met; the feed refuses to serve a number it does not stand behind. Your `MIN_SOURCES` is a stricter check layered on top for paths where being wrong is expensive.
+Note that `peek()` itself reverts with `InsufficientHealthySources(healthy, required)` when the aggregator's own minimum is not met; the feed refuses to serve a number it does not stand behind. Your `MIN_SOURCES` is a stricter check layered on top for paths where being wrong is expensive. Every Arc pair runs `minHealthySources = 1` today, because no third-party push oracle publishes on Arc yet; a consumer hardcoding 2 would revert on every read until a second source is added. See the [trust model](/resources/trust-model).
 
 ## Resolve addresses at runtime
 
@@ -85,7 +85,7 @@ interface IAggregatorRegistry {
 
 contract DynamicConsumer {
     IAggregatorRegistry constant REGISTRY =
-        IAggregatorRegistry(0x65af89Cf250FcC7627e53Ce0c892B65d6dBbB5eF); // Base
+        IAggregatorRegistry(0x610cC0E643dF3DC452929cfD0A4ADCdDB406B587); // Arc
 
     function priceOf(string calldata pair) external view returns (int256) {
         address feed = REGISTRY.getAggregatorByName(pair);
@@ -100,19 +100,19 @@ The registry is admin-gated for writes, so a pair cannot be repointed by anyone 
 
 ## Addresses
 
-Full list on [deployed addresses](/networks/addresses). Base (8453):
+Full list on [deployed addresses](/networks/addresses), which is generated from the deployment
+manifest. Arc Testnet (5042002):
 
-| Pair | Aggregator (Base, 8453) |
+| Pair | Aggregator |
 |---|---|
-| BTC/USD | `0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345` |
-| ETH/USD | `0x98bc4A5Da6AE2cAc688eb9b75eBb36649E2F65c4` |
-| SOL/USD | `0x5f8D593C0C5Fd59D209eA618b7F211310057c6D7` |
-| VIRTUAL/USD | `0x9E83e182b8f1b464D5Ee9818818AA31A0118F9d5` |
-| NVDA/USD | `0xd4e034215222F327F08f4067805d055Ec3c1aD89` |
-| TSLA/USD | `0xE8C828ee3C284B6e5c8dC1963827e524F80c90f9` |
-| AAPL/USD | `0x111A875F39C69a1E429a3D612c33123E69339a74` |
-| GOOGL/USD | `0x7786f77D50Be682bDd7bA78D39c15Ccf15Ee1197` |
-| Registry | `0x65af89Cf250FcC7627e53Ce0c892B65d6dBbB5eF` |
+| BTC/USD | `0xE6727b1eE47e3056A29ECeDc82EDDd1161Ca6c21` |
+| ETH/USD | `0x0995c64eE3d3AA01B2e581CbcAed601A53E1deB0` |
+| SOL/USD | `0x5df475576f0Ee6e4537c1538C3D0C422d1d1E021` |
+| NVDA/USD | `0xa5dDb1FAaf09D6bCaFDDa13AFed239056EE5417E` |
+| TSLA/USD | `0x12AeA54771C43CB6A0d393B930c642F28389210B` |
+| AAPL/USD | `0x05292d70254f9309D731B5Ba93AE7a53710d469B` |
+| GOOGL/USD | `0x580587a72F84740A13C920ACb7cd356596b2D1ad` |
+| Registry | `0x610cC0E643dF3DC452929cfD0A4ADCdDB406B587` |
 
 All feeds are 8 decimals.
 
@@ -128,4 +128,4 @@ Once deployed, add your consumer address to your project at [build.squidlor.com]
 
 ## Ready-made
 
-[`squidlor-lending-example`](/build/templates) is a Foundry project implementing stock-collateral lending on Robinhood Chain with fork tests against the live feeds.
+[`squidlor-lending-example`](/build/templates) is a Foundry project implementing stock-collateral lending with fork tests against the live feeds.

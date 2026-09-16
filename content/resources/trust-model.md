@@ -11,7 +11,7 @@ If you are sizing risk for a protocol that will hold real money, this is the pag
 
 ### 1. A single key controls every contract
 
-One address per chain is the deployer and owner of every live contract and `superAdmin` of the registry: `0x34f54E0Ca7f18DB6F088297d3a34D67B57B443Cb` on Robinhood Chain and `0xB57BBda48C33fF725E93D604023D56D9C5b00e2a` on Base. The Base key also owns the prediction market's contracts and mints sqUSD.
+One address is the deployer and owner of every live contract and `superAdmin` of the registry: `0xB57BBda48C33fF725E93D604023D56D9C5b00e2a`. It also owns the prediction market's contracts and mints sqUSD. The relay signs with a separate key, `0x94d89f2C7F0fa43fED39Bd07bE04a1606CD669C9`, which does nothing else.
 
 That address can:
 
@@ -26,13 +26,13 @@ That address can:
 
 ### 2. The signer set is one key
 
-`SquidlorAdapterV2` runs `requiredSigners = 1` on every chain. Base has several authorized signer keys, one per relay process, but they are all operated by Squidlor, so for trust purposes it is one signer.
+`SquidlorAdapterV2` runs `requiredSigners = 1`. There are several authorized signer keys, one per relay process, but they are all operated by Squidlor, so for trust purposes it is one signer.
 
 The M-of-N machinery is real and enforced on-chain. With N=1, it provides no protection. Whoever holds the signer key can publish any price into Squidlor's own feed.
 
-The mitigation that partially holds today: on Base every pair medians the Squidlor feed **with** Chainlink, and on Robinhood Chain every pair except SOL/USD is wired the same way. A compromised Squidlor signer moves the median only as far as the median voter: with two sources, it can pull the answer but not set it freely.
+The mitigation is currently OFF-CHAIN, and you should size your trust accordingly. On Arc no third-party push oracle publishes yet, so each aggregator has one on-chain leg: ours. What medians several independent sources is the relay, before it signs. That defends against one venue being wrong; it does not defend against our signer being wrong, which an on-chain second source would.
 
-Two places where that does not hold. SOL/USD on Robinhood Chain has no second source. And the [prediction market](/products/markets) settles against the adapter's own round through `SquidlorPriceResolver`, not against the aggregator, so a market's outcome is decided by Squidlor's signer alone. That is by design (settlement needs a fixed cadence the aggregator does not have) and it is the sharpest consequence of the single-signer configuration.
+The [prediction market](/products/markets) settles against the adapter's own round through `SquidlorPriceResolver`, not against the aggregator, so a market's outcome is decided by Squidlor's signer. That is by design (settlement needs a fixed cadence the aggregator does not have) and it is the sharpest consequence of the single-signer configuration.
 
 **What closes it:** independent signers with independent key custody and `requiredSigners ≥ 3`.
 
@@ -54,11 +54,11 @@ Halting is the correct failure (far better than serving a stale price as if it w
 
 ### 5. Chainlink, where it is a source
 
-Where an aggregator wires `ChainlinkSource`, you inherit Chainlink's trust model for that source. On Robinhood Chain, where Squidlor's relay is paused, every pair currently reads Chainlink alone, so there **you are trusting Chainlink and Squidlor's configuration of it**, not a Squidlor-independent price. On Base the equity legs are Coinbase's B20 total-return feeds published through Chainlink.
+Where an aggregator wires `ChainlinkSource`, you inherit Chainlink's trust model for that source. No such source is wired on Arc today, so every reading is Squidlor's own; the aggregator contract supports adding one to a live pair without a redeploy, and that is the plan the moment a provider publishes there.
 
 ### 6. The chain itself
 
-Robinhood Chain has a single Robinhood sequencer and permissioned validators. Deployment is permissionless; block production is not. Chain-level liveness and censorship-resistance are Robinhood's, not Squidlor's. Base is an OP Stack rollup with a single Coinbase-operated sequencer; the same statement applies.
+Arc is Circle's L1 with a permissioned validator set and instant finality on inclusion. Deployment is permissionless; block production is not. Chain-level liveness and censorship-resistance are the validators', not Squidlor's. Gas is paid in USDC, so a funded relay does not need a volatile asset to keep publishing.
 
 ## What you do not have to trust
 
@@ -82,15 +82,15 @@ That distinction is real, and it is also not the same as being decentralized. Bo
 
 Concretely, given the above:
 
-**Bound staleness and health yourself.** On Base, BTC, ETH and SOL run `minHealthySources = 2` and revert unless both legs are fresh; VIRTUAL and the four equities run 1. On Robinhood Chain everything runs 1. Whatever the aggregator's floor, read `peek()` and enforce your own; see [read prices on-chain](/integration/reading-prices).
+**Bound staleness and health yourself.** Every Arc pair runs `minHealthySources = 1` today, because there is one on-chain leg. That means the aggregator will answer from a single source: read `peek()` and enforce your own bound rather than relying on the floor; see [read prices on-chain](/integration/reading-prices).
 
-**Check how many sources back your pair, on the chain you read.** On Base every pair has two legs, Chainlink and Squidlor, and the majors refuse to answer with fewer. On Robinhood Chain BTC, ETH and the equities are wired for two but the Squidlor relay is paused, so they read as Chainlink alone; SOL there has only Squidlor. The [measured performance](/oracle/evidence) page shows each leg's fresh rate over the last 30 days. Size your exposure accordingly.
+**Check how many sources back your pair.** Every Arc pair has one on-chain leg today. The [measured performance](/oracle/evidence) page shows what the legs did historically. Size your exposure accordingly.
 
 **Monitor ownership and configuration events.** `OwnershipTransferred`, `SignerAdded`, `RequiredSignersChanged`, and source changes on the aggregators you read. A change in who controls the oracle is a change in your risk.
 
 **Add your own circuit breaker if you need one.** There is no maximum-deviation check on-chain. A colliding signer majority could publish an extreme price and nothing would reject it. If a sudden 40% move should pause your protocol, implement that yourself.
 
-**Consider which chain you are reading.** On Base the equity aggregators deliver the two-source guarantee. On Robinhood Chain, with the relay paused, they do not; treat those as Chainlink with a wrapper until the relay resumes.
+**Read the source count, not the promise.** Until a second on-chain leg exists, an Arc aggregator is our signed median with a cross-oracle interface; treat it as such.
 
 ## The hardening ladder
 
@@ -98,11 +98,11 @@ Each rung has a trigger rather than a date. The order does not change; dates app
 
 | Rung | Trigger | What it closes |
 | --- | --- | --- |
-| Dedicated relay key per chain, published | Done on Base | The key that signs a chain's feeds does nothing else |
+| Dedicated relay key, published | Done | The key that signs the feeds does nothing else |
 | Feed freshness and relayer wallet-balance alerting, every chain | Before the next chain deployment | Gap 4, relayer liveness, stops being discovered by consumers |
 | Owner multisig, then a timelock | First partner chain in production, or first third-party protocol holding value on the feeds | Gap 1, the single owner key |
 | Independent signers, `requiredSigners` 2-of-3 | Three external signers onboarded, expected to be a partner chain's validators | Gaps 2 and 3, the single signer and the relayer deciding the price alone |
-| Robinhood Chain relay resumed | Dedicated funded key plus the alerting rung, then a shadow run | Every 4663 pair back to two sources |
+| A second on-chain source per pair | A push oracle publishing on Arc, then `addSource` on the live aggregator | Every pair back to a real on-chain median |
 | Redundant relayers | Follows the signer rung; each signer runs its own | Gap 4 for good |
 | `requiredSigners` 5-of-9 with stake-backed slashing | Nine signers onboarded | Collusion becomes expensive |
 | Contract-level deviation circuit breaker | Scoped with the first partner chain's risk team | The missing on-chain maximum-spread guard |

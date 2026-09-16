@@ -32,10 +32,10 @@ interface IAggregatorV3 {
 }
 
 contract PriceConsumer {
-    // BTC/USD aggregator on Base (8453): median of Chainlink and Squidlor,
-    // reverts unless both legs are fresh (minHealthySources = 2).
+    // BTC/USD aggregator on Arc. Take the address from /networks/addresses;
+    // it differs between Arc Testnet and Arc mainnet.
     IAggregatorV3 public constant BTC_USD =
-        IAggregatorV3(0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345);
+        IAggregatorV3(0xE6727b1eE47e3056A29ECeDc82EDDd1161Ca6c21); // Arc Testnet
 
     /// @notice Latest BTC/USD price, reverting if the feed has gone stale.
     function btcPrice(uint256 maxAge) external view returns (int256) {
@@ -49,7 +49,7 @@ contract PriceConsumer {
 }
 ```
 
-That is the whole integration. Aggregator addresses for every pair are in [deployed addresses](/networks/addresses). The Base aggregators for BTC, ETH and SOL require both legs fresh, so a successful read there is a two-source read by construction; the [measured performance](/oracle/evidence) page shows how often that guarantee held since go-live.
+That is the whole integration. Aggregator addresses for every pair are in [deployed addresses](/networks/addresses), generated from the deployment manifest for the Arc network currently served. On Arc each aggregator has one on-chain source today, Squidlor's own feed, so read `peek()` for `healthyCount` rather than assuming two legs; see [Arc](/networks/arc#what-squidlor-runs-on-arc).
 
 > [!IMPORTANT]
 > Always bound staleness yourself. The aggregator drops sources it considers unhealthy, but *your* protocol decides what age of price is acceptable for the risk it is taking. Never read `answer` without also checking `updatedAt`.
@@ -61,32 +61,32 @@ For the richer read paths (`peek()`, historical rounds, and committing a round w
 The public API needs no key. Ask for one value:
 
 ```bash
-curl https://api.squidlor.com/aggregator/v1/base/feeds/BTC_USD/value
+curl https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/value
 ```
 
 ```json
 {
   "pair": "BTC/USD",
-  "chainId": 8453,
+  "chainId": 5042002,
   "value": "77103.18524622",
   "valueRaw": "7710318524622",
   "decimals": 8,
-  "healthyCount": 2,
+  "healthyCount": 1,
   "updatedAt": 1789152365
 }
 ```
 
-`healthyCount: 2` is the point: both Chainlink and Squidlor were fresh and the value is their median. Response captured 2026-09-11.
+`healthyCount` is the point: it says how many on-chain sources were fresh for the value. On Arc that is 1 today (Squidlor's own feed, itself an off-chain median of several exchanges) and becomes 2 when a second oracle network publishes on Arc. Response shape captured 2026-09-11; the chain id is Arc Testnet's.
 
 Note the pair format: a URL uses `_` where the pair uses `/`, so `BTC/USD` becomes `BTC_USD`.
 
 List everything configured on a chain:
 
 ```bash
-curl https://api.squidlor.com/aggregator/v1/base/feeds
+curl https://api.squidlor.com/aggregator/v1/arc/feeds
 ```
 
-The full surface, including per-source breakdowns, history, OHLC candles, and event outcomes, is in the [API reference](/api).
+The full surface, including per-source breakdowns, history, OHLC candles and provider scorecards, is in the [API reference](/api).
 
 ## Ask in natural language
 
@@ -120,7 +120,7 @@ Which BTC sources are currently unhealthy, and how far apart are they?
   },
   {
     "title": "Deployed addresses",
-    "description": "Live contract addresses per chain and per pair.",
+    "description": "Live contract addresses on Arc, per pair, generated from the deployment manifest.",
     "href": "/networks/addresses",
     "icon": "network"
   }

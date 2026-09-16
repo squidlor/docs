@@ -171,7 +171,7 @@ Five feeds in one transaction cost roughly 522k gas (about $0.05) on the live de
 
 **Redundancy.** Relayer downtime past the staleness window makes the feed unreadable for consumers that check freshness. Run more than one, and monitor `DataFeedsUpdated` rather than assuming your process is alive.
 
-**Gas price.** Some chains need an explicit gas price. On Robinhood Chain it is pinned at `0.1 gwei` in the deploy config, because automatic `maxFee` estimation underbids the base fee and stalls.
+**Gas price.** Arc has a flat 20 gwei base-fee floor and drops a transaction bidding under it silently, with no error. Pin 25 gwei or let your client use EIP-1559 estimation; a gas price carried over from a cheaper chain never lands.
 
 **Key custody.** A signer key can publish prices that consumers will act on. Use a hardware wallet or HSM in production; see [security properties](/contracts/security#trust-assumptions).
 

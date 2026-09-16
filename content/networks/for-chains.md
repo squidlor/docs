@@ -5,7 +5,7 @@ description: For L1 and L2 teams without Chainlink, Pyth or DIA. What Squidlor d
 
 This page is for the people who run a chain, not the people building on one. If you are a protocol looking to read a price, start at the [quick start](/quick-start).
 
-Most emerging EVM chains have no production oracle. Chainlink's bring-up depends on a commercial agreement and its node operators' schedule, typically six to twelve months; Pyth needs a Wormhole route; DIA depends on its own relayer roadmap. Squidlor's whole stack deploys from a script. Robinhood Chain went live in July 2026 and Base in August 2026 with no Solidity change between them.
+Most emerging EVM chains have no production oracle. Chainlink's bring-up depends on a commercial agreement and its node operators' schedule, typically six to twelve months; Pyth needs a Wormhole route; DIA depends on its own relayer roadmap. Squidlor's whole stack deploys from a script. The Arc deployment in September 2026 went from an unfunded deployer key to seven live aggregators and a resolved prediction-market round in one day, with no Solidity change.
 
 ## What your chain gets
 
@@ -16,7 +16,7 @@ Most emerging EVM chains have no production oracle. Chainlink's bring-up depends
 | `SquidlorOracleAggregator`, one per pair | Median of every healthy leg with per-source staleness and a minimum-healthy floor | `AggregatorV3Interface` plus `peek()` |
 | Source adapters | Squidlor's feed, a local DEX TWAP, and Chainlink, Pyth, DIA, RedStone, API3, Chronicle, Stork, Supra or eOracle the day any of them arrives on your chain | `IPriceSource` |
 | `AggregatorRegistry` | Pair name to aggregator address | Read |
-| Off-chain | Your chain's slug on the [public API](/api), the [SDK](/integration/sdk), the [MCP tools](/ai/mcp) and [Oracle Chat](/ai/oracle-chat), a docs page like [Base](/networks/base), and the operations console | HTTPS |
+| Off-chain | Your chain's slug on the [public API](/api), the [SDK](/integration/sdk), the [MCP tools](/ai/mcp) and [Oracle Chat](/ai/oracle-chat), a docs page like [Arc](/networks/arc), and the operations console | HTTPS |
 
 Every protocol on your chain that already knows how to read a Chainlink feed reads a Squidlor feed with one address change. That is the unlock for lending, perps and prediction markets on a chain that has none of them yet.
 
@@ -25,7 +25,7 @@ Every protocol on your chain that already knows how to read a Chainlink feed rea
 | Requirement | Why |
 | --- | --- |
 | Two or three independent JSON-RPC endpoints | The relay runs an ordered failover pool. A single public endpoint throttling the simulation call once stalled pushes for four hours; see [measured performance](/oracle/evidence). |
-| A gas wallet in the native token, with a named top-up owner | Pushes are relayer-paid. The onboarding script refuses to start unless the wallet holds three times the estimated cost, because a running process that cannot pay gas has caused an outage before. |
+| A gas wallet in the native token, with a named top-up owner | Pushes are relayer-paid. The onboarding script refuses to start unless the wallet holds three times the estimated cost, because a running process that cannot pay gas has caused an outage before. On Arc the native token is USDC, so this is a dollar figure. |
 | A Blockscout-compatible explorer with contract verification | Every address we publish is verified before it is listed. |
 | A written statement of finality assumptions | The relay treats a block as final when your chain says it is. |
 | Optional: the address of a liquid BTC or ETH pool on a local DEX | A TWAP leg gives the aggregator a second, chain-native source before any third-party oracle arrives. |
@@ -34,7 +34,7 @@ Solidity 0.8 or later with standard `ecrecover`, standard JSON-RPC, and permissi
 
 ## What it costs
 
-Gas is the small part. Measured constants from the onboarding script, which has run on four chains:
+Gas is the small part. Measured constants from the onboarding script, with Arc as the worked example:
 
 | Item | Gas |
 | --- | --- |
@@ -45,8 +45,9 @@ Gas is the small part. Measured constants from the onboarding script, which has 
 | Registry | 1.44M |
 | Wiring transactions | about 3M |
 | **BTC/USD and ETH/USD with two legs each** | **about 14.5M, one time** |
+| **The full Arc deployment: oracle, seven single-leg aggregators, registry, prediction market** | **about 46.8M, one time; about 0.94 USDC at Arc's 20 gwei floor** |
 
-Ongoing cost is one transaction per update carrying every feed. On Base that is about 289,000 gas for four feeds at a 0.5% deviation or 300-second heartbeat trigger. At a one-minute heartbeat, plan on roughly 1,500 transactions a day; at five minutes, about 300. Multiply by your chain's gas price and the answer is usually a rounding error in the native token. The exact figure for your chain, at your cadence, is a one-line calculation we do on the first call.
+Ongoing cost is one transaction per update carrying every feed. On Arc a push carrying every feed is about 350,000 gas, about 0.007 USDC, at a 0.5% deviation or 300-second heartbeat trigger. At a one-minute heartbeat, plan on roughly 1,500 transactions a day; at five minutes, about 300. Multiply by your chain's gas price and the answer is usually a rounding error in the native token. The exact figure for your chain, at your cadence, is a one-line calculation we do on the first call.
 
 The real budget lines are operations and signer incentives, and they follow the same shape the incumbents use. Chainlink's Scale program has the chain cover node-operator gas and operating costs for a period under private terms. DIA funds twelve months of gas through per-chain grants. Our version:
 
@@ -92,10 +93,10 @@ Chain programs advance this ladder; each rung has a trigger rather than a date, 
 We propose the same thing to every chain: a 30-day benchmark of BTC/USD and ETH/USD on your mainnet, before any partnership announcement.
 
 - Cadence 0.5% deviation or a five-minute heartbeat, off-chain minimum of three live venues, staleness windows published before day one.
-- Metrics read straight from the public API by either side: freshness p50 and p95, deviation from exchange mid at write time, deviation from Chainlink's Base feed as an external reference, updates and gas per day, rounds refused for insufficient healthy legs, and every flagged round explained.
+- Metrics read straight from the public API by either side: freshness p50 and p95, deviation from exchange mid at write time, deviation from a Chainlink feed for the same pair on a reference chain, updates and gas per day, rounds refused for insufficient healthy legs, and every flagged round explained.
 - Your reviewers get a read-only login to the operations console and a professional-tier API key on day one, so every number in the report is one they can reproduce.
 - Day 30: a written report with the raw rounds attached, and a recommendation for the first production use case.
 
-The [measured performance](/oracle/evidence) page is what that report looks like for Base, including the rounds where the oracle refused to answer. If the benchmark is weak, you have lost a month and no money. If it is strong, the production conversation starts from evidence.
+The [measured performance](/oracle/evidence) page is what that report looks like, written for an earlier deployment and including the rounds where the oracle refused to answer; the Arc report replaces it after a week of data. If the benchmark is weak, you have lost a month and no money. If it is strong, the production conversation starts from evidence.
 
 To start, write to build@squidlor.com with your chain ID, RPC endpoints and explorer.

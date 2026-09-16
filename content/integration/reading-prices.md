@@ -160,9 +160,8 @@ There is no universal answer; it depends on the feed's cadence and on what a sta
 
 | Feed type | Suggested `maxAge` | Why |
 | --- | --- | --- |
-| Crypto, Base | 15–30 minutes | The relay pushes on a 0.5% move or a 300 s heartbeat, and the Squidlor leg's on-chain window is 600 s. A bound under 10 minutes will trip on normal operation; one over an hour is looser than the feed. |
-| Crypto, Robinhood Chain | 1–3 hours | The relay there runs a 1-hour heartbeat when active, and is paused as of September 2026, so the Chainlink leg (1-hour heartbeat) sets the cadence. |
-| Tokenized equity | 48–72 hours | No updates overnight or at weekends. Chainlink's 24h heartbeat backs the feed. |
+| Crypto | 15–30 minutes | The relay pushes on a 0.5% move or a 300 s heartbeat, and the Squidlor leg's on-chain window is 600 s. A bound under 10 minutes will trip on normal operation; one over an hour is looser than the feed. |
+| Tokenized equity | 48–72 hours | No updates overnight or at weekends, and on Arc there is no second leg to carry the price across the gap. |
 | Anything liquidating positions | As tight as the cadence allows | A stale price here costs users money. |
 
 > [!WARNING]
@@ -174,13 +173,11 @@ Read `sourceCount()` for the feed and set your floor relative to it:
 
 | Feed | Sources | Reasonable floor |
 | --- | --- | --- |
-| Base: BTC/USD, ETH/USD, SOL/USD | Chainlink + Squidlor, both pushed | 2, insist on agreement |
-| Base: VIRTUAL/USD and the equity pairs | Chainlink + Squidlor, the Chainlink leg on a 24h heartbeat | 1, and read `updatedAt`; the pair itself runs at 1 |
-| Robinhood: every pair but SOL/USD | Chainlink + Squidlor, Squidlor's relay paused | 1 until the relay resumes |
-| Robinhood: SOL/USD | Squidlor only, paused | Unreadable today; `peek()` reverts |
+| Arc: BTC/USD, ETH/USD, SOL/USD | Squidlor only, pushed every 300 s or on a 0.5% move | 1, and read `updatedAt`; move to 2 once a second source is added |
+| Arc: NVDA, TSLA, AAPL, GOOGL | Squidlor only, pushed during the US session | 1, and read `updatedAt`; `peek()` reverts outside the session |
 
 > [!IMPORTANT]
-> Demanding `healthyCount >= 2` on a feed with one healthy source makes it permanently unreadable. Check `sourceCount()` and `peek()` before choosing your floor, and revisit it when a chain's relay state changes. The [price feeds](/oracle/feeds) page carries the per-chain table.
+> Demanding `healthyCount >= 2` on a feed with one healthy source makes it permanently unreadable, and on Arc every feed has one source today. Check `sourceCount()` and `peek()` before choosing your floor, and revisit it when a second source is wired. The [price feeds](/oracle/feeds) page carries the table.
 
 ## Migrating from Chainlink
 

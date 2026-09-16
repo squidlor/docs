@@ -26,7 +26,7 @@ A row belongs to exactly one class, and the class decides how the price was meas
 
 `crypto` and `onchain` can both hold the same asset. They are two different measurements (the off-chain market, and the value contracts actually read, which only updates on a 0.5% deviation or the hourly heartbeat), so they are stored and returned separately rather than merged.
 
-The same pair on two chains is likewise two rows, not one: `BTC/USD` on Arbitrum and on Robinhood have different sources and different push timing.
+The same pair on two chains is likewise two rows, not one: rows stored from earlier chains keep their own `chainId` and are not merged into Arc's.
 
 ## Reading `source` before you settle
 
@@ -77,14 +77,14 @@ GET /v1/daily
 | --- | --- | --- |
 | `day` | latest day held | `YYYY-MM-DD`, an ISO timestamp, or a unix time. |
 | `class` | all | `crypto`, `equity` or `onchain`. |
-| `chain` | all | For `class=onchain`: `base`, `robinhood`, `arbitrum`, or a chain id. |
+| `chain` | all | For `class=onchain`: `arc`, or its chain id. |
 | `symbols` | all | Comma-separated, e.g. `BTC,ETH,NVDA`. |
 | `limit` | `1000` | Maximum rows. |
 
 It defaults to the most recent day held rather than today, so a call made before tonight's capture does not return an empty board for a boundary that has not happened yet.
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/daily?day=2026-08-27&class=onchain&chain=robinhood"
+curl "https://api.squidlor.com/aggregator/v1/daily?day=2026-08-27&class=onchain&chain=arc"
 ```
 
 ```json
@@ -104,8 +104,8 @@ curl "https://api.squidlor.com/aggregator/v1/daily?day=2026-08-27&class=onchain&
       "price": 221.125,
       "priceRaw": "22112500000",
       "decimals": 8,
-      "source": "onchain:4663",
-      "chainId": 4663,
+      "source": "onchain:5042002",
+      "chainId": 5042002,
       "contributorCount": 3
     }
   ]
@@ -151,8 +151,8 @@ A pair published on several chains returns **400** `AMBIGUOUS_CHAIN` listing the
 ```json
 {
   "code": "AMBIGUOUS_CHAIN",
-  "message": "BTC/USD is stored for 2 chains (4663, 42161). Add ?chain= to pick one.",
-  "chains": [4663, 42161]
+  "message": "BTC/USD is stored for 2 chains (5042002, 1). Add ?chain= to pick one.",
+  "chains": [5042002, 1]
 }
 ```
 

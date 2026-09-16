@@ -104,8 +104,8 @@ curl "https://api.squidlor.com/aggregator/v1/daily?day=2026-08-27&class=onchain&
       "price": 221.125,
       "priceRaw": "22112500000",
       "decimals": 8,
-      "source": "onchain:5042002",
-      "chainId": 5042002,
+      "source": "onchain:5042",
+      "chainId": 5042,
       "contributorCount": 3
     }
   ]
@@ -151,8 +151,8 @@ A pair published on several chains returns **400** `AMBIGUOUS_CHAIN` listing the
 ```json
 {
   "code": "AMBIGUOUS_CHAIN",
-  "message": "BTC/USD is stored for 2 chains (5042002, 1). Add ?chain= to pick one.",
-  "chains": [5042002, 1]
+  "message": "BTC/USD is stored for 2 chains (5042, 1). Add ?chain= to pick one.",
+  "chains": [5042, 1]
 }
 ```
 

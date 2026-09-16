@@ -20,9 +20,9 @@ interface IAggregatorV3 {
 }
 
 contract PriceConsumer {
-    // NVDA/USD on Arc: Squidlor's signed median, published during US market hours
+    // NVDA/USD on Arc mainnet: Squidlor's signed median, published during US market hours
     IAggregatorV3 public constant NVDA_USD =
-        IAggregatorV3(0xa5dDb1FAaf09D6bCaFDDa13AFed239056EE5417E);
+        IAggregatorV3(0xfa0A9D8a8c631065c89b0b58B90aB535961321cB);
 
     error StalePrice(uint256 updatedAt, uint256 maxAge);
     error BadPrice(int256 answer);
@@ -101,18 +101,22 @@ The registry is admin-gated for writes, so a pair cannot be repointed by anyone 
 ## Addresses
 
 Full list on [deployed addresses](/networks/addresses), which is generated from the deployment
-manifest. Arc Testnet (5042002):
+manifest. Arc mainnet (5042):
 
 | Pair | Aggregator |
 |---|---|
-| BTC/USD | `0xE6727b1eE47e3056A29ECeDc82EDDd1161Ca6c21` |
-| ETH/USD | `0x0995c64eE3d3AA01B2e581CbcAed601A53E1deB0` |
-| SOL/USD | `0x5df475576f0Ee6e4537c1538C3D0C422d1d1E021` |
-| NVDA/USD | `0xa5dDb1FAaf09D6bCaFDDa13AFed239056EE5417E` |
-| TSLA/USD | `0x12AeA54771C43CB6A0d393B930c642F28389210B` |
-| AAPL/USD | `0x05292d70254f9309D731B5Ba93AE7a53710d469B` |
-| GOOGL/USD | `0x580587a72F84740A13C920ACb7cd356596b2D1ad` |
-| Registry | `0x610cC0E643dF3DC452929cfD0A4ADCdDB406B587` |
+| BTC/USD | `0x9a4e4d5f83e3ad9568Ee2919cc0A4Ba7a4c0F735` |
+| ETH/USD | `0x7DADEEC6665D330b35e38C18bdF270ABd34d92be` |
+| SOL/USD | `0x2597340cE638734845c6DaEfE211D3C58a1CCA4f` |
+| NVDA/USD | `0xfa0A9D8a8c631065c89b0b58B90aB535961321cB` |
+| TSLA/USD | `0xE08191D2Ba69785079D655bA23B829a4B5029316` |
+| AAPL/USD | `0xb64a411dF119E1E2a8b18812fD1512b48CF29Bb2` |
+| GOOGL/USD | `0xFaCe2ABF0C7CCDa15252F7020fAA24FC65c15540` |
+| Registry | `0x3c8552764DC0f8719cC6cedab81C4659E18D9574` |
+
+Arc Testnet uses different addresses and is not listed here. Resolve them from the testnet
+registry at `0x610cC0E643dF3DC452929cfD0A4ADCdDB406B587`; see
+[building against testnet](/networks/arc#building-against-testnet).
 
 All feeds are 8 decimals.
 

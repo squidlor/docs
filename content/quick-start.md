@@ -32,10 +32,10 @@ interface IAggregatorV3 {
 }
 
 contract PriceConsumer {
-    // BTC/USD aggregator on Arc. Take the address from /networks/addresses;
-    // it differs between Arc Testnet and Arc mainnet.
+    // BTC/USD aggregator on Arc mainnet. Take the address from /networks/addresses;
+    // Arc Testnet uses a different one, resolvable from the testnet registry.
     IAggregatorV3 public constant BTC_USD =
-        IAggregatorV3(0xE6727b1eE47e3056A29ECeDc82EDDd1161Ca6c21); // Arc Testnet
+        IAggregatorV3(0x9a4e4d5f83e3ad9568Ee2919cc0A4Ba7a4c0F735); // Arc (5042)
 
     /// @notice Latest BTC/USD price, reverting if the feed has gone stale.
     function btcPrice(uint256 maxAge) external view returns (int256) {
@@ -67,16 +67,16 @@ curl https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/value
 ```json
 {
   "pair": "BTC/USD",
-  "chainId": 5042002,
-  "value": "77103.18524622",
-  "valueRaw": "7710318524622",
+  "chainId": 5042,
+  "value": "75546.5",
+  "valueRaw": "7554650000000",
   "decimals": 8,
   "healthyCount": 1,
-  "updatedAt": 1789152365
+  "updatedAt": 1789567706
 }
 ```
 
-`healthyCount` is the point: it says how many on-chain sources were fresh for the value. On Arc that is 1 today (Squidlor's own feed, itself an off-chain median of several exchanges) and becomes 2 when a second oracle network publishes on Arc. Response shape captured 2026-09-11; the chain id is Arc Testnet's.
+`healthyCount` is the point: it says how many on-chain sources were fresh for the value. On Arc that is 1 today (Squidlor's own feed, itself an off-chain median of several exchanges) and becomes 2 when a second oracle network publishes on Arc. Captured from the live API on 2026-09-16; `chainId` 5042 is Arc mainnet.
 
 Note the pair format: a URL uses `_` where the pair uses `/`, so `BTC/USD` becomes `BTC_USD`.
 

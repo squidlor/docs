@@ -19,11 +19,11 @@ curl https://api.squidlor.com/aggregator/v1/arc/feeds
 
 ```json
 {
-  "chainId": 5042002,
+  "chainId": 5042,
   "count": 8,
   "feeds": [
     {
-      "chainId": 5042002,
+      "chainId": 5042,
       "pair": "BTC/USD",
       "aggregator": "0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345",
       "kind": "aggregator",
@@ -66,7 +66,7 @@ curl https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD
 
 ```json
 {
-  "chainId": 5042002,
+  "chainId": 5042,
   "pair": "BTC/USD",
   "aggregator": "0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345",
   "kind": "aggregator",
@@ -152,7 +152,7 @@ curl https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/value
 ```json
 {
   "pair": "BTC/USD",
-  "chainId": 5042002,
+  "chainId": 5042,
   "value": "77016.42057129",
   "valueRaw": "7701642057129",
   "decimals": 8,
@@ -164,13 +164,13 @@ curl https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/value
 The legacy query-string route additionally returns `ok`, `totalSources`, and `mode`:
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/feeds/BTC_USD/value?chainId=5042002"
+curl "https://api.squidlor.com/aggregator/v1/feeds/BTC_USD/value?chainId=5042"
 ```
 
 ```json
 {
   "pair": "BTC/USD",
-  "chainId": 5042002,
+  "chainId": 5042,
   "ok": true,
   "value": "77016.42057129",
   "valueRaw": "7701642057129",
@@ -189,7 +189,7 @@ If `peek()` reverts, typically because too few sources are healthy, this endpoin
 ```json
 {
   "pair": "BTC/USD",
-  "chainId": 5042002,
+  "chainId": 5042,
   "error": "minHealthySources not met"
 }
 ```

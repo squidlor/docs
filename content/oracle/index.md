@@ -59,7 +59,7 @@ The oracle is deployed on one chain:
 
 | Chain | Pairs | State |
 | --- | --- | --- |
-| **[Arc](/networks/arc)** | 7: BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL | Both relays running. One on-chain source per pair (Squidlor's feed) until another oracle network publishes on Arc. The prediction market lives here. On Arc Testnet today; mainnet from 2026-09-16. |
+| **[Arc](/networks/arc)** | 7: BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL | Both relays running on mainnet (chain 5042). One on-chain source per pair (Squidlor's feed) until another oracle network publishes on Arc. The prediction market lives here. Arc Testnet runs the same seven pairs for integration; see [building against testnet](/networks/arc#building-against-testnet). |
 
 The whole Arc deployment, oracle and prediction market together, cost about 0.94 USDC in gas.
 

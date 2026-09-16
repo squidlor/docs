@@ -3,41 +3,42 @@ title: Supported networks
 description: Where Squidlor is deployed, how the API addresses the chain, and what it takes to add a new one.
 ---
 
-Squidlor runs on exactly one chain per build: Arc. No contract hardcodes a chain, and every off-chain service is parameterized by chain ID and RPC URL, so the deployment below is a configuration, not a property of the code.
+Squidlor runs on one chain: Arc. No contract hardcodes a chain, and every off-chain service is parameterized by chain ID and RPC URL, so the deployment below is a configuration, not a property of the code.
 
 ## Deployment
 
-| Chain | Network today | Status |
+| Network | Chain ID | Status |
 | --- | --- | --- |
-| **[Arc](/networks/arc)** | Arc Testnet, chain ID 5042002 | **Live.** Oracle with seven aggregators (BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL against USD), registry, both relays and the prediction market. Mainnet launches 2026-09-16; see [Arc](/networks/arc#testnet-and-mainnet). |
+| **[Arc](/networks/arc)** | 5042 | **Live, and what everything serves.** Oracle with seven aggregators (BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL against USD), registry, both relays and the prediction market. Addresses on [deployed addresses](/networks/addresses). |
+| **[Arc Testnet](/networks/arc#building-against-testnet)** | 5042002 | **Live, for integration only.** The same seven pairs and the same contracts. Not served by the public API; read it over RPC and resolve addresses from the registry. |
 
 Every service knows the same chain:
 
-| | Arc |
-| --- | --- |
-| Contracts deployed | Yes |
-| On the live public API | Yes, slug `arc` |
-| In `@squidlor/oracle-sdk` (1.0.0) | Yes, `getFeed('arc', 'BTC/USD')` |
-| Oracle tools in chat and MCP | Yes |
-| Prediction market | Yes |
+| | Arc (5042) | Arc Testnet (5042002) |
+| --- | --- | --- |
+| Contracts deployed | Yes | Yes |
+| On the live public API | Yes, slug `arc` | No |
+| In `@squidlor/oracle-sdk` | Yes, `getFeed('arc', 'BTC/USD')` | By explicit address and client |
+| Oracle tools in chat and MCP | Yes | No |
+| Prediction market | Yes | Yes |
 
 ## Chain slug
 
-The API accepts the slug `arc` or the numeric chain ID in place of `:chain`:
+The API accepts the slug `arc` or the numeric chain ID in place of `:chain`. Both mean mainnet:
 
 ```bash
 # Equivalent
 curl https://api.squidlor.com/aggregator/v1/arc/feeds
-curl https://api.squidlor.com/aggregator/v1/5042002/feeds
+curl https://api.squidlor.com/aggregator/v1/5042/feeds
 ```
 
-An unrecognised slug returns `404`. Check `chainId` in the response; it should match the network on [deployed addresses](/networks/addresses).
+An unrecognised slug returns `404`, and `5042002` returns `chain not supported`: the API does not serve testnet. Check `chainId` in the response; it should read `5042`.
 
 ## What a new chain requires
 
 If you run a chain and are evaluating Squidlor, [bring Squidlor to your chain](/networks/for-chains) is written for you: cost model, validator-as-signer program and the 30-day benchmark. The technical checklist follows.
 
-Nothing that touches Solidity. The Arc deployment went live without a contract change.
+Nothing that touches Solidity. Both Arc deployments went live without a contract change.
 
 **On-chain:**
 

@@ -1,11 +1,18 @@
 ---
 title: Arc
-description: Chain facts for Arc, Circle's L1 with USDC as the gas token. How to connect a wallet, where to get testnet USDC, what Squidlor runs there, and how testnet and mainnet differ.
+description: Chain facts for Arc, Circle's L1 with USDC as the gas token. Mainnet and testnet parameters, how to connect a wallet, what Squidlor runs on each, and which one the public API serves.
 ---
 
-Arc is Circle's Layer 1 and the one chain Squidlor runs on. Every Squidlor contract, the relay, the public API, the SDK, the agent tools and the prediction market address a single Arc deployment per build. Squidlor moved to Arc on 2026-09-15, first on Arc Testnet; Arc mainnet launches on 2026-09-16.
+Arc is Circle's Layer 1 and the one chain Squidlor runs on. **Arc mainnet is live, and it is what the public API, the SDK and the agent tools serve.** Arc Testnet runs the same seven pairs for anyone integrating before they go to production.
+
+> [!IMPORTANT]
+> The public API serves **mainnet only**. `https://api.squidlor.com/aggregator/v1/arc/...` returns
+> chain 5042, and asking it for 5042002 returns `chain not supported`. Testnet integrators read the
+> contracts directly over RPC; see [building against testnet](#building-against-testnet).
 
 ## Chain facts
+
+These hold on both networks:
 
 | Fact | Value |
 | --- | --- |
@@ -13,12 +20,18 @@ Arc is Circle's Layer 1 and the one chain Squidlor runs on. Every Squidlor contr
 | Base fee | Flat floor of 20 gwei. A transaction whose `maxFeePerGas` is under 20 gwei is dropped silently rather than rejected. |
 | Blocks | About 0.5 seconds apart. Timestamps are non-decreasing and can repeat across consecutive blocks. |
 | Finality | Instant on inclusion. There is no reorg window to wait out. |
-| Testnet chain ID | **5042002** (`0x4D0012`), label "Arc Testnet" |
-| Testnet RPC | `https://rpc.testnet.arc.io` |
-| Testnet explorer | `https://testnet.arcscan.app` (Blockscout) |
-| Testnet faucet | `https://faucet.circle.com` |
-| Mainnet | Launches 2026-09-16. Chain ID, RPC and explorer are published by [docs.arc.io](https://docs.arc.io); this site does not repeat them until they are. |
-| API slug | `arc` |
+
+And these differ:
+
+| | Arc Mainnet | Arc Testnet |
+| --- | --- | --- |
+| Chain ID | **5042** (`0x13B2`) | **5042002** (`0x4CEF52`) |
+| Network name | Arc | Arc Testnet |
+| RPC | `https://rpc.mainnet.arc.io` | `https://rpc.testnet.arc.io` |
+| Explorer | `https://explorer.arc.io` | `https://explorer.testnet.arc.io` |
+| Gas USDC | Real. Fund the wallet. | Free from `https://faucet.circle.com` |
+| Public API | Yes, slug `arc` or `5042` | **Not served** |
+| Addresses | [deployed addresses](/networks/addresses) | Resolve from the registry, [below](#building-against-testnet) |
 
 ```bash
 curl https://api.squidlor.com/aggregator/v1/arc/feeds
@@ -26,21 +39,33 @@ curl https://api.squidlor.com/aggregator/v1/arc/feeds
 
 ## Adding Arc to a wallet
 
-The wallet parameters are the row values above. For Arc Testnet:
+The wallet parameters are the row values above. For Arc mainnet:
 
 ```json
 {
-  "chainId": "0x4D0012",
+  "chainId": "0x13B2",
+  "chainName": "Arc",
+  "rpcUrls": ["https://rpc.mainnet.arc.io"],
+  "nativeCurrency": { "name": "USDC", "symbol": "USDC", "decimals": 18 },
+  "blockExplorerUrls": ["https://explorer.arc.io"]
+}
+```
+
+For Arc Testnet:
+
+```json
+{
+  "chainId": "0x4CEF52",
   "chainName": "Arc Testnet",
   "rpcUrls": ["https://rpc.testnet.arc.io"],
   "nativeCurrency": { "name": "USDC", "symbol": "USDC", "decimals": 18 },
-  "blockExplorerUrls": ["https://testnet.arcscan.app"]
+  "blockExplorerUrls": ["https://explorer.testnet.arc.io"]
 }
 ```
 
 `decimals` stays **18**. The native currency is USDC, but the wallet-visible balance is the 18-decimal native view, so `formatEther` on a balance and `/1e18` gas math are both correct. Reading the 6-decimal ERC-20 view for anything that credits a balance truncates.
 
-For mainnet, take the same shape and fill it from docs.arc.io once the values are published. Squidlor's own frontends read every one of these fields from their build environment, so there is nothing to change in a consumer contract between the two.
+Squidlor's own frontends read every one of these fields from their build environment, so nothing in a consumer contract changes between the two networks. Only the addresses do.
 
 ## Gas, in dollars
 
@@ -69,17 +94,32 @@ Gas is not a budget line on Arc. Funding the deployer and the relay wallet is.
 
 ## Explorer and verification
 
-Arc's explorer is Blockscout. Contract pages at `https://testnet.arcscan.app/address/<address>` show verified source for every Squidlor contract, and a transaction is at `/tx/<hash>`. Squidlor's own surfaces build every explorer link from the chain's configured explorer URL, so the same links point at the mainnet explorer after 09-16 without a code change.
+Arc's explorer is Blockscout. Contract pages at `https://explorer.arc.io/address/<address>` show verified source for every Squidlor contract, and a transaction is at `/tx/<hash>`. The testnet explorer is the same software at `https://explorer.testnet.arc.io`. Squidlor's own surfaces build every explorer link from the chain's configured explorer URL, so no link is hardcoded to one network.
 
-## Testnet and mainnet
+## Building against testnet
 
-Squidlor runs on exactly one Arc network per build. Today that is Arc Testnet, and the [deployed addresses](/networks/addresses) page names which network it was generated for. When mainnet goes live, the contracts are redeployed there, the manifest is regenerated and that page changes with it; testnet addresses are not reused on mainnet.
+Both networks run the same seven pairs, the same contracts and the same relays. Two differences decide how you integrate.
 
-Testnet USDC comes from `https://faucet.circle.com`. Testnet state is not carried to mainnet.
+**The public API is mainnet only.** Every documented endpoint, every SDK call and every agent tool answers for chain 5042. There is no testnet equivalent, and no testnet slug: `/v1/5042002/feeds` returns `chain not supported`. On testnet you read the contracts yourself over `https://rpc.testnet.arc.io`, with the same ABI the [contract quickstart](/build/quickstart-contracts) uses.
+
+**Testnet addresses are not published on this site.** [Deployed addresses](/networks/addresses) is generated from the mainnet manifest. Testnet addresses differ, and the registry is the way to get them without hardcoding anything:
+
+```bash
+# Arc Testnet registry
+cast call 0x610cC0E643dF3DC452929cfD0A4ADCdDB406B587 \
+  "getAggregatorByName(string)(address)" "BTC/USD" \
+  --rpc-url https://rpc.testnet.arc.io
+# 0xE6727b1eE47e3056A29ECeDc82EDDd1161Ca6c21
+```
+
+The same call against the mainnet registry at `0x3c8552764DC0f8719cC6cedab81C4659E18D9574` over `https://rpc.mainnet.arc.io` returns the mainnet aggregator. Writing your consumer against the registry rather than a hardcoded address is what makes promoting it from testnet to mainnet a config change.
+
+Testnet USDC comes from `https://faucet.circle.com`. Testnet state is not carried to mainnet, and a testnet address is never reused on mainnet.
 
 ## Reading Arc from your own infrastructure
 
-- `https://rpc.testnet.arc.io` is the public RPC. Mirrors exist on dRPC, QuickNode and Alchemy (with a key). Squidlor's relay runs an ordered failover pool rather than trusting one endpoint.
+- `https://rpc.mainnet.arc.io` and `https://rpc.testnet.arc.io` are the public RPCs. Mirrors exist on dRPC, QuickNode and Alchemy (with a key). Squidlor's relay runs an ordered failover pool rather than trusting one endpoint.
+- Assert `eth_chainId` before trusting any address. Squidlor has run the same contract address on more than one chain, so an address alone does not tell you which network answered.
 - `PREVRANDAO` returns 0 on Arc, there are no blob (type-3) transactions, and the beacon-root contract is absent. None of Squidlor's contracts depend on any of those.
 - A native transfer to `address(0)` reverts unless zero-value, and value sent to a precompile reverts.
 - Multicall3 is at `0xcA11bde05977b3631167028862bE2a173976CA11`, the same address as on other EVM chains, and the deterministic CREATE2 factory at `0x4e59b44847b379578588920cA78FbF26c0B4956C` is deployed.

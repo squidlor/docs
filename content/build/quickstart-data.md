@@ -14,7 +14,7 @@ curl https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/value
 ```json
 {
   "pair": "BTC/USD",
-  "chainId": 5042002,
+  "chainId": 5042,
   "value": "63460.2815151",
   "valueRaw": "6346028151510",
   "decimals": 8,

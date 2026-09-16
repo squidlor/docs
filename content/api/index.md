@@ -40,19 +40,21 @@ Get one at [build.squidlor.com](https://build.squidlor.com). Full detail in [aut
 
 ```bash
 curl https://api.squidlor.com/aggregator/v1/arc/feeds
-curl https://api.squidlor.com/aggregator/v1/5042002/feeds
+curl https://api.squidlor.com/aggregator/v1/5042/feeds
 ```
 
 `:chain` accepts either the slug or the numeric chain ID of the configured network:
 
 | Slug | Chain ID |
 | --- | --- |
-| `arc` | 5042002 on Arc Testnet; the mainnet id once the API serves mainnet |
+| `arc` | 5042, Arc mainnet |
+
+Arc Testnet (5042002) is **not served**: it returns `chain not supported`. See [building against testnet](/networks/arc#building-against-testnet).
 
 **Legacy query-string paths**, still mounted for backwards compatibility:
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/feeds?chainId=5042002"
+curl "https://api.squidlor.com/aggregator/v1/feeds?chainId=5042"
 ```
 
 These default to the configured chain when `chainId` is omitted. New integrations should use the chain-scoped form: a feed is then addressable as `(chain, pair)` with no query string, which is what the SDK and frontends use.

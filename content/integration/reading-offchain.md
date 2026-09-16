@@ -75,10 +75,10 @@ No dependency on Squidlor's servers, just an RPC endpoint:
 import { createPublicClient, http, parseAbi, formatUnits, defineChain } from "viem";
 
 const arc = defineChain({
-  id: 5042002,
-  name: "Arc Testnet",
+  id: 5042,
+  name: "Arc",
   nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
-  rpcUrls: { default: { http: ["https://rpc.testnet.arc.io"] } },
+  rpcUrls: { default: { http: ["https://rpc.mainnet.arc.io"] } },
 });
 
 const AGGREGATOR_ABI = parseAbi([
@@ -90,10 +90,10 @@ const AGGREGATOR_ABI = parseAbi([
 
 const client = createPublicClient({
   chain: arc,
-  transport: http("https://rpc.testnet.arc.io"),
+  transport: http("https://rpc.mainnet.arc.io"),
 });
 
-const BTC_USD = "0xE6727b1eE47e3056A29ECeDc82EDDd1161Ca6c21"; // BTC/USD aggregator, Arc Testnet; see /networks/addresses
+const BTC_USD = "0x9a4e4d5f83e3ad9568Ee2919cc0A4Ba7a4c0F735"; // BTC/USD aggregator, Arc mainnet; see /networks/addresses
 
 // One multicall instead of four round trips.
 const [peek, decimals, sourceCount] = await client.multicall({

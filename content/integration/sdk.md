@@ -34,20 +34,21 @@ console.log(updatedAt);  // 1789152685 (unix seconds)
 
 | Chain | ID | Built-in aggregators |
 | --- | --- | --- |
-| `arc` | 5042002 (testnet) | BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL (all /USD) |
+| `arc` | 5042 (mainnet) | BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL (all /USD) |
 
 Squidlor publishes on one chain, so `chain` has a default and you can leave it out. Chain IDs work
-in place of slugs: `getFeed(5042002, "BTC/USD")`.
+in place of slugs: `getFeed(5042, "BTC/USD")`.
 
 The table is generated from the deployment manifest at publish time, so an SDK release always
-matches the chain it shipped for. Mainnet ships as its own release; read
+matches the chain it shipped for. Arc Testnet is not in the static map: pass an explicit `address`
+and a testnet `client`, as in [address resolution](#address-resolution). Read
 [deployed addresses](/networks/addresses) for what is live now.
 
 ```typescript
 import { knownPairs, supportedChains } from "@squidlor/oracle-sdk";
 
 knownPairs("arc");  // ['BTC/USD', 'ETH/USD', ...]
-supportedChains();  // [{ key: 'arc', chainId: 5042002, pairs: 7 }]
+supportedChains();  // [{ key: 'arc', chainId: 5042, pairs: 7 }]
 ```
 
 Anything outside that map needs an explicit address or a registry lookup; see [address resolution](#address-resolution).
@@ -107,7 +108,7 @@ Three ways, in the order the SDK tries them:
 // 1. Explicit address: the escape hatch for any chain or pair the SDK
 //    doesn't know about yet.
 const feed = getFeed("arc", "SOMETHING/USD", {
-  address: "0xa5dDb1FAaf09D6bCaFDDa13AFed239056EE5417E",
+  address: "0xfa0A9D8a8c631065c89b0b58B90aB535961321cB",
 });
 
 // 2. Resolve through the on-chain registry: async, because it reads a contract.
@@ -137,10 +138,10 @@ import { createPublicClient, http, defineChain } from "viem";
 import { getFeed } from "@squidlor/oracle-sdk";
 
 const arc = defineChain({
-  id: 5042002,
-  name: "Arc Testnet",
+  id: 5042,
+  name: "Arc",
   nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
-  rpcUrls: { default: { http: ["https://rpc.testnet.arc.io"] } },
+  rpcUrls: { default: { http: ["https://rpc.mainnet.arc.io"] } },
 });
 
 const client = createPublicClient({
@@ -179,7 +180,7 @@ interface Feed {
 import { knownPairs, CHAINS } from "@squidlor/oracle-sdk";
 
 knownPairs("arc");  // ["BTC/USD", "ETH/USD", "SOL/USD", …]
-CHAINS.arc.chainId; // 5042002
+CHAINS.arc.chainId; // 5042
 ```
 
 `knownPairs` reads the static map, so it will not list pairs that exist on-chain but are not compiled into the SDK. For live discovery, use the [API's feed list](/api/feeds#list-feeds).
@@ -206,7 +207,7 @@ try {
   const reading = await feed.read();
 } catch (error) {
   // getFeed throws synchronously for an unsupported chain or unknown pair:
-  //   "No known aggregator for XAU/USD on chain 5042002. Pass opts.address, …"
+  //   "No known aggregator for XAU/USD on chain 5042. Pass opts.address, …"
   // read() throws on RPC failure, or if the aggregator reverts.
   console.error(error);
 }

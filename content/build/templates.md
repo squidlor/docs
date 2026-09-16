@@ -35,7 +35,7 @@ Demonstrates the checks a real market needs, not the minimum that compiles: `pee
 ```bash
 git clone https://github.com/squidlor/squidlor-lending-example
 cd squidlor-lending-example && forge install
-forge test --fork-url https://rpc.testnet.arc.io
+forge test --fork-url https://rpc.mainnet.arc.io
 ```
 
 **Use it for:** lending, perps, collateralised anything. Also the reference for [the on-chain consumer bounties](/build/bounties).

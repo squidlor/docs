@@ -5,12 +5,20 @@ description: What shipped on the builder platform, newest first.
 
 Changes to the API, SDK, MCP server and builder platform. Contract deployments are on [deployed addresses](/networks/addresses).
 
-## Arc, September 2026
+## Arc mainnet, September 2026
 
-**Squidlor runs on [Arc](/networks/arc), and only Arc.** Circle's L1, gas paid in USDC. The whole
-stack is deployed there: the adapter, seven `SquidPriceFeed` proxies, seven aggregators, the
-registry, and the prediction market with both relays. Slug `arc` on the API; any other chain
-slug returns `404` rather than quietly answering with data it does not have.
+**Arc mainnet is live, chain 5042.** The whole stack is deployed and both relays are pushing:
+the adapter, the `SquidPriceFeed` proxies, seven aggregators, the registry, and the prediction
+market. The API slug `arc` now resolves to 5042, and every documented endpoint, SDK call and
+agent tool answers for mainnet. Addresses are on [deployed addresses](/networks/addresses).
+
+**Arc Testnet (5042002) stays up for integration.** Same seven pairs, same contracts, different
+addresses. It is deliberately **not** on the public API: `/v1/5042002/feeds` returns `chain not
+supported`. Read it over `https://rpc.testnet.arc.io` and resolve addresses from the testnet
+registry. See [building against testnet](/networks/arc#building-against-testnet).
+
+**Squidlor runs on [Arc](/networks/arc), and only Arc.** Circle's L1, gas paid in USDC. Any chain
+slug other than `arc` returns `404` rather than quietly answering with data it does not have.
 
 **Seven pairs.** BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL against USD. Each has one on-chain leg,
 Squidlor's own signed median, because no third-party push oracle publishes on Arc yet. The

@@ -57,7 +57,7 @@ curl "https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/history?interval=
 
 ```json
 {
-  "chainId": 5042002,
+  "chainId": 5042,
   "pair": "BTC/USD",
   "interval": "1h",
   "count": 3,
@@ -120,7 +120,7 @@ curl "https://api.squidlor.com/aggregator/v1/arc/feeds/ETH_USD/ohlc?interval=4h&
 
 ```json
 {
-  "chainId": 5042002,
+  "chainId": 5042,
   "pair": "ETH/USD",
   "interval": "4h",
   "count": 2,
@@ -171,12 +171,12 @@ curl "https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/audit?flagged=tru
 
 ```json
 {
-  "chainId": 5042002,
+  "chainId": 5042,
   "pair": "BTC/USD",
   "count": 1,
   "rounds": [
     {
-      "chainId": 5042002,
+      "chainId": 5042,
       "pair": "BTC/USD",
       "ts": "2026-09-09T12:21:00.852Z",
       "decimals": 8,

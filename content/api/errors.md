@@ -16,7 +16,7 @@ description: Every status code the API returns, what each one actually means, an
 Error bodies carry a single `message` field:
 
 ```json
-{ "message": "Feed not found: XAU/USD on chain 5042002" }
+{ "message": "Feed not found: XAU/USD on chain 5042" }
 ```
 
 ## The two failure modes worth distinguishing
@@ -32,7 +32,7 @@ Error bodies carry a single `message` field:
 ```json
 {
   "pair": "BTC/USD",
-  "chainId": 5042002,
+  "chainId": 5042,
   "error": "minHealthySources not met"
 }
 ```

@@ -69,20 +69,21 @@ curl "https://api.squidlor.com/quest/points/leaderboard?limit=10"
 
 ## Contracts
 
-| Contract | Address (Arc Testnet) |
+| Contract | Address (Arc mainnet, 5042) |
 | --- | --- |
-| `MarketFactory` | `0xb64a411dF119E1E2a8b18812fD1512b48CF29Bb2` |
-| `ConditionalTokens` | `0x0bC4E8dCe77e25A8219EA7794281a2E355484fA5` |
-| `FPMMFactory` | `0x870DdB6F14B5926C56DB74F52Ce06800A8795909` |
-| `SquidlorPriceResolver` | `0xEcd3Da639CDbD837350ebd580F6dF388573E1418` |
-| `AdminResolver` | `0xa3F54e9963185819Db7DC166181b9977c834b607` |
-| `SquidlorUSD` (sqUSD) | `0xFaCe2ABF0C7CCDa15252F7020fAA24FC65c15540` |
-| `SubsidyVault` | `0x3F898b06764686d49b602967fB00610d0A05E6E8` |
-| Netting relay (proxy) | `0xE4CA129bCB8Dd050d7892b165615f54A1652bd75` |
-| `SquidlorRegistry` | `0x3D03C75f76dd90505aA2061B95aDB9b74216Dd30` |
+| `MarketFactory` | `0x72F01a08090ddB2210232251fAB61D1A81403010` |
+| `ConditionalTokens` | `0xfE6bfD335E18b0308008720C1903f52B3e1fE26d` |
+| `FPMMFactory` | `0xF94e6c2A01aD9fDf449aA7809107DdE6Efa59a7E` |
+| `SquidlorPriceResolver` | `0xa8E4A797Cf85cA5882f20b0DFcd33b3b3D77c748` |
+| `AdminResolver` | `0x69fD7B3B6050512f7d7B7dE42190e86BD3f4874E` |
+| `SquidlorUSD` (sqUSD) | `0xfb95f8B1fb13264028fA158739183f002110c0EA` |
+| `SubsidyVault` | `0x710477A6Ed0B12d8C2A44029bd494905EAcCD3B8` |
+| Netting relay (proxy) | `0x4dc3cB450C3fa277164226093F6c30f50296a9A5` |
+| `SquidlorRegistry` | `0xd280A08b3F1818f10438ACba9EbA2DBE34fa9Fc5` |
 
-Mainnet addresses land on [deployed addresses](/networks/addresses), which is generated from the
-deployment manifest rather than typed.
+This table is kept in step with [deployed addresses](/networks/addresses), which is generated from
+the deployment manifest rather than typed. Arc Testnet runs the same contracts at different
+addresses; see [building against testnet](/networks/arc#building-against-testnet).
 
 The resolver reads the same `SquidlorAdapterV2` listed on [Arc](/networks/arc). It does not read the cross-oracle aggregators: those serve the price board and the public API, and they are deliberately not wired to settlement.
 

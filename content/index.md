@@ -10,7 +10,7 @@ Squidlor is a self-owned price oracle, and a set of products that run on it:
 3. **[The Squidlor Agent](/ai)**: Oracle Chat with six desks, and an MCP server, over live feed state, wallets, agent tokens and markets.
 4. **[The hub](/products/hub)** at [app.squidlor.com](https://app.squidlor.com): connect a wallet once and open everything signed in.
 
-Production is **[Arc](/networks/arc)**, Circle's L1 where gas is paid in USDC: seven pairs, both relays running, on Arc Testnet today and on mainnet when it launches on 2026-09-16. The whole deployment cost about 0.94 USDC in gas and no Solidity changes; see [bring Squidlor to your chain](/networks/for-chains).
+Production is **[Arc mainnet](/networks/arc)** (chain 5042), Circle's L1 where gas is paid in USDC: seven pairs with both relays running. Arc Testnet runs the same seven pairs for integration work. The whole deployment cost about 0.94 USDC in gas and no Solidity changes; see [bring Squidlor to your chain](/networks/for-chains).
 
 ## Start here
 

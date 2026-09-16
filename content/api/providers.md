@@ -20,7 +20,7 @@ curl "https://api.squidlor.com/aggregator/v1/arc/providers?pair=BTC_USD"
 
 ```json
 {
-  "chainId": 5042002,
+  "chainId": 5042,
   "window": { "from": "2026-08-12T18:49:34Z", "to": "2026-09-11T18:49:34Z", "days": 30 },
   "roundsScanned": 12757,
   "providers": [
@@ -82,7 +82,7 @@ curl "https://api.squidlor.com/aggregator/v1/arc/feeds/ETH_USD/at?timestamp=1789
 
 ```json
 {
-  "chainId": 5042002,
+  "chainId": 5042,
   "pair": "ETH/USD",
   "requestedAt": "2026-09-11T17:49:38Z",
   "observedAt": "2026-09-11T17:49:26Z",

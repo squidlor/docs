@@ -20,18 +20,18 @@ curl https://api.squidlor.com/aggregator/v1/arc/feeds
 ```json
 {
   "chainId": 5042,
-  "count": 8,
+  "count": 7,
   "feeds": [
     {
       "chainId": 5042,
       "pair": "BTC/USD",
-      "aggregator": "0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345",
+      "aggregator": "0x9a4e4d5f83e3ad9568Ee2919cc0A4Ba7a4c0F735",
       "kind": "aggregator",
       "description": "BTC/USD (Squidlor aggregated, Arc)",
-      "median": "77016.42057129",
-      "healthyCount": 2,
-      "totalSources": 2,
-      "freshestUpdatedAt": 1789152685
+      "median": "79903",
+      "healthyCount": 1,
+      "totalSources": 1,
+      "freshestUpdatedAt": 1789739907
     }
   ]
 }
@@ -48,7 +48,7 @@ curl https://api.squidlor.com/aggregator/v1/arc/feeds
 | `peekError` | Present only on failure: the revert reason from `peek()`. `median` is then absent. |
 
 > [!IMPORTANT]
-> Watch the ratio of `healthyCount` to `totalSources`. In the response above, 1 of 8 sources is healthy; the aggregate is technically valid because it clears `minHealthySources`, but it is effectively a single-source price. A monitoring integration should alert on that, not just on a missing value.
+> Watch the ratio of `healthyCount` to `totalSources`. Every Arc pair runs one source today, so a healthy read is 1 of 1: valid, but with nothing corroborating it. Alert on `healthyCount` reaching 0, which is when `peek()` reverts and `median` disappears, and re-check the ratio once a second source is wired.
 
 An empty `feeds` array means no aggregators are configured for that chain on this instance, not that the chain has no feeds. Configuration is per deployment.
 
@@ -68,44 +68,33 @@ curl https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD
 {
   "chainId": 5042,
   "pair": "BTC/USD",
-  "aggregator": "0xA180DcB56057a9a4D5DA17978Dd95C6692Ae6345",
+  "aggregator": "0x9a4e4d5f83e3ad9568Ee2919cc0A4Ba7a4c0F735",
   "kind": "aggregator",
   "description": "BTC/USD (Squidlor aggregated, Arc)",
   "decimals": 8,
   "owner": "0xB57BBda48C33fF725E93D604023D56D9C5b00e2a",
   "selectionMode": "MEDIAN",
-  "minHealthySources": 2,
+  "minHealthySources": 1,
   "defaultMaxStaleness": 600,
   "latestRoundId": "0",
-  "median": "77016.42057129",
-  "medianRaw": "7701642057129",
-  "freshestUpdatedAt": 1789152685,
-  "healthyCount": 2,
+  "median": "79903",
+  "medianRaw": "7990300000000",
+  "freshestUpdatedAt": 1789739907,
+  "healthyCount": 1,
   "sources": [
     {
       "index": 0,
-      "adapter": "0x49707860769dB9f662f429713ba9C11B1437BC38",
-      "name": "chainlink:BTC/USD",
-      "enabled": true,
-      "maxStaleness": 3600,
-      "price": "77006.54114258",
-      "priceRaw": "7700654114258",
-      "updatedAt": 1789152685,
-      "isStale": false
-    },
-    {
-      "index": 1,
-      "adapter": "0xe1f9fe8FA22D49B7345AF0Cc78149759A4B1F8c7",
+      "adapter": "0x12AeA54771C43CB6A0d393B930c642F28389210B",
       "name": "squidlor:BTC/USD",
       "enabled": true,
-      "maxStaleness": 600,
-      "price": "77026.3",
-      "priceRaw": "7702630000000",
-      "updatedAt": 1789152667,
+      "maxStaleness": 900,
+      "price": "79903",
+      "priceRaw": "7990300000000",
+      "updatedAt": 1789739907,
       "isStale": false
     }
   ],
-  "cachedAt": "2026-09-11T18:55:59.612Z"
+  "cachedAt": "2026-09-18T14:00:34.719Z"
 }
 ```
 
@@ -127,7 +116,7 @@ curl https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD
 | --- | --- |
 | `index` | Position in the source list. Under `PRIMARY_WITH_FALLBACK` this is priority order. |
 | `adapter` | The adapter contract wrapping this source. |
-| `name` | Self-reported label from the adapter: `chainlink`, `squidlor`, and so on. |
+| `name` | Self-reported label from the adapter, e.g. `squidlor:BTC/USD`. Arc runs one source per pair today, so it is `squidlor` on every feed. |
 | `enabled` | Disabled sources are never counted, even if fresh. |
 | `maxStaleness` | Seconds. `0` means the aggregator's `defaultMaxStaleness` applies. |
 | `price` / `priceRaw` | This source's own answer, formatted and raw. |
@@ -153,11 +142,11 @@ curl https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/value
 {
   "pair": "BTC/USD",
   "chainId": 5042,
-  "value": "77016.42057129",
-  "valueRaw": "7701642057129",
+  "value": "80332.85",
+  "valueRaw": "8033285000000",
   "decimals": 8,
-  "healthyCount": 2,
-  "updatedAt": 1789152685
+  "healthyCount": 1,
+  "updatedAt": 1789740074
 }
 ```
 
@@ -172,13 +161,14 @@ curl "https://api.squidlor.com/aggregator/v1/feeds/BTC_USD/value?chainId=5042"
   "pair": "BTC/USD",
   "chainId": 5042,
   "ok": true,
-  "value": "77016.42057129",
-  "valueRaw": "7701642057129",
+  "value": "80332.85",
+  "valueRaw": "8033285000000",
   "decimals": 8,
-  "healthyCount": 2,
-  "totalSources": 2,
-  "updatedAt": 1789152685,
-  "mode": "MEDIAN"
+  "healthyCount": 1,
+  "totalSources": 1,
+  "updatedAt": 1789740074,
+  "mode": "MEDIAN",
+  "kind": "aggregator"
 }
 ```
 

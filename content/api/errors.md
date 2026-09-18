@@ -49,12 +49,12 @@ Two cases return `200` while carrying bad news in the body.
 ```json
 {
   "pair": "SOL/USD",
-  "peekError": "minHealthySources not met",
-  "sources": [ { "name": "squidlor", "isStale": true } ]
+  "peekError": "The contract function \"peek\" reverted with the following signature:\n0x1f4d5e9b",
+  "sources": [ { "name": "squidlor:SOL/USD", "isStale": true } ]
 }
 ```
 
-**A low `healthyCount`.** This is the subtle one: the request succeeded, a price came back, and it is technically valid. But `healthyCount: 1` of `totalSources: 8` means the multi-source guarantee is not currently holding for that feed.
+**A low `healthyCount`.** This is the subtle one: the request succeeded, a price came back, and it is technically valid. But `healthyCount: 1` of `totalSources: 3` means the multi-source guarantee is not currently holding for that feed. Arc pairs run one source today, so the check below only starts firing once a second one is wired.
 
 ```typescript
 const feed = await fetchFeed("arc", "BTC_USD");

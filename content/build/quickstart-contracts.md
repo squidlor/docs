@@ -53,7 +53,7 @@ interface ISquidlorAggregator {
 
 contract LendingMarket {
     ISquidlorAggregator constant FEED =
-        ISquidlorAggregator(0xE6727b1eE47e3056A29ECeDc82EDDd1161Ca6c21); // BTC/USD, Arc
+        ISquidlorAggregator(0x9a4e4d5f83e3ad9568Ee2919cc0A4Ba7a4c0F735); // BTC/USD, Arc mainnet
 
     uint256 constant MIN_SOURCES = 1; // raise to 2 once a second source is added on Arc
     uint256 constant MAX_AGE = 30 minutes;
@@ -85,7 +85,7 @@ interface IAggregatorRegistry {
 
 contract DynamicConsumer {
     IAggregatorRegistry constant REGISTRY =
-        IAggregatorRegistry(0x610cC0E643dF3DC452929cfD0A4ADCdDB406B587); // Arc
+        IAggregatorRegistry(0x3c8552764DC0f8719cC6cedab81C4659E18D9574); // Arc mainnet
 
     function priceOf(string calldata pair) external view returns (int256) {
         address feed = REGISTRY.getAggregatorByName(pair);

@@ -21,34 +21,26 @@ curl "https://api.squidlor.com/aggregator/v1/arc/providers?pair=BTC_USD"
 ```json
 {
   "chainId": 5042,
-  "window": { "from": "2026-08-12T18:49:34Z", "to": "2026-09-11T18:49:34Z", "days": 30 },
-  "roundsScanned": 12757,
+  "window": { "from": "2026-08-19T14:06:22.541Z", "to": "2026-09-18T14:06:22.542Z", "days": 30 },
+  "roundsScanned": 2970,
+  "truncated": false,
   "providers": [
-    {
-      "name": "chainlink:BTC/USD",
-      "provider": "chainlink",
-      "kind": "oracle",
-      "samples": 12757,
-      "freshRate": 1,
-      "staleRate": 0,
-      "errorRate": 0,
-      "deviation": { "median": 2, "p95": 6, "max": 44 },
-      "worst": { "bps": 44, "ts": "2026-09-03T14:50:58Z", "median": 80114.69, "price": 80463.69 },
-      "outlierRate": null
-    },
     {
       "name": "squidlor:BTC/USD",
       "provider": "squidlor",
       "kind": "oracle",
-      "samples": 12757,
-      "freshRate": 0.9836,
-      "staleRate": 0.0164,
-      "errorRate": 0,
-      "deviation": { "median": 2, "p95": 6, "max": 44 },
-      "outlierRate": null
+      "pairs": ["BTC/USD"],
+      "samples": 2970,
+      "freshRate": 0.9973,
+      "staleRate": 0.0027,
+      "errorRate": 0.0003,
+      "deviation": { "median": 0, "p95": 0, "max": 0 },
+      "worst": { "bps": 0, "ts": "2026-09-18T14:06:07.020Z", "pair": "BTC/USD", "median": 80492.4, "price": 80492.4 },
+      "outlierRate": null,
+      "outlierEligibleSamples": 0
     }
   ],
-  "summary": { "sources": 2, "reliable": 1, "mostlyStale": [], "neverFresh": [] }
+  "summary": { "sources": 1, "oracleSources": 1, "dexSources": 0, "reliable": 1, "mostlyStale": [], "neverFresh": [] }
 }
 ```
 
@@ -62,7 +54,7 @@ curl "https://api.squidlor.com/aggregator/v1/arc/providers?pair=BTC_USD"
 | `kind` | `oracle` or `dex`. DEX TWAPs are graded separately because an AMM lagging a fast move is an AMM behaving normally, not a bad feed. |
 | `summary.reliable` | Sources with `freshRate` of 99% or better. `mostlyStale` is below 50%, `neverFresh` is zero. |
 
-Two things to read carefully. Deviation is measured against the round median, not against truth: on a two-leg pair a large number means the legs disagreed, not which was right. And a disabled source is excluded entirely, because disabling is a configuration choice, not a performance fact.
+Two things to read carefully. Deviation is measured against the round median, not against truth, so on the single-source Arc pairs the source **is** the median and every deviation is 0 by construction: the column only becomes informative once a second source is wired. And a disabled source is excluded entirely, because disabling is a configuration choice, not a performance fact.
 
 Equity legs score low on `freshRate` over a 24-hour clock because Squidlor's equity feed publishes only during the US regular session and carries a two-hour window. That is by design; see [price feeds](/oracle/feeds#tokenized-equity-pairs).
 
@@ -77,30 +69,30 @@ GET /v1/:chain/feeds/:pair/at?timestamp=<unix seconds or ISO>
 Returns the recorded observation nearest the requested moment, with the distance attached. Recording is sampled, so an exact-timestamp answer does not exist and the endpoint never pretends it does.
 
 ```bash
-curl "https://api.squidlor.com/aggregator/v1/arc/feeds/ETH_USD/at?timestamp=1789145378"
+curl "https://api.squidlor.com/aggregator/v1/arc/feeds/ETH_USD/at?timestamp=1789700000"
 ```
 
 ```json
 {
   "chainId": 5042,
   "pair": "ETH/USD",
-  "requestedAt": "2026-09-11T17:49:38Z",
-  "observedAt": "2026-09-11T17:49:26Z",
-  "offsetSeconds": -12,
-  "median": "2570.6218883",
+  "requestedAt": "2026-09-18T02:53:20.000Z",
+  "observedAt": "2026-09-18T02:53:06.599Z",
+  "offsetSeconds": -13,
+  "median": "2463.36",
+  "medianNum": 2463.36,
   "decimals": 8,
-  "healthyCount": 2,
+  "healthyCount": 1,
   "flagged": false,
   "sources": [
-    { "name": "chainlink:ETH/USD", "price": "2571.59377661", "isStale": false, "deviationBps": 4 },
-    { "name": "squidlor:ETH/USD", "price": "2569.65", "isStale": false, "deviationBps": -4 }
+    { "name": "squidlor:ETH/USD", "price": "2463.36", "priceNum": 2463.36, "isStale": false, "deviationBps": 0 }
   ],
   "toleranceSeconds": 3600,
   "toleranceDefaulted": true
 }
 ```
 
-`?tolerance=` (seconds) bounds how far the nearest observation may be from the request; outside it the response is **404** `NO_OBSERVATION`. `offsetSeconds` is negative when the observation precedes the request. Every leg's price and deviation at that moment is included, so "what did Chainlink say at 14:30 while Squidlor said this" is one call.
+`?tolerance=` (seconds) bounds how far the nearest observation may be from the request; outside it the response is **404** `NO_OBSERVATION`. `offsetSeconds` is negative when the observation precedes the request. Every source's price and deviation at that moment is included, so on a multi-source pair "what did each leg say at 14:30" is one call.
 
 For settlement-grade "exact day in, one price out" reads, use the [daily price book](/api/daily), which never substitutes a neighbouring observation.
 

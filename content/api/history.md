@@ -63,25 +63,25 @@ curl "https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/history?interval=
   "count": 3,
   "points": [
     {
-      "ts": "2026-09-11T16:59:24.755Z",
-      "median": "77891.64392423",
-      "medianNum": 77891.64392423,
-      "healthyCount": 2,
-      "bucket": "2026-09-11T16:00:00.000Z"
+      "ts": "2026-09-18T12:59:06.378Z",
+      "median": "78037.6",
+      "medianNum": 78037.6,
+      "healthyCount": 1,
+      "bucket": "2026-09-18T12:00:00.000Z"
     },
     {
-      "ts": "2026-09-11T17:59:24.700Z",
-      "median": "77531.09160608",
-      "medianNum": 77531.09160608,
-      "healthyCount": 2,
-      "bucket": "2026-09-11T17:00:00.000Z"
+      "ts": "2026-09-18T13:59:07.030Z",
+      "median": "79903",
+      "medianNum": 79903,
+      "healthyCount": 1,
+      "bucket": "2026-09-18T13:00:00.000Z"
     },
     {
-      "ts": "2026-09-11T18:55:33.264Z",
-      "median": "77016.42057129",
-      "medianNum": 77016.42057129,
-      "healthyCount": 2,
-      "bucket": "2026-09-11T18:00:00.000Z"
+      "ts": "2026-09-18T14:04:06.551Z",
+      "median": "80332.85",
+      "medianNum": 80332.85,
+      "healthyCount": 1,
+      "bucket": "2026-09-18T14:00:00.000Z"
     }
   ]
 }
@@ -162,7 +162,7 @@ The per-source forensic record: what each source reported at each sample, how fa
 | --- | --- | --- |
 | `from` / `to` | - | Range. |
 | `limit` | - | Maximum rounds. |
-| `source` | - | Filter to one source by name, e.g. `chainlink`. |
+| `source` | - | Filter to one source by name, e.g. `squidlor`. |
 | `flagged` | `false` | `true` returns only rounds flagged for deviation or staleness. |
 
 ```bash
@@ -178,7 +178,7 @@ curl "https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/audit?flagged=tru
     {
       "chainId": 5042,
       "pair": "BTC/USD",
-      "ts": "2026-09-09T12:21:00.852Z",
+      "ts": "2026-09-16T20:47:05.727Z",
       "decimals": 8,
       "selectionMode": "MEDIAN",
       "peekError": "The contract function \"peek\" reverted with the following signature:\n0x1f4d5e9b",
@@ -190,22 +190,12 @@ curl "https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD/audit?flagged=tru
       "sources": [
         {
           "index": 0,
-          "adapter": "0x49707860769dB9f662f429713ba9C11B1437BC38",
-          "name": "chainlink:BTC/USD",
-          "enabled": true,
-          "price": "79350.45021471",
-          "priceNum": 79350.45021471,
-          "updatedAt": 1788955249,
-          "isStale": false
-        },
-        {
-          "index": 1,
-          "adapter": "0xe1f9fe8FA22D49B7345AF0Cc78149759A4B1F8c7",
+          "adapter": "0x12AeA54771C43CB6A0d393B930c642F28389210B",
           "name": "squidlor:BTC/USD",
           "enabled": true,
-          "price": "79320.3",
-          "priceNum": 79320.3,
-          "updatedAt": 1788955125,
+          "price": "76209.6",
+          "priceNum": 76209.6,
+          "updatedAt": 1789590422,
           "isStale": true
         }
       ]

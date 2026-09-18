@@ -139,7 +139,7 @@ Point `AGGREGATOR_API_URL` at your own instance to query a chain the public API 
 
 Two habits are worth building when an agent is reading these tools for you.
 
-**Check `healthyCount` against `totalSources`.** A price returned from 1 of 8 sources is valid and unprotected. An agent will report the number without necessarily flagging the ratio; ask, or read it yourself.
+**Check `healthyCount` against `totalSources`.** A price backed by fewer sources than the feed has is valid and unprotected. Every Arc pair reports 1 of 1 today, so there is no corroboration behind any answer yet. An agent will report the number without necessarily flagging the ratio; ask, or read it yourself.
 
 **Distinguish `cachedAt` from `updatedAt`.** `cachedAt` is when the API read the chain; `updatedAt` is when the data was published. A response can be seconds old and carry a price from Friday afternoon, which is exactly correct for an equity feed on a Sunday.
 

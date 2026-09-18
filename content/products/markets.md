@@ -27,7 +27,7 @@ Every market has a short link on `squidlor.market` (the code is the first eight 
 
 ## Season 1 points
 
-Squidlor Points (SP) is the scoreboard for a 14-day season, **2026-09-10 to 2026-09-23**. At the end of the season the top 1,000 wallets share **10,000,000 SQDLR**, 1% of the 1 billion supply, pro-rata by points with a 2% per-wallet clamp. The live rules are served by the API and are what the site reads:
+Squidlor Points (SP) is the scoreboard for a 14-day season, **2026-09-16 to 2026-09-29**. At the end of the season the top 1,000 wallets share **1,000,000 SQDLR**, 0.1% of the 1 billion supply, pro-rata by points with a 2% per-wallet clamp. The live rules are served by the API and are what the site reads:
 
 ```bash
 curl https://api.squidlor.com/quest/points/rules
@@ -44,7 +44,7 @@ curl https://api.squidlor.com/quest/points/rules
 Streak and posting pay only on a day with trading or creating points, so a perfect 14-day bonus run is 970 SP, less than one capped trading day. There are no multipliers anywhere.
 
 > [!NOTE]
-> The ticker is SQDLR. Anything that mentions multipliers, a 2% pool, 20,000,000 tokens or the ticker SQUID describes an earlier revision. The rules endpoint above is authoritative, and the terms on markets.squidlor.com govern.
+> The ticker is SQDLR. Anything that mentions multipliers, a 1% or 2% pool, 10,000,000 or 20,000,000 tokens, or the ticker SQUID describes an earlier revision. The rules endpoint above is authoritative, and the terms on markets.squidlor.com govern.
 
 ## Read it yourself
 

@@ -1,6 +1,6 @@
 ---
 title: Bring Squidlor to your chain
-description: For L1 and L2 teams without Chainlink, Pyth or DIA. What Squidlor deploys, what the chain provides, what it costs, how your validators become the signers, and the 30-day benchmark we offer before anyone commits.
+description: For L1 and L2 teams without Chainlink, Pyth or DIA. What Squidlor deploys, what the chain provides, what it costs, how your validators become the signers, and the 7-day benchmark we offer before anyone commits.
 ---
 
 This page is for the people who run a chain, not the people building on one. If you are a protocol looking to read a price, start at the [quick start](/quick-start).
@@ -53,7 +53,7 @@ The real budget lines are operations and signer incentives, and they follow the 
 
 | Phase | Squidlor provides | The chain provides |
 | --- | --- | --- |
-| **0. Benchmark**, 30 days | Deployment, relay, dashboard access, a written report | RPC endpoints, explorer, DEX pool addresses, reviewer wallets, and a gas grant in the native token with a large buffer that we account for and return |
+| **0. Benchmark**, 7 days | Deployment, relay, dashboard access, a written report | RPC endpoints, explorer, DEX pool addresses, reviewer wallets, and a gas grant in the native token with a large buffer that we account for and return |
 | **1. Production feeds**, year one | BTC and ETH plus up to eight more pairs, your cadence, full API/SDK/MCP/chat coverage, monitoring and on-call, the hardening milestones below | A recoverable gas float and a hard-capped operations grant from the foundation; a chain representative on the ownership multisig |
 | **2. Validator signers** | The signer daemon kit, onboarding, threshold raised from 1-of-1 to 2-of-3 and beyond | Three to five committed validators and a capped monthly stipend pool in the native token that phases out as consumer fees arrive |
 | **3. Consumer fees** | A fee collector and per-epoch distribution, 70% to validator signers and 30% to Squidlor as a starting point | Ecosystem protocols paying feed-access fees |
@@ -90,13 +90,13 @@ Chain programs advance this ladder; each rung has a trigger rather than a date, 
 
 ## How the evaluation works
 
-We propose the same thing to every chain: a 30-day benchmark of BTC/USD and ETH/USD on your mainnet, before any partnership announcement.
+We propose the same thing to every chain: a 7-day benchmark of BTC/USD and ETH/USD on your mainnet, before any partnership announcement.
 
 - Cadence 0.5% deviation or a five-minute heartbeat, off-chain minimum of three live venues, staleness windows published before day one.
 - Metrics read straight from the public API by either side: freshness p50 and p95, deviation from exchange mid at write time, deviation from a Chainlink feed for the same pair on a reference chain, updates and gas per day, rounds refused for insufficient healthy legs, and every flagged round explained.
 - Your reviewers get a read-only login to the operations console and a professional-tier API key on day one, so every number in the report is one they can reproduce.
-- Day 30: a written report with the raw rounds attached, and a recommendation for the first production use case.
+- Day 7: a written report with the raw rounds attached, and a recommendation for the first production use case.
 
-The [measured performance](/oracle/evidence) page is what that report looks like, written for an earlier deployment and including the rounds where the oracle refused to answer; the Arc report replaces it after a week of data. If the benchmark is weak, you have lost a month and no money. If it is strong, the production conversation starts from evidence.
+The [measured performance](/oracle/evidence) page is what that report looks like, written for an earlier deployment and including the rounds where the oracle refused to answer; the Arc report replaces it after a week of data. If the benchmark is weak, you have lost a week and no money. If it is strong, the production conversation starts from evidence.
 
 To start, write to build@squidlor.com with your chain ID, RPC endpoints and explorer.

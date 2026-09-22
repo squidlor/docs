@@ -125,7 +125,7 @@ They are Squidlor's short-link domains for sharing markets. They redirect to mar
 
 ### Can Squidlor deploy on my chain?
 
-If it runs Solidity ≥ 0.8 with standard `ecrecover` and exposes standard JSON-RPC, yes. No node software and no bridge; the whole stack deploys from a script in about a week, and your validators can join later as signers. [Bring Squidlor to your chain](/networks/for-chains) has the requirements, the cost model and the 30-day benchmark we offer first.
+If it runs Solidity ≥ 0.8 with standard `ecrecover` and exposes standard JSON-RPC, yes. No node software and no bridge; the whole stack deploys from a script in about a week, and your validators can join later as signers. [Bring Squidlor to your chain](/networks/for-chains) has the requirements, the cost model and the 7-day benchmark we offer first.
 
 ### What does a deployment cost?
 

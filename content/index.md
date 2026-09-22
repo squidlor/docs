@@ -93,7 +93,7 @@ Two earlier chains proved it in July and August 2026, and Arc repeated it in Sep
   },
   {
     "title": "Bring Squidlor to your chain",
-    "description": "For chain teams: what deploys, what it costs, how your validators become the signers, and the 30-day benchmark.",
+    "description": "For chain teams: what deploys, what it costs, how your validators become the signers, and the 7-day benchmark.",
     "href": "/networks/for-chains",
     "icon": "network"
   }

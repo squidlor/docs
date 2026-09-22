@@ -36,7 +36,7 @@ An unrecognised slug returns `404`, and `5042002` returns `chain not supported`:
 
 ## What a new chain requires
 
-If you run a chain and are evaluating Squidlor, [bring Squidlor to your chain](/networks/for-chains) is written for you: cost model, validator-as-signer program and the 30-day benchmark. The technical checklist follows.
+If you run a chain and are evaluating Squidlor, [bring Squidlor to your chain](/networks/for-chains) is written for you: cost model, validator-as-signer program and the 7-day benchmark. The technical checklist follows.
 
 Nothing that touches Solidity. Both Arc deployments went live without a contract change.
 

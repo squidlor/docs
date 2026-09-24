@@ -19,13 +19,13 @@ Each address is a `SquidlorOracleAggregator` implementing Chainlink's `Aggregato
 
 | Pair | Aggregator | Sources |
 | --- | --- | --- |
-| BTC/USD | `0x9a4e4d5f83e3ad9568Ee2919cc0A4Ba7a4c0F735` | squidlor `0x12AeA54771C43CB6A0d393B930c642F28389210B` |
-| ETH/USD | `0x7DADEEC6665D330b35e38C18bdF270ABd34d92be` | squidlor `0x05292d70254f9309D731B5Ba93AE7a53710d469B` |
-| SOL/USD | `0x2597340cE638734845c6DaEfE211D3C58a1CCA4f` | squidlor `0x580587a72F84740A13C920ACb7cd356596b2D1ad` |
-| NVDA/USD | `0xfa0A9D8a8c631065c89b0b58B90aB535961321cB` | squidlor `0xb2876B874134Eb62757163BE87020DF32E80Bc14` |
-| TSLA/USD | `0xE08191D2Ba69785079D655bA23B829a4B5029316` | squidlor `0x0bC4E8dCe77e25A8219EA7794281a2E355484fA5` |
-| AAPL/USD | `0xb64a411dF119E1E2a8b18812fD1512b48CF29Bb2` | squidlor `0xEcd3Da639CDbD837350ebd580F6dF388573E1418` |
-| GOOGL/USD | `0xFaCe2ABF0C7CCDa15252F7020fAA24FC65c15540` | squidlor `0x3F898b06764686d49b602967fB00610d0A05E6E8` |
+| BTC/USD | `0x7D86f28D1BBECf39f7BB192a1c26C7c19447E47C` | squidlor `0x12AeA54771C43CB6A0d393B930c642F28389210B` |
+| ETH/USD | `0x9cEb5c840C618Ea4d219488D6b0516750A1dF3CE` | squidlor `0x05292d70254f9309D731B5Ba93AE7a53710d469B` |
+| SOL/USD | `0xFF27feF2c5584Af8b13e3E630F161cc34c084E8A` | squidlor `0x580587a72F84740A13C920ACb7cd356596b2D1ad` |
+| NVDA/USD | `0x5C792F2d7d350CFcA1661BC3d8d3B7F062Ed1bE5` | squidlor `0xb2876B874134Eb62757163BE87020DF32E80Bc14` |
+| TSLA/USD | `0x83A54C02Cd6D01E2f722E8315F3F153f8C1dE82a` | squidlor `0x0bC4E8dCe77e25A8219EA7794281a2E355484fA5` |
+| AAPL/USD | `0x0062E0D202E595024A3a9C76c1621F3683f06f19` | squidlor `0xEcd3Da639CDbD837350ebd580F6dF388573E1418` |
+| GOOGL/USD | `0xf1FC679bd35cFD2155DCD3dbc9542435C2AfF2c4` | squidlor `0x3F898b06764686d49b602967fB00610d0A05E6E8` |
 
 ### Oracle core
 
@@ -62,7 +62,7 @@ Each address is a `SquidlorOracleAggregator` implementing Chainlink's `Aggregato
 Never trust a documentation table for something that moves money. Confirm on-chain first:
 
 ```bash
-cast call 0x9a4e4d5f83e3ad9568Ee2919cc0A4Ba7a4c0F735 "description()(string)" --rpc-url https://rpc.mainnet.arc.io
-cast call 0x9a4e4d5f83e3ad9568Ee2919cc0A4Ba7a4c0F735 "peek()(int256,uint256,uint256)" --rpc-url https://rpc.mainnet.arc.io
+cast call 0x7D86f28D1BBECf39f7BB192a1c26C7c19447E47C "description()(string)" --rpc-url https://rpc.mainnet.arc.io
+cast call 0x7D86f28D1BBECf39f7BB192a1c26C7c19447E47C "peek()(int256,uint256,uint256)" --rpc-url https://rpc.mainnet.arc.io
 ```
 

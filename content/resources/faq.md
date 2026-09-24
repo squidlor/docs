@@ -19,7 +19,7 @@ Paid plans exist for throughput and history depth, not for access to data. See [
 
 ### Is it really a one-line change from Chainlink?
 
-Mechanically, yes: Squidlor aggregators implement `AggregatorV3Interface` at 8 decimals, so you change the address. But read [the staleness trap](/integration/reading-prices#the-staleness-trap) before you ship it. `latestRoundData().updatedAt` does not mean what it means on a Chainlink feed unless rounds are being committed.
+Mechanically, yes: Squidlor aggregators implement `AggregatorV3Interface` at 8 decimals, so you change the address. `latestRoundData().updatedAt` is the source publish time and the call reverts when the price is stale, so a Chainlink staleness check works unchanged. See [what `updatedAt` means](/integration/reading-prices#updatedat-on-an-aggregator).
 
 ### Which contract should I read?
 

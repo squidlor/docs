@@ -1,6 +1,6 @@
 ---
 title: Read prices on-chain
-description: Production-ready patterns for consuming Squidlor feeds from Solidity, including the staleness trap that catches most integrations.
+description: Production-ready patterns for consuming Squidlor feeds from Solidity, including what updatedAt means on an aggregator.
 ---
 
 Squidlor aggregators implement Chainlink's `AggregatorV3Interface`, so a migration is one address change. Getting it *right* takes a little more care, and this page is about the parts that are easy to get wrong.
@@ -45,31 +45,26 @@ interface ISquidlorAggregator is IAggregatorV3 {
 }
 ```
 
-## The staleness trap
+## `updatedAt` on an aggregator
 
-This is the one thing to take away from this page.
-
-`latestRoundData()` has two behaviours on a Squidlor aggregator:
-
-- If `poke()` has been called at least once, it returns the last **committed round**, and `updatedAt` is when that round was committed.
-- If it has never been called, it returns a **live aggregate** stamped with `block.timestamp`.
-
-In the second case, `updatedAt == block.timestamp`, so:
+On a Squidlor aggregator, `latestRoundData().updatedAt` is the **publish time of the freshest healthy source**, not the time of your read. A standard Chainlink staleness check works as written:
 
 ```solidity
-// BROKEN on a feed with no committed rounds: this check can never fail,
-// because updatedAt is the time of *this* call, not of the data.
-require(block.timestamp - updatedAt <= 1 hours, "stale");
+(, int256 answer, , uint256 updatedAt, ) = aggregator.latestRoundData();
+require(block.timestamp - updatedAt <= maxAge, "stale price");
 ```
 
-You have written a staleness check that always passes, on a feed that might be reading a source that stopped updating days ago.
+Two more guarantees hold on every read:
 
-> [!DANGER]
-> A staleness check against `latestRoundData().updatedAt` provides no protection unless you have verified that rounds are actually being committed on that feed. Check `latestRoundId()`: if it is `0`, no round has ever been committed.
+- **It reverts instead of serving a stale price.** When fewer than `minHealthySources` sources are fresh, `latestRoundData()` reverts with `InsufficientHealthySources`, exactly like `peek()`.
+- **It always follows the newest data.** A round committed with `poke()` is returned only while it is still the freshest publish. After the next publish, `latestRoundData()` returns the live aggregate as provisional round `latestRoundId() + 1`, the id the next `poke()` would commit it under.
 
-### The fix: use `peek()`
+> [!WARNING]
+> Aggregators deployed before 2026-09-24 behave differently: until a round is committed they stamp `updatedAt` with `block.timestamp`, so a staleness check against it always passes. Every current address on [networks & addresses](/networks/addresses) has the new behaviour. If you hardcoded an older address, move to the current one, or read `peek()`.
 
-`peek()` returns the freshest timestamp **among the underlying sources**, which is real data age:
+### `peek()` gives you the source count too
+
+`peek()` returns the same publish time plus the number of healthy sources, so you can demand more than one when a feed has them:
 
 ```solidity
 (int256 answer, uint256 freshestUpdatedAt, uint256 healthyCount) = aggregator.peek();
@@ -208,6 +203,6 @@ If your protocol needs a stable round ID to settle against, so you can prove *wh
 
 ## Reading the Squidlor feed alone
 
-To read Squidlor's own price without the cross-oracle layer, point at the pair's [`SquidPriceFeed`](/contracts/price-feed). There, `latestRoundData().updatedAt` *is* a genuine publish timestamp; the trap above does not apply, because a price feed proxy has no live-read mode.
+To read Squidlor's own price without the cross-oracle layer, point at the pair's [`SquidPriceFeed`](/contracts/price-feed). There, `latestRoundData().updatedAt` is the on-chain publish time of the last push. Unlike the aggregator, the proxy does not revert when the price is stale, so the `updatedAt` check is yours to make.
 
 You are also giving up Layer 3 protection entirely. Do this only when you specifically want the single source.

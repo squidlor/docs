@@ -79,10 +79,10 @@ Adding an oracle network means writing one adapter and calling `addSource`. `Squ
 
 Live reads compute the aggregate at call time and write nothing. `poke()`, which is **permissionless**, commits the current aggregate as a numbered round that `getRoundData` can retrieve.
 
-> [!IMPORTANT]
-> If nobody has ever called `poke()` on an aggregator, `latestRoundData()` returns a live aggregate stamped with `block.timestamp`. A staleness check against that `updatedAt` will always pass, because it is the time of *your read*, not of the data.
->
-> Use `peek()` and check `freshestUpdatedAt` if you need real data age. This is the single most consequential detail on this page.
+`latestRoundData()` reports the freshest healthy source's publish time as `updatedAt`, and reverts with `InsufficientHealthySources` when too few sources are fresh. A committed round is returned only while it is still the freshest publish; after the next publish, the live aggregate is returned as provisional round `latestRoundId() + 1`. `poke()` stores the same publish time, so committed rounds carry data age rather than commit time.
+
+> [!NOTE]
+> Aggregators deployed before 2026-09-24 stamp `updatedAt` with `block.timestamp` until a round is committed, and after one `poke()` keep returning that round. They are superseded; the current addresses are on [networks & addresses](/networks/addresses).
 
 ## Configuration
 

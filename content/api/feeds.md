@@ -25,7 +25,7 @@ curl https://api.squidlor.com/aggregator/v1/arc/feeds
     {
       "chainId": 5042,
       "pair": "BTC/USD",
-      "aggregator": "0x9a4e4d5f83e3ad9568Ee2919cc0A4Ba7a4c0F735",
+      "aggregator": "0x7D86f28D1BBECf39f7BB192a1c26C7c19447E47C",
       "kind": "aggregator",
       "description": "BTC/USD (Squidlor aggregated, Arc)",
       "median": "79903",
@@ -68,7 +68,7 @@ curl https://api.squidlor.com/aggregator/v1/arc/feeds/BTC_USD
 {
   "chainId": 5042,
   "pair": "BTC/USD",
-  "aggregator": "0x9a4e4d5f83e3ad9568Ee2919cc0A4Ba7a4c0F735",
+  "aggregator": "0x7D86f28D1BBECf39f7BB192a1c26C7c19447E47C",
   "kind": "aggregator",
   "description": "BTC/USD (Squidlor aggregated, Arc)",
   "decimals": 8,

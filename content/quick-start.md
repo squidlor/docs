@@ -35,7 +35,7 @@ contract PriceConsumer {
     // BTC/USD aggregator on Arc mainnet. Take the address from /networks/addresses;
     // Arc Testnet uses a different one, resolvable from the testnet registry.
     IAggregatorV3 public constant BTC_USD =
-        IAggregatorV3(0x9a4e4d5f83e3ad9568Ee2919cc0A4Ba7a4c0F735); // Arc (5042)
+        IAggregatorV3(0x7D86f28D1BBECf39f7BB192a1c26C7c19447E47C); // Arc (5042)
 
     /// @notice Latest BTC/USD price, reverting if the feed has gone stale.
     function btcPrice(uint256 maxAge) external view returns (int256) {

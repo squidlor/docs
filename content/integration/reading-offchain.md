@@ -93,7 +93,7 @@ const client = createPublicClient({
   transport: http("https://rpc.mainnet.arc.io"),
 });
 
-const BTC_USD = "0x9a4e4d5f83e3ad9568Ee2919cc0A4Ba7a4c0F735"; // BTC/USD aggregator, Arc mainnet; see /networks/addresses
+const BTC_USD = "0x7D86f28D1BBECf39f7BB192a1c26C7c19447E47C"; // BTC/USD aggregator, Arc mainnet; see /networks/addresses
 
 // One multicall instead of four round trips.
 const [peek, decimals, sourceCount] = await client.multicall({

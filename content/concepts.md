@@ -69,7 +69,7 @@ Two related bounds live one layer lower, in the signer layer: Squidlor rejects p
 
 A **round** is a committed, numbered answer stored on-chain, in the Chainlink sense. Squidlor supports both styles of read:
 
-- **Live reads** (`peek()`, and `latestRoundData()` before any round is committed) compute the aggregate from the sources at call time. Nothing is written.
+- **Live reads** (`peek()` and `latestRoundData()`) compute the aggregate from the sources at call time and report the freshest source's publish time. Nothing is written.
 - **Committed rounds** are created by calling `poke()`, which is permissionless. Indexers and settlement logic that need a stable, replayable round ID use these; `getRoundData(roundId)` reads them back.
 
 Nobody needs to call `poke()` for prices to work. It exists for consumers that need a persisted identifier rather than a live number.

@@ -22,7 +22,7 @@ interface IAggregatorV3 {
 contract PriceConsumer {
     // NVDA/USD on Arc mainnet: Squidlor's signed median, published during US market hours
     IAggregatorV3 public constant NVDA_USD =
-        IAggregatorV3(0xfa0A9D8a8c631065c89b0b58B90aB535961321cB);
+        IAggregatorV3(0x5C792F2d7d350CFcA1661BC3d8d3B7F062Ed1bE5);
 
     error StalePrice(uint256 updatedAt, uint256 maxAge);
     error BadPrice(int256 answer);
@@ -53,7 +53,7 @@ interface ISquidlorAggregator {
 
 contract LendingMarket {
     ISquidlorAggregator constant FEED =
-        ISquidlorAggregator(0x9a4e4d5f83e3ad9568Ee2919cc0A4Ba7a4c0F735); // BTC/USD, Arc mainnet
+        ISquidlorAggregator(0x7D86f28D1BBECf39f7BB192a1c26C7c19447E47C); // BTC/USD, Arc mainnet
 
     uint256 constant MIN_SOURCES = 1; // raise to 2 once a second source is added on Arc
     uint256 constant MAX_AGE = 30 minutes;
@@ -105,13 +105,13 @@ manifest. Arc mainnet (5042):
 
 | Pair | Aggregator |
 |---|---|
-| BTC/USD | `0x9a4e4d5f83e3ad9568Ee2919cc0A4Ba7a4c0F735` |
-| ETH/USD | `0x7DADEEC6665D330b35e38C18bdF270ABd34d92be` |
-| SOL/USD | `0x2597340cE638734845c6DaEfE211D3C58a1CCA4f` |
-| NVDA/USD | `0xfa0A9D8a8c631065c89b0b58B90aB535961321cB` |
-| TSLA/USD | `0xE08191D2Ba69785079D655bA23B829a4B5029316` |
-| AAPL/USD | `0xb64a411dF119E1E2a8b18812fD1512b48CF29Bb2` |
-| GOOGL/USD | `0xFaCe2ABF0C7CCDa15252F7020fAA24FC65c15540` |
+| BTC/USD | `0x7D86f28D1BBECf39f7BB192a1c26C7c19447E47C` |
+| ETH/USD | `0x9cEb5c840C618Ea4d219488D6b0516750A1dF3CE` |
+| SOL/USD | `0xFF27feF2c5584Af8b13e3E630F161cc34c084E8A` |
+| NVDA/USD | `0x5C792F2d7d350CFcA1661BC3d8d3B7F062Ed1bE5` |
+| TSLA/USD | `0x83A54C02Cd6D01E2f722E8315F3F153f8C1dE82a` |
+| AAPL/USD | `0x0062E0D202E595024A3a9C76c1621F3683f06f19` |
+| GOOGL/USD | `0xf1FC679bd35cFD2155DCD3dbc9542435C2AfF2c4` |
 | Registry | `0x3c8552764DC0f8719cC6cedab81C4659E18D9574` |
 
 Arc Testnet uses different addresses and is not listed here. Resolve them from the testnet

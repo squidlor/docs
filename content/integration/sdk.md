@@ -108,7 +108,7 @@ Three ways, in the order the SDK tries them:
 // 1. Explicit address: the escape hatch for any chain or pair the SDK
 //    doesn't know about yet.
 const feed = getFeed("arc", "SOMETHING/USD", {
-  address: "0xfa0A9D8a8c631065c89b0b58B90aB535961321cB",
+  address: "0x5C792F2d7d350CFcA1661BC3d8d3B7F062Ed1bE5",
 });
 
 // 2. Resolve through the on-chain registry: async, because it reads a contract.
@@ -189,7 +189,7 @@ CHAINS.arc.chainId; // 5042
 
 Being clear about the boundaries, since they are easy to assume away:
 
-- **No `peek()`.** `read()` calls `latestRoundData()`, which means it inherits [the staleness trap](/integration/reading-prices#the-staleness-trap): on a feed with no committed rounds, `updatedAt` is the read time rather than the data time. For real freshness and source health, call `peek()` yourself with viem.
+- **No `peek()`.** `read()` calls `latestRoundData()`, whose `updatedAt` is the source publish time on current aggregators ([details](/integration/reading-prices#updatedat-on-an-aggregator)). For the healthy-source count, call `peek()` yourself with viem.
 - **No history, OHLC, or audit.** Those live in the [HTTP API](/api/history).
 - **No writes.** Read-only by design. Publishing is the relayer's job.
 - **No health data.** `healthyCount` is not exposed. Use `peek()` or the API.

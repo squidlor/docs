@@ -149,8 +149,8 @@ contract SquidFeedConsumer {
         (, int256 answer, , uint256 updatedAt, ) = feed.latestRoundData();
 
         require(answer > 0, "invalid price");
-        // updatedAt is the on-chain publish time, a real staleness signal here,
-        // unlike the aggregator's live-read fallback.
+        // updatedAt is the on-chain publish time of the last push. The proxy
+        // does not revert when stale, so this check is what protects you.
         require(block.timestamp - updatedAt <= maxAge, "stale");
 
         return answer;

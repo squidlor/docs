@@ -125,6 +125,8 @@ export const nav: NavGroup[] = [
     items: [
       { title: "Supported networks", slug: "/networks" },
       { title: "Arc", slug: "/networks/arc" },
+      { title: "Arbitrum One", slug: "/networks/arbitrum" },
+      { title: "Base", slug: "/networks/base" },
       { title: "Deployed addresses", slug: "/networks/addresses" },
       { title: "Bring Squidlor to your chain", slug: "/networks/for-chains" },
     ],

@@ -5,6 +5,24 @@ description: What shipped on the builder platform, newest first.
 
 Changes to the API, SDK, MCP server and builder platform. Contract deployments are on [deployed addresses](/networks/addresses).
 
+## Arbitrum One and Base, October 2026
+
+**The oracle is live on [Arbitrum One](/networks/arbitrum) (42161) and [Base](/networks/base) (8453).**
+Both run Arc's seven pairs: BTC, ETH, SOL, NVDA, TSLA, AAPL and GOOGL against USD. Each pair
+medians two on-chain sources, Chainlink's feed on that chain and Squidlor's signed median, so
+BTC, ETH and SOL run `minHealthySources = 2` there.
+
+**Relay cadence follows Chainlink's on Base.** BTC pushes on a 0.1% move or every 20 minutes,
+ETH on 0.15% or 20 minutes, and SOL and the equities on 0.5% or every 24 hours. Two relay copies
+run in different locations, and each re-reads the chain before it sends, so one update lands once.
+
+**The Base aggregators are new.** The October set replaces the August 2026 one, so
+`latestRoundData().updatedAt` reports the freshest publish time. The Base registry points at the
+new addresses.
+
+**Read both chains on-chain.** The API, the SDK and the agent tools serve Arc. Addresses for the
+new chains are on their network pages.
+
 ## Arc mainnet, September 2026
 
 **Arc mainnet is live, chain 5042.** The whole stack is deployed and both relays are pushing:

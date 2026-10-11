@@ -3,28 +3,33 @@ title: Supported networks
 description: Where Squidlor is deployed, how the API addresses the chain, and what it takes to add a new one.
 ---
 
-Squidlor runs on one chain: Arc. No contract hardcodes a chain, and every off-chain service is parameterized by chain ID and RPC URL, so the deployment below is a configuration, not a property of the code.
+Squidlor's oracle is live on three chains: Arc, Arbitrum One and Base. No contract hardcodes a chain, and every off-chain service is parameterized by chain ID and RPC URL, so each deployment below is a configuration, not a property of the code.
 
 ## Deployment
 
 | Network | Chain ID | Status |
 | --- | --- | --- |
 | **[Arc](/networks/arc)** | 5042 | **Live, and what everything serves.** Oracle with seven aggregators (BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL against USD), registry, both relays and the prediction market. Addresses on [deployed addresses](/networks/addresses). |
+| **[Arbitrum One](/networks/arbitrum)** | 42161 | **Live since October 2026.** The same seven pairs, each a median of Chainlink's Arbitrum feed and Squidlor's feed. Oracle and registry only, no prediction market. |
+| **[Base](/networks/base)** | 8453 | **Live.** The same seven pairs, each a median of Chainlink's Base feed and Squidlor's feed. |
 | **[Arc Testnet](/networks/arc#building-against-testnet)** | 5042002 | **Live, for integration only.** The same seven pairs and the same contracts. Not served by the public API; read it over RPC and resolve addresses from the registry. |
 
-Every service knows the same chain:
+What each service covers:
 
-| | Arc (5042) | Arc Testnet (5042002) |
-| --- | --- | --- |
-| Contracts deployed | Yes | Yes |
-| On the live public API | Yes, slug `arc` | No |
-| In `@squidlor/oracle-sdk` | Yes, `getFeed('arc', 'BTC/USD')` | By explicit address and client |
-| Oracle tools in chat and MCP | Yes | No |
-| Prediction market | Yes | Yes |
+| | Arc (5042) | Arbitrum One (42161) | Base (8453) | Arc Testnet (5042002) |
+| --- | --- | --- | --- | --- |
+| Oracle contracts and relays | Yes | Yes | Yes | Yes |
+| On-chain sources per pair | 1 (Squidlor) | 2 (Chainlink and Squidlor) | 2 (Chainlink and Squidlor) | 1 (Squidlor) |
+| On the live public API | Yes, slug `arc` | No | No | No |
+| In `@squidlor/oracle-sdk` | Yes, `getFeed('arc', 'BTC/USD')` | By explicit address and client | By explicit address and client | By explicit address and client |
+| Oracle tools in chat and MCP | Yes | No | No | No |
+| Prediction market | Yes | No | No | Yes |
+
+On Arbitrum and Base, read the aggregators on-chain. Their addresses are on the [Arbitrum One](/networks/arbitrum) and [Base](/networks/base) pages.
 
 ## Chain slug
 
-The API accepts the slug `arc` or the numeric chain ID in place of `:chain`. Both mean mainnet:
+The API accepts the slug `arc` or the numeric chain ID in place of `:chain`. Both mean Arc mainnet:
 
 ```bash
 # Equivalent
@@ -32,13 +37,13 @@ curl https://api.squidlor.com/aggregator/v1/arc/feeds
 curl https://api.squidlor.com/aggregator/v1/5042/feeds
 ```
 
-An unrecognised slug returns `404`, and `5042002` returns `chain not supported`: the API does not serve testnet. Check `chainId` in the response; it should read `5042`.
+An unrecognised slug returns `404`. `5042002`, `42161` and `8453` return `chain not supported`: the API serves Arc mainnet only. Check `chainId` in the response. It should read `5042`.
 
 ## What a new chain requires
 
 If you run a chain and are evaluating Squidlor, [bring Squidlor to your chain](/networks/for-chains) is written for you: cost model, validator-as-signer program and the 7-day benchmark. The technical checklist follows.
 
-Nothing that touches Solidity. Both Arc deployments went live without a contract change.
+Nothing that touches Solidity. Arc, Arbitrum One and Base all went live without a contract change.
 
 **On-chain:**
 
@@ -64,7 +69,7 @@ Nothing that touches Solidity. Both Arc deployments went live without a contract
 | A gas token the relayer can hold | Pushes are relayer-paid. On Arc that token is USDC. |
 | An explorer | For verification and receipts. Arc's is Blockscout. |
 
-One thing is helpful but not required: an existing Chainlink deployment, which gives cross-oracle aggregation something to aggregate with. Without it, a chain runs on Squidlor's own source alone until a second provider is available. That is Arc's situation today; see [Arc](/networks/arc#what-squidlor-runs-on-arc).
+One thing is helpful but not required: an existing Chainlink deployment, which gives cross-oracle aggregation something to aggregate with. Without it, a chain runs on Squidlor's own source alone until a second provider is available. That is Arc's situation today. See [Arc](/networks/arc#what-squidlor-runs-on-arc). Arbitrum One and Base both have Chainlink feeds, so every pair there medians two sources.
 
 ## Cost
 

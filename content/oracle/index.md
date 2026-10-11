@@ -55,11 +55,13 @@ For **tokenized equities**, most chains provide only one stock oracle, which mak
 
 ## Where it is live
 
-The oracle is deployed on one chain:
+The oracle is deployed on three chains:
 
 | Chain | Pairs | State |
 | --- | --- | --- |
 | **[Arc](/networks/arc)** | 7: BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL | Both relays running on mainnet (chain 5042). One on-chain source per pair (Squidlor's feed) until another oracle network publishes on Arc. The prediction market lives here. Arc Testnet runs the same seven pairs for integration; see [building against testnet](/networks/arc#building-against-testnet). |
+| **[Arbitrum One](/networks/arbitrum)** | 7: the same pairs | Live since October 2026 (chain 42161). Two on-chain sources per pair: Chainlink's Arbitrum feed and Squidlor's feed. |
+| **[Base](/networks/base)** | 7: the same pairs | Live (chain 8453). Two on-chain sources per pair: Chainlink's Base feed and Squidlor's feed. |
 
 The whole Arc deployment, oracle and prediction market together, cost about 0.94 USDC in gas.
 

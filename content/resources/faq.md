@@ -85,7 +85,7 @@ No third-party audit is published. Read [security properties](/contracts/securit
 
 ### Which chains does the API serve?
 
-`arc`, as a slug or its numeric id. It is the default, so you can omit it. An unrecognized slug returns `404`; it used to fall back to another chain silently, and checking `chainId` in the response is still a good habit. See [supported networks](/networks).
+`arc`, as a slug or its numeric id. It is the default, so you can omit it. The oracle also runs on [Arbitrum One](/networks/arbitrum) and [Base](/networks/base); the API does not serve those chains, so read them on-chain. An unrecognized slug returns `404`; it used to fall back to another chain silently, and checking `chainId` in the response is still a good habit. See [supported networks](/networks).
 
 ### Why do the history endpoints return 503?
 
@@ -97,7 +97,7 @@ Yes. 30 requests a minute per IP without a key, 300 with a free key, 3,000 on Pr
 
 ### Does the SDK cover every chain?
 
-`@squidlor/oracle-sdk` 1.0.0 ships the Arc addresses, generated from the deployment manifest at publish time. Anything newer than the release you hold can be passed via `opts.address` from [deployed addresses](/networks/addresses), or read [directly with viem](/integration/reading-offchain#via-direct-rpc-with-viem).
+`@squidlor/oracle-sdk` 1.0.0 ships the Arc addresses, generated from the deployment manifest at publish time. For Arbitrum One and Base, pass the address from the chain's page via `opts.address`. Anything newer than the release you hold can be passed via `opts.address` from [deployed addresses](/networks/addresses), or read [directly with viem](/integration/reading-offchain#via-direct-rpc-with-viem).
 
 ### Is the MCP server live?
 

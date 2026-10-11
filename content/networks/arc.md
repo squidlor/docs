@@ -3,7 +3,7 @@ title: Arc
 description: Chain facts for Arc, Circle's L1 with USDC as the gas token. Mainnet and testnet parameters, how to connect a wallet, what Squidlor runs on each, and which one the public API serves.
 ---
 
-Arc is Circle's Layer 1 and the one chain Squidlor runs on. **Arc mainnet is live, and it is what the public API, the SDK and the agent tools serve.** Arc Testnet runs the same seven pairs for anyone integrating before they go to production.
+Arc is Circle's Layer 1 and the chain where Squidlor runs its full stack: oracle, relays, prediction market, public API, SDK and agent tools. **Arc mainnet is live, and it is the chain the public API, the SDK and the agent tools serve.** The oracle also runs on [Arbitrum One](/networks/arbitrum) and [Base](/networks/base). Arc Testnet runs the same seven pairs for anyone integrating before they go to production.
 
 > [!IMPORTANT]
 > The public API serves **mainnet only**. `https://api.squidlor.com/aggregator/v1/arc/...` returns

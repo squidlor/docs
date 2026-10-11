@@ -3,7 +3,7 @@ title: System architecture
 description: How the contracts, relayers, services, and frontends fit together, and which piece to look at when something is wrong.
 ---
 
-Squidlor is one system with three faces: contracts on chain, a set of backend services off chain, and the interfaces people actually touch. Since August 2026 the same oracle also settles a prediction market. Everything runs on one chain, Arc.
+Squidlor is one system with three faces: contracts on chain, a set of backend services off chain, and the interfaces people actually touch. Since August 2026 the same oracle also settles a prediction market. The full stack runs on Arc. The oracle also runs on Arbitrum One and Base, where each pair medians Chainlink's feed with Squidlor's.
 
 ## The shape of it
 

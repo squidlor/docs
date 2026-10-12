@@ -55,13 +55,15 @@ For **tokenized equities**, most chains provide only one stock oracle, which mak
 
 ## Where it is live
 
-The oracle is deployed on three chains:
+The oracle is deployed on four mainnets and two testnets:
 
 | Chain | Pairs | State |
 | --- | --- | --- |
 | **[Arc](/networks/arc)** | 7: BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL | Both relays running on mainnet (chain 5042). One on-chain source per pair (Squidlor's feed) until another oracle network publishes on Arc. The prediction market lives here. Arc Testnet runs the same seven pairs for integration; see [building against testnet](/networks/arc#building-against-testnet). |
 | **[Arbitrum One](/networks/arbitrum)** | 7: the same pairs | Live since October 2026 (chain 42161). Two on-chain sources per pair: Chainlink's Arbitrum feed and Squidlor's feed. |
 | **[Base](/networks/base)** | 7: the same pairs | Live (chain 8453). Two on-chain sources per pair: Chainlink's Base feed and Squidlor's feed. |
+| **[Robinhood Chain](/networks/robinhood)** | 7: the same pairs | Live since July 2026 (chain 4663). Squidlor pushes BTC, ETH and SOL. BTC and ETH median Chainlink's feed with Squidlor's. The stock pairs read Chainlink's official stock-token feeds. |
+| **[Torus Testnet](/networks/torus)** | 8: BTC, ETH, XAU, EUR, BRENT, and 24/7 XAU24, EUR24, BRENT24 | Testnet (chain 8196), the benchmark for Torus's oracle integration. Gasless pushes, 2-of-3 signing, owned by a Safe. |
 
 The whole Arc deployment, oracle and prediction market together, cost about 0.94 USDC in gas.
 

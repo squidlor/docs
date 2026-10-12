@@ -3,7 +3,7 @@ title: API overview
 description: The public read API. API root, chain addressing, pair formatting, caching, and the optional API key.
 ---
 
-The `aggregator-api` service exposes Squidlor's on-chain oracle state as JSON over HTTPS. It is read-only, works without a key, and reads the same contract state your own `eth_call` would. It serves Arc. The oracle also runs on Arbitrum One and Base, which you read on-chain; see [supported networks](/networks).
+The `aggregator-api` service exposes Squidlor's on-chain oracle state as JSON over HTTPS. It is read-only, works without a key, and reads the same contract state your own `eth_call` would. It serves Arc. The oracle also runs on Arbitrum One, Base, Robinhood Chain and Torus Testnet, which you read on-chain; see [supported networks](/networks).
 
 ## API root
 

@@ -23,6 +23,10 @@ new addresses.
 **Read both chains on-chain.** The API, the SDK and the agent tools serve Arc. Addresses for the
 new chains are on their network pages.
 
+**Robinhood Chain and Torus Testnet now have network pages.** Both deployments predate this
+release: [Robinhood Chain](/networks/robinhood) since July 2026 and [Torus Testnet](/networks/torus)
+since September 2026. Each page lists its pairs, sources, relay cadence and addresses.
+
 ## Arc mainnet, September 2026
 
 **Arc mainnet is live, chain 5042.** The whole stack is deployed and both relays are pushing:

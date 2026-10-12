@@ -3,7 +3,7 @@ title: Build with Squidlor
 description: Everything you need to ship on Squidlor price feeds: quickstarts by persona, API keys, templates, and the builder rewards program.
 ---
 
-Squidlor is a multi-source price oracle running on [Arc](/networks/arc), [Arbitrum One](/networks/arbitrum) and [Base](/networks/base), and the oracle behind a [prediction market](/products/markets). Feeds implement Chainlink's `AggregatorV3Interface`, so if your contract already reads a Chainlink feed, you change one address.
+Squidlor is a multi-source price oracle running on [Arc](/networks/arc), [Arbitrum One](/networks/arbitrum), [Base](/networks/base) and [Robinhood Chain](/networks/robinhood), and the oracle behind a [prediction market](/products/markets). Feeds implement Chainlink's `AggregatorV3Interface`, so if your contract already reads a Chainlink feed, you change one address.
 
 This section is for people building **on** Squidlor rather than operating it.
 

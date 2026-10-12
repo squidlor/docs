@@ -36,7 +36,7 @@ console.log(updatedAt);  // 1789152685 (unix seconds)
 | --- | --- | --- |
 | `arc` | 5042 (mainnet) | BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL (all /USD) |
 
-The SDK ships one chain, Arc, so `chain` has a default and you can leave it out. To read Arbitrum One or Base, pass the aggregator address from the [Arbitrum One](/networks/arbitrum) or [Base](/networks/base) page and your own client. Chain IDs work
+The SDK ships one chain, Arc, so `chain` has a default and you can leave it out. To read another chain, pass the aggregator address from its page under [supported networks](/networks) and your own client. Chain IDs work
 in place of slugs: `getFeed(5042, "BTC/USD")`.
 
 The table is generated from the deployment manifest at publish time, so an SDK release always

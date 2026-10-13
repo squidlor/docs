@@ -55,7 +55,7 @@ For **tokenized equities**, most chains provide only one stock oracle, which mak
 
 ## Where it is live
 
-The oracle is deployed on four mainnets and two testnets:
+The oracle is deployed on five mainnets and two testnets:
 
 | Chain | Pairs | State |
 | --- | --- | --- |
@@ -63,7 +63,7 @@ The oracle is deployed on four mainnets and two testnets:
 | **[Arbitrum One](/networks/arbitrum)** | 7: the same pairs | Live since October 2026 (chain 42161). Two on-chain sources per pair: Chainlink's Arbitrum feed and Squidlor's feed. |
 | **[Base](/networks/base)** | 7: the same pairs | Live (chain 8453). Two on-chain sources per pair: Chainlink's Base feed and Squidlor's feed. |
 | **[Robinhood Chain](/networks/robinhood)** | 7: the same pairs | Live since July 2026 (chain 4663). Squidlor pushes BTC, ETH and SOL. BTC and ETH median Chainlink's feed with Squidlor's. The stock pairs read Chainlink's official stock-token feeds. |
-| **[Torus Testnet](/networks/torus)** | 8: BTC, ETH, XAU, EUR, BRENT, and 24/7 XAU24, EUR24, BRENT24 | Testnet (chain 8196), the benchmark for Torus's oracle integration. Gasless pushes, 2-of-3 signing, owned by a Safe. |
+| **[Torus](/networks/torus)** | 5: BTC, ETH, XAU, EUR, BRENT | Live since October 2026 (chain 8195). Gasless: Torus's relayer pays every push. 2-of-3 signing, owned by a Safe, upgrades behind a 48-hour timelock. Torus Testnet (8196) adds 24/7 XAU24, EUR24 and BRENT24 for integration; see [Torus Testnet](/networks/torus#torus-testnet). |
 
 The whole Arc deployment, oracle and prediction market together, cost about 0.94 USDC in gas.
 

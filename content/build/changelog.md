@@ -5,6 +5,23 @@ description: What shipped on the builder platform, newest first.
 
 Changes to the API, SDK, MCP server and builder platform. Contract deployments are on [deployed addresses](/networks/addresses).
 
+## Torus mainnet, October 2026
+
+**The oracle is live on [Torus](/networks/torus) mainnet (8195).** Five feeds: BTC, ETH, gold
+(XAU), EUR and Brent against USD, each a `SquidlorOracleAggregator` registered in the Torus
+`AggregatorRegistry`.
+
+**Torus pays the gas.** Every update goes through Torus's ERC-2771 transaction forwarder and its
+relayer, so Squidlor's relay holds no TQF. `SquidlorAdapterV3` accepts these forwarded updates
+and verifies the same signed payload as a direct push.
+
+**Two signatures per update, and a 48-hour upgrade delay.** The adapter requires 2 of 3
+authorised signers. A 2-of-3 Safe owns the adapter, the aggregators and the registry admin role,
+and every upgrade waits 48 hours in a timelock that only the Safe can drive.
+
+**Read Torus on-chain.** The API, the SDK and the agent tools serve Arc. Addresses are on the
+[Torus page](/networks/torus). Torus Testnet (8196) stays up with eight feeds for integration.
+
 ## Arbitrum One and Base, October 2026
 
 **The oracle is live on [Arbitrum One](/networks/arbitrum) (42161) and [Base](/networks/base) (8453).**

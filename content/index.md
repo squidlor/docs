@@ -1,6 +1,6 @@
 ---
 title: Welcome to Squidlor
-description: A self-owned, multi-source on-chain price oracle on Arc, Arbitrum One, Base, Robinhood Chain, Torus and Hemi, and the products built on it. Prediction markets, an AI query layer, and one hub that signs you into all of them.
+description: A self-owned, multi-source on-chain price oracle on Arbitrum One, Arc, Base, Hemi, Robinhood Chain and Torus, and the products built on it. Prediction markets, an AI query layer, and one hub that signs you into all of them.
 ---
 
 Squidlor is a self-owned price oracle, and a set of products that run on it:

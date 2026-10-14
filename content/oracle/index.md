@@ -59,12 +59,12 @@ The oracle is deployed on six mainnets and two testnets:
 
 | Chain | Pairs | State |
 | --- | --- | --- |
+| **[Arbitrum One](/networks/arbitrum)** | 7: BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL | Live since October 2026 (chain 42161). Two on-chain sources per pair: Chainlink's Arbitrum feed and Squidlor's feed. |
 | **[Arc](/networks/arc)** | 7: BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL | Both relays running on mainnet (chain 5042). One on-chain source per pair (Squidlor's feed) until another oracle network publishes on Arc. The prediction market lives here. Arc Testnet runs the same seven pairs for integration; see [building against testnet](/networks/arc#building-against-testnet). |
-| **[Arbitrum One](/networks/arbitrum)** | 7: the same pairs | Live since October 2026 (chain 42161). Two on-chain sources per pair: Chainlink's Arbitrum feed and Squidlor's feed. |
-| **[Base](/networks/base)** | 7: the same pairs | Live (chain 8453). Two on-chain sources per pair: Chainlink's Base feed and Squidlor's feed. |
-| **[Robinhood Chain](/networks/robinhood)** | 7: the same pairs | Live since July 2026 (chain 4663). Squidlor pushes BTC, ETH and SOL. BTC and ETH median Chainlink's feed with Squidlor's. The stock pairs read Chainlink's official stock-token feeds. |
-| **[Torus](/networks/torus)** | 5: BTC, ETH, XAU, EUR, BRENT | Live since October 2026 (chain 8195). Gasless: Torus's relayer pays every push. 2-of-3 signing, owned by a Safe, upgrades behind a 48-hour timelock. Torus Testnet (8196) adds 24/7 XAU24, EUR24 and BRENT24 for integration; see [Torus Testnet](/networks/torus#torus-testnet). |
+| **[Base](/networks/base)** | 7: BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL | Live (chain 8453). Two on-chain sources per pair: Chainlink's Base feed and Squidlor's feed. |
 | **[Hemi](/networks/hemi)** | 10: BTC, ETH, HEMI, hemiBTC, VUSD/USDC, sVUSD/USDC, NVDA, TSLA, AAPL, GOOGL | Live since October 2026 (chain 43111). BTC, ETH and HEMI median RedStone's Hemi feed with Squidlor's. VUSD and sVUSD are quoted in USDC. 2-of-3 signing. |
+| **[Robinhood Chain](/networks/robinhood)** | 7: BTC, ETH, SOL, NVDA, TSLA, AAPL, GOOGL | Live since July 2026 (chain 4663). Squidlor pushes BTC, ETH and SOL. BTC and ETH median Chainlink's feed with Squidlor's. The stock pairs read Chainlink's official stock-token feeds. |
+| **[Torus](/networks/torus)** | 5: BTC, ETH, XAU, EUR, BRENT | Live since October 2026 (chain 8195). Gasless: Torus's relayer pays every push. 2-of-3 signing, owned by a Safe, upgrades behind a 48-hour timelock. Torus Testnet (8196) adds 24/7 XAU24, EUR24 and BRENT24 for integration; see [Torus Testnet](/networks/torus#torus-testnet). |
 
 The whole Arc deployment, oracle and prediction market together, cost about 0.94 USDC in gas.
 

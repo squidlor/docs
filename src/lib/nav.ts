@@ -124,12 +124,13 @@ export const nav: NavGroup[] = [
     icon: "network",
     items: [
       { title: "Supported networks", slug: "/networks" },
-      { title: "Arc", slug: "/networks/arc" },
+      // Chains in alphabetical order, between the overview and the two general pages.
       { title: "Arbitrum One", slug: "/networks/arbitrum" },
+      { title: "Arc", slug: "/networks/arc" },
       { title: "Base", slug: "/networks/base" },
+      { title: "Hemi", slug: "/networks/hemi" },
       { title: "Robinhood Chain", slug: "/networks/robinhood" },
       { title: "Torus", slug: "/networks/torus" },
-      { title: "Hemi", slug: "/networks/hemi" },
       { title: "Deployed addresses", slug: "/networks/addresses" },
       { title: "Bring Squidlor to your chain", slug: "/networks/for-chains" },
     ],

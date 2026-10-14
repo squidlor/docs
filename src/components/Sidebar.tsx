@@ -36,15 +36,22 @@ function groupContains(groupIndex: number, pathname: string): boolean {
 export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const { pathname } = useLocation();
 
-  // The group holding the current page is always open; others remember the
-  // reader's own expand/collapse choices.
+  // Only the group holding the current page starts open. Clicking a category opens or closes it,
+  // and any number can be open at once. Navigating into a group opens it; groups the reader opened
+  // stay open until they close them.
   const activeGroup = useMemo(
     () => nav.findIndex((_, index) => groupContains(index, pathname)),
     [pathname],
   );
 
-  const [collapsed, setCollapsed] = useState<Record<number, boolean>>({});
+  const [expanded, setExpanded] = useState<Record<number, boolean>>(() =>
+    activeGroup >= 0 ? { [activeGroup]: true } : {},
+  );
   const activeLinkRef = useRef<HTMLAnchorElement | null>(null);
+
+  useEffect(() => {
+    if (activeGroup >= 0) setExpanded((previous) => (previous[activeGroup] ? previous : { ...previous, [activeGroup]: true }));
+  }, [activeGroup]);
 
   // On a fresh load (or a deep link), scroll the active item into view; long
   // sidebars otherwise open scrolled to the top with no visible selection.
@@ -56,17 +63,16 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
     <nav aria-label="Documentation" className="pb-16">
       {nav.map((group, groupIndex) => {
         const Icon = ICONS[group.icon] ?? BookOpen;
-        const isActiveGroup = groupIndex === activeGroup;
-        const isOpen = isActiveGroup || !collapsed[groupIndex];
+        const isOpen = !!expanded[groupIndex];
 
         return (
           <div key={group.title} className="mb-1">
             <button
               type="button"
               onClick={() =>
-                setCollapsed((previous) => ({
+                setExpanded((previous) => ({
                   ...previous,
-                  [groupIndex]: !collapsed[groupIndex],
+                  [groupIndex]: !previous[groupIndex],
                 }))
               }
               aria-expanded={isOpen}

@@ -85,7 +85,7 @@ No third-party audit is published. Read [security properties](/contracts/securit
 
 ### Which chains does the API serve?
 
-`arc`, as a slug or its numeric id. It is the default, so you can omit it. The oracle also runs on [Arbitrum One](/networks/arbitrum), [Base](/networks/base), [Robinhood Chain](/networks/robinhood), [Torus](/networks/torus), [Hemi](/networks/hemi) and Torus Testnet. The API does not serve those chains, so read them on-chain. An unrecognized slug returns `404`; it used to fall back to another chain silently, and checking `chainId` in the response is still a good habit. See [supported networks](/networks).
+`arc`, as a slug or its numeric id. It is the default, so you can omit it. The oracle also runs on [Arbitrum One](/networks/arbitrum), [Base](/networks/base), [Hemi](/networks/hemi), [Robinhood Chain](/networks/robinhood), [Torus](/networks/torus) and Torus Testnet. The API does not serve those chains, so read them on-chain. An unrecognized slug returns `404`; it used to fall back to another chain silently, and checking `chainId` in the response is still a good habit. See [supported networks](/networks).
 
 ### Why do the history endpoints return 503?
 

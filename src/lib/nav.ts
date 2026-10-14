@@ -129,6 +129,7 @@ export const nav: NavGroup[] = [
       { title: "Base", slug: "/networks/base" },
       { title: "Robinhood Chain", slug: "/networks/robinhood" },
       { title: "Torus", slug: "/networks/torus" },
+      { title: "Hemi", slug: "/networks/hemi" },
       { title: "Deployed addresses", slug: "/networks/addresses" },
       { title: "Bring Squidlor to your chain", slug: "/networks/for-chains" },
     ],

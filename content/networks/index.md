@@ -3,7 +3,7 @@ title: Supported networks
 description: Where Squidlor is deployed, how the API addresses the chain, and what it takes to add a new one.
 ---
 
-Squidlor's oracle is live on five mainnets, Arc, Arbitrum One, Base, Robinhood Chain and Torus, and on two testnets, Arc Testnet and Torus Testnet. No contract hardcodes a chain, and every off-chain service is parameterized by chain ID and RPC URL, so each deployment below is a configuration, not a property of the code.
+Squidlor's oracle is live on six mainnets, Arc, Arbitrum One, Base, Robinhood Chain, Torus and Hemi, and on two testnets, Arc Testnet and Torus Testnet. No contract hardcodes a chain, and every off-chain service is parameterized by chain ID and RPC URL, so each deployment below is a configuration, not a property of the code.
 
 ## Deployment
 
@@ -14,20 +14,21 @@ Squidlor's oracle is live on five mainnets, Arc, Arbitrum One, Base, Robinhood C
 | **[Base](/networks/base)** | 8453 | **Live.** The same seven pairs, each a median of Chainlink's Base feed and Squidlor's feed. |
 | **[Robinhood Chain](/networks/robinhood)** | 4663 | **Live since July 2026.** Seven aggregators. Squidlor pushes BTC, ETH and SOL. The four stock pairs read Chainlink's official Robinhood feeds. |
 | **[Torus](/networks/torus)** | 8195 | **Live since October 2026.** BTC, ETH, gold, EUR and Brent, pushed gasless through Torus's relayer with 2-of-3 signing. Owned by a Safe, upgrades behind a 48-hour timelock. |
+| **[Hemi](/networks/hemi)** | 43111 | **Live since October 2026.** Ten pairs: BTC, ETH, HEMI, hemiBTC, VUSD/USDC, sVUSD/USDC and four stocks. BTC, ETH and HEMI median RedStone's Hemi feed with Squidlor's. 2-of-3 signing. |
 | **[Arc Testnet](/networks/arc#building-against-testnet)** | 5042002 | **Live, for integration only.** The same seven pairs and the same contracts. Not served by the public API; read it over RPC and resolve addresses from the registry. |
 | **[Torus Testnet](/networks/torus#torus-testnet)** | 8196 | **Live, for integration.** Mainnet's five feeds plus 24/7 gold, EUR and Brent, pushed gasless with 2-of-3 signing. |
 
 What each service covers:
 
-| | Arc (5042) | Arbitrum One (42161) | Base (8453) | Robinhood Chain (4663) | Torus (8195) | Arc Testnet (5042002) | Torus Testnet (8196) |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Oracle contracts and relays | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Pairs | 7 | 7 | 7 | 7 | 5 | 7 | 8 |
-| On-chain sources per pair | 1 (Squidlor) | 2 (Chainlink and Squidlor) | 2 (Chainlink and Squidlor) | BTC, ETH: 2. SOL: Squidlor. Stocks: Chainlink. | 1 (Squidlor) | 1 (Squidlor) | 1 (Squidlor) |
-| On the live public API | Yes, slug `arc` | No | No | No | No | No | No |
-| In `@squidlor/oracle-sdk` | Yes, `getFeed('arc', 'BTC/USD')` | By address | By address | By address | By address | By address | By address |
-| Oracle tools in chat and MCP | Yes | No | No | No | No | No | No |
-| Prediction market | Yes | No | No | No | No | Yes | No |
+| | Arc (5042) | Arbitrum One (42161) | Base (8453) | Robinhood Chain (4663) | Torus (8195) | Hemi (43111) | Arc Testnet (5042002) | Torus Testnet (8196) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Oracle contracts and relays | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| Pairs | 7 | 7 | 7 | 7 | 5 | 10 | 7 | 8 |
+| On-chain sources per pair | 1 (Squidlor) | 2 (Chainlink and Squidlor) | 2 (Chainlink and Squidlor) | BTC, ETH: 2. SOL: Squidlor. Stocks: Chainlink. | 1 (Squidlor) | BTC, ETH, HEMI: 2 (RedStone and Squidlor). Others: Squidlor. | 1 (Squidlor) | 1 (Squidlor) |
+| On the live public API | Yes, slug `arc` | No | No | No | No | No | No | No |
+| In `@squidlor/oracle-sdk` | Yes, `getFeed('arc', 'BTC/USD')` | By address | By address | By address | By address | By address | By address | By address |
+| Oracle tools in chat and MCP | Yes | No | No | No | No | No | No | No |
+| Prediction market | Yes | No | No | No | No | No | Yes | No |
 
 On every chain but Arc, read the aggregators on-chain. Each chain's page lists its addresses.
 
@@ -73,7 +74,7 @@ Nothing that touches Solidity. Every chain above went live on the same core cont
 | A gas token the relayer can hold | Pushes are relayer-paid. On Arc that token is USDC. On Torus the chain's own relayer pays, through an ERC-2771 forwarder. |
 | An explorer | For verification and receipts. Arc's is Blockscout. |
 
-One thing is helpful but not required: an existing Chainlink deployment, which gives cross-oracle aggregation something to aggregate with. Without it, a chain runs on Squidlor's own source alone until a second provider is available. That is Arc's situation today. See [Arc](/networks/arc#what-squidlor-runs-on-arc). Arbitrum One and Base both have Chainlink feeds, so every pair there medians two sources. Robinhood Chain has Chainlink feeds for BTC, ETH and its stock tokens.
+One thing is helpful but not required: an existing Chainlink deployment, which gives cross-oracle aggregation something to aggregate with. Without it, a chain runs on Squidlor's own source alone until a second provider is available. That is Arc's situation today. See [Arc](/networks/arc#what-squidlor-runs-on-arc). Arbitrum One and Base both have Chainlink feeds, so every pair there medians two sources. Robinhood Chain has Chainlink feeds for BTC, ETH and its stock tokens. On Hemi, RedStone's push feeds give BTC, ETH and HEMI their second source.
 
 ## Cost
 

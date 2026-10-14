@@ -5,6 +5,23 @@ description: What shipped on the builder platform, newest first.
 
 Changes to the API, SDK, MCP server and builder platform. Contract deployments are on [deployed addresses](/networks/addresses).
 
+## Hemi, October 2026
+
+**The oracle is live on [Hemi](/networks/hemi) (43111).** Ten pairs, each a
+`SquidlorOracleAggregator` registered in the Hemi `AggregatorRegistry`: BTC, ETH and HEMI against
+USD; hemiBTC against USD; Vetro's VUSD and sVUSD against USDC; and NVDA, TSLA, AAPL and GOOGL in
+US market hours.
+
+**Two sources where Hemi has a second oracle.** BTC, ETH and HEMI median RedStone's push feed on
+Hemi with Squidlor's. The other seven pairs read Squidlor's feed.
+
+**Feeds priced from the contracts that set their value.** VUSD/USDC comes from Vetro's Curve pools
+on Ethereum, sVUSD/USDC from the sVUSD vault's share price, and hemiBTC/USD from BTC/USD with a
+depeg check against hemiBTC's own markets.
+
+**Two signatures per update.** The adapter requires 2 of 3 authorised signers. Updates fire on a
+0.1% move or every 15 minutes. Read Hemi on-chain; the API, the SDK and the agent tools serve Arc.
+
 ## Torus mainnet, October 2026
 
 **The oracle is live on [Torus](/networks/torus) mainnet (8195).** Five feeds: BTC, ETH, gold

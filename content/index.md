@@ -1,6 +1,6 @@
 ---
 title: Welcome to Squidlor
-description: A self-owned, multi-source on-chain price oracle on Arc, Arbitrum One, Base, Robinhood Chain and Torus, and the products built on it. Prediction markets, an AI query layer, and one hub that signs you into all of them.
+description: A self-owned, multi-source on-chain price oracle on Arc, Arbitrum One, Base, Robinhood Chain, Torus and Hemi, and the products built on it. Prediction markets, an AI query layer, and one hub that signs you into all of them.
 ---
 
 Squidlor is a self-owned price oracle, and a set of products that run on it:
@@ -10,7 +10,7 @@ Squidlor is a self-owned price oracle, and a set of products that run on it:
 3. **[The Squidlor Agent](/ai)**: Oracle Chat with six desks, and an MCP server, over live feed state, wallets, agent tokens and markets.
 4. **[The hub](/products/hub)** at [app.squidlor.com](https://app.squidlor.com): connect a wallet once and open everything signed in.
 
-The full stack runs on **[Arc mainnet](/networks/arc)** (chain 5042), Circle's L1 where gas is paid in USDC: seven pairs with both relays running. The oracle also runs on **[Arbitrum One](/networks/arbitrum)** and **[Base](/networks/base)**, where each pair medians Chainlink's feed with Squidlor's, on **[Robinhood Chain](/networks/robinhood)**, and on **[Torus](/networks/torus)**, where five feeds push gasless through Torus's own relayer. Arc Testnet and Torus Testnet run the same contracts for integration work. The whole deployment cost about 0.94 USDC in gas and no Solidity changes; see [bring Squidlor to your chain](/networks/for-chains).
+The full stack runs on **[Arc mainnet](/networks/arc)** (chain 5042), Circle's L1 where gas is paid in USDC: seven pairs with both relays running. The oracle also runs on **[Arbitrum One](/networks/arbitrum)** and **[Base](/networks/base)**, where each pair medians Chainlink's feed with Squidlor's, on **[Robinhood Chain](/networks/robinhood)**, on **[Torus](/networks/torus)**, where five feeds push gasless through Torus's own relayer, and on **[Hemi](/networks/hemi)**, with ten feeds including hemiBTC, VUSD and sVUSD. Arc Testnet and Torus Testnet run the same contracts for integration work. The whole deployment cost about 0.94 USDC in gas and no Solidity changes; see [bring Squidlor to your chain](/networks/for-chains).
 
 ## Start here
 

@@ -1,9 +1,11 @@
 ---
 title: Robinhood Chain
-description: Squidlor's oracle on Robinhood Chain (chain 4663). Seven aggregators, Squidlor's relay pushing BTC, ETH and SOL, and Chainlink's official feeds for the tokenized stocks.
+description: Squidlor's oracle on Robinhood Chain (chain 4663). Seven aggregators, Squidlor's relay pushing BTC, ETH and SOL, a SHERWOOD/USD feed for Sherwood, and Chainlink's official feeds for the tokenized stocks.
 ---
 
 Squidlor's oracle has run on Robinhood Chain since July 2026. Seven aggregators cover BTC, ETH, SOL, NVDA, TSLA, AAPL and GOOGL against USD. Squidlor's relay pushes BTC, ETH and SOL. The four stock pairs read Chainlink's official Robinhood feeds, which are the chain's own oracle for its stock tokens.
+
+Since October 2026 the adapter also carries **[SHERWOOD/USD](#sherwoodusd)**, the price of [Sherwood](https://sherwood.cash)'s token, priced from its Uniswap v4 pool on Robinhood Chain.
 
 > [!IMPORTANT]
 > Read Robinhood Chain on-chain. The public API, the SDK and the agent tools serve Arc, so
@@ -33,7 +35,7 @@ Squidlor's oracle has run on Robinhood Chain since July 2026. Seven aggregators 
 
 Chainlink's stock-token feeds already include the corporate-action multiplier, so the price is what one stock token is worth.
 
-**Relay.** Squidlor pushes BTC, ETH and SOL on a 1% deviation or a 1-hour heartbeat. Two relay copies run in different locations. Each re-reads the chain before it sends, so one update lands once.
+**Relay.** Squidlor pushes BTC, ETH and SOL on a 1% deviation or a 1-hour heartbeat, and SHERWOOD on a 2% deviation or a 6-hour heartbeat. Two relay copies run in different locations. Each re-reads the chain before it sends, so one update lands once.
 
 **Staleness windows:**
 
@@ -42,6 +44,39 @@ Chainlink's stock-token feeds already include the corporate-action multiplier, s
 | BTC/USD, ETH/USD | 25,200 s | 3,900 s |
 | SOL/USD | none | 7,800 s |
 | Stock pairs | 259,200 s | 259,200 s |
+
+## SHERWOOD/USD
+
+SHERWOOD/USD is a feed on the adapter, not an aggregator pair: there is no `AggregatorV3Interface` address for it. Read it from the adapter by its feed ID, as shown below.
+
+| Fact | Value |
+| --- | --- |
+| Feed ID | `bytes32("SHERWOOD")` = `0x53484552574f4f44000000000000000000000000000000000000000000000000` |
+| Adapter | `0xf64c478d921e1d2904Dd15b43bE39659e54f22f1` |
+| Decimals | 8 |
+| Token | `0xD4DC6B48Ad73EC51E71D9B8F65568f88609b92c1` (18 decimals) |
+| Updates | On a 2% move or every 6 hours, whichever comes first |
+| Live since | 15 October 2026 |
+
+**Where the price comes from.** SHERWOOD trades in one Uniswap v4 pool on Robinhood Chain, paired with ETH (pool ID `0x2e03323ecfe5e6e4c287bdb731ea0f8857e5afbbded6612fdca4b8de20d0d874`). Every minute Squidlor reads the pool price from the v4 `PoolManager` and converts it to USD with Chainlink's ETH/USD feed. DexScreener's price for the same pool is a second reading. If the two differ by more than 3%, that minute is skipped.
+
+**What is published.** The 30-minute time-weighted average of those readings, so the feed trails the pool by design and one large swap cannot set it. If the pool's liquidity falls below $25,000, updates pause until it recovers.
+
+**Read it.**
+
+```bash
+FEED=0x53484552574f4f44000000000000000000000000000000000000000000000000
+ADAPTER=0xf64c478d921e1d2904Dd15b43bE39659e54f22f1
+RPC=https://rpc.mainnet.chain.robinhood.com
+
+ROUND=$(cast call $ADAPTER "latestRoundForFeed(bytes32)(uint80)" $FEED --rpc-url $RPC)
+cast call $ADAPTER "getPrice(bytes32,uint80)(uint256)" $FEED $ROUND --rpc-url $RPC   # USD, 8 decimals
+cast call $ADAPTER "getLastDataTimestamp(bytes32)(uint256)" $FEED --rpc-url $RPC      # milliseconds
+```
+
+> [!WARNING]
+> `getLastDataTimestamp(feedId)` returns **milliseconds**. A healthy feed is never older than
+> 6 hours, so reject a reading older than that plus a margin, such as 25,200 seconds.
 
 ## Addresses
 
@@ -68,6 +103,7 @@ Owner of every contract below: `0x34f54E0Ca7f18DB6F088297d3a34D67B57B443Cb`.
 | Contract | Address |
 | --- | --- |
 | SquidlorAdapterV2 | `0xf64c478d921e1d2904Dd15b43bE39659e54f22f1` |
+| SHERWOOD feed (on the adapter, no proxy) | feed ID `bytes32("SHERWOOD")` |
 | BTC SquidPriceFeed | `0x2eD9A7002D7e8685D47B7D802F951c856d742648` |
 | ETH SquidPriceFeed | `0x241B3638Bf7db7cF2eA530Bb30F372493456de36` |
 | SOL SquidPriceFeed | `0xCD0348723f4b7b2E323D04d9b88d75a410c3ac70` |

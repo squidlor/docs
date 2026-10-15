@@ -14,7 +14,7 @@ Squidlor's oracle is live on six mainnets, Arbitrum One, Arc, Base, Hemi, Robinh
 | **[Arc Testnet](/networks/arc#building-against-testnet)** | 5042002 | **Live, for integration only.** Arc's seven pairs on the same contracts. Not served by the public API; read it over RPC and resolve addresses from the registry. |
 | **[Base](/networks/base)** | 8453 | **Live.** Arc's seven pairs, each a median of Chainlink's Base feed and Squidlor's feed. |
 | **[Hemi](/networks/hemi)** | 43111 | **Live since October 2026.** Ten pairs: BTC, ETH, HEMI, hemiBTC, VUSD/USDC, sVUSD/USDC and four stocks. BTC, ETH and HEMI median RedStone's Hemi feed with Squidlor's. 2-of-3 signing. |
-| **[Robinhood Chain](/networks/robinhood)** | 4663 | **Live since July 2026.** Seven aggregators. Squidlor pushes BTC, ETH and SOL. The four stock pairs read Chainlink's official Robinhood feeds. |
+| **[Robinhood Chain](/networks/robinhood)** | 4663 | **Live since July 2026.** Seven aggregators. Squidlor pushes BTC, ETH and SOL. The four stock pairs read Chainlink's official Robinhood feeds. Since October 2026 the adapter also carries the [SHERWOOD/USD](/networks/robinhood#sherwoodusd) feed. |
 | **[Torus](/networks/torus)** | 8195 | **Live since October 2026.** BTC, ETH, gold, EUR and Brent, pushed gasless through Torus's relayer with 2-of-3 signing. Owned by a Safe, upgrades behind a 48-hour timelock. |
 | **[Torus Testnet](/networks/torus#torus-testnet)** | 8196 | **Live, for integration.** Mainnet's five feeds plus 24/7 gold, EUR and Brent, pushed gasless with 2-of-3 signing. |
 
@@ -23,8 +23,8 @@ What each service covers:
 |  | Arbitrum One (42161) | Arc (5042) | Arc Testnet (5042002) | Base (8453) | Hemi (43111) | Robinhood Chain (4663) | Torus (8195) | Torus Testnet (8196) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Oracle contracts and relays | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| Pairs | 7 | 7 | 7 | 7 | 10 | 7 | 5 | 8 |
-| On-chain sources per pair | 2 (Chainlink and Squidlor) | 1 (Squidlor) | 1 (Squidlor) | 2 (Chainlink and Squidlor) | BTC, ETH, HEMI: 2 (RedStone and Squidlor). Others: Squidlor. | BTC, ETH: 2. SOL: Squidlor. Stocks: Chainlink. | 1 (Squidlor) | 1 (Squidlor) |
+| Pairs | 7 | 7 | 7 | 7 | 10 | 7, plus the SHERWOOD feed | 5 | 8 |
+| On-chain sources per pair | 2 (Chainlink and Squidlor) | 1 (Squidlor) | 1 (Squidlor) | 2 (Chainlink and Squidlor) | BTC, ETH, HEMI: 2 (RedStone and Squidlor). Others: Squidlor. | BTC, ETH: 2. SOL, SHERWOOD: Squidlor. Stocks: Chainlink. | 1 (Squidlor) | 1 (Squidlor) |
 | On the live public API | No | Yes, slug `arc` | No | No | No | No | No | No |
 | In `@squidlor/oracle-sdk` | By address | Yes, `getFeed('arc', 'BTC/USD')` | By address | By address | By address | By address | By address | By address |
 | Oracle tools in chat and MCP | No | Yes | No | No | No | No | No | No |

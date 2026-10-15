@@ -5,6 +5,18 @@ description: What shipped on the builder platform, newest first.
 
 Changes to the API, SDK, MCP server and builder platform. Contract deployments are on [deployed addresses](/networks/addresses).
 
+## SHERWOOD on Robinhood Chain, October 2026
+
+**[SHERWOOD/USD](/networks/robinhood#sherwoodusd) is live on Robinhood Chain (4663)** for
+[Sherwood](https://sherwood.cash). It is a feed on the Robinhood adapter
+(`0xf64c478d921e1d2904Dd15b43bE39659e54f22f1`) under the feed ID `bytes32("SHERWOOD")`, 8 decimals.
+It has no aggregator address, so read it with `latestRoundForFeed` and `getPrice`.
+
+**Priced from Sherwood's own pool.** The value is the 30-minute time-weighted average of the
+SHERWOOD/ETH Uniswap v4 pool on Robinhood Chain, converted with Chainlink's ETH/USD and checked
+against DexScreener. Updates fire on a 2% move or every 6 hours, and pause while the pool holds
+less than $25,000.
+
 ## Hemi, October 2026
 
 **The oracle is live on [Hemi](/networks/hemi) (43111).** Ten pairs, each a

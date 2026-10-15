@@ -84,13 +84,36 @@ Gas is not a budget line on Arc. Funding the deployer and the relay wallet is.
 
 ## What Squidlor runs on Arc
 
-**Oracle.** One `SquidlorAdapterV2` with seven `SquidPriceFeed` proxies and seven `SquidlorOracleAggregator` instances, all 8-decimal `MEDIAN`, one per pair: BTC/USD, ETH/USD, SOL/USD, NVDA/USD, TSLA/USD, AAPL/USD, GOOGL/USD. `AggregatorRegistry` registers all seven. Every address is on [deployed addresses](/networks/addresses), generated from the deployment manifest so it cannot drift.
+**Oracle.** One `SquidlorAdapterV2` with seven `SquidPriceFeed` proxies and seven `SquidlorOracleAggregator` instances, all 8-decimal `MEDIAN`, one per pair: BTC/USD, ETH/USD, SOL/USD, NVDA/USD, TSLA/USD, AAPL/USD, GOOGL/USD. `AggregatorRegistry` registers all seven. Every address is on [deployed addresses](/networks/addresses), generated from the deployment manifest so it cannot drift. The adapter also carries the [KARMA/USD](#karmausd) partner feed.
 
 **Sources per aggregator.** Nobody has published Arc feed addresses for any push oracle yet, so each aggregator starts with **one on-chain source, Squidlor's own feed**, at `minHealthySources = 1`. Cross-checking against other venues still happens, but off-chain: the relay medians several exchanges before it signs, so the value stored on Arc is a median anchored by one contract rather than an on-chain median of two oracle networks. When Chainlink or RedStone publish Arc feeds, a second source is one `addSource` call on the live aggregator and `minHealthySources` goes to 2. The [trust model](/resources/trust-model) states what this means for a consumer.
 
-**Relay.** Two processes on separate signer keys. The crypto relay pushes BTC, ETH and SOL on a 0.5% deviation or 300-second heartbeat; the equity relay pushes NVDA, TSLA, AAPL and GOOGL during the US regular session, 09:30 to 16:00 ET, medianing four market-data APIs. Both read the venue median the [realtime price stream](/api/realtime) publishes every second.
+**Relay.** Two processes on separate signer keys. The crypto relay pushes BTC, ETH and SOL on a 0.5% deviation or 300-second heartbeat; the equity relay pushes NVDA, TSLA, AAPL and GOOGL during the US regular session, 09:30 to 16:00 ET, medianing four market-data APIs. A third process pushes [KARMA/USD](#karmausd). The crypto and equity relays read the venue median the [realtime price stream](/api/realtime) publishes every second.
 
 **Prediction market.** `MarketFactory`, `ConditionalTokens`, the FPMM factory, `SquidlorPriceResolver`, sqUSD, the subsidy vault and the netting relay are all on Arc. See [prediction markets](/products/markets).
+
+## KARMA/USD
+
+KARMA/USD is the price of Karma by Virtuals, a token on Robinhood Chain, published on Arc so KARMA prediction markets can settle here. It is a feed on the adapter, not an aggregator pair: there is no `AggregatorV3Interface` address for it.
+
+| Fact | Value |
+| --- | --- |
+| Feed ID | `bytes32("KARMA")` = `0x4b41524d41000000000000000000000000000000000000000000000000000000` |
+| Adapter | `0x0e674eeaaDB0213DE29C72aeFfD3d85E592024Bb` |
+| Decimals | 8 |
+| Updates | On a 1% move or every 24 hours, and always once in the 25 minutes before an open KARMA market expires, so it can resolve |
+| Live since | October 2026 |
+
+The value is the same one published on Robinhood Chain: a 30-minute time-weighted average of KARMA's Uniswap v2 pair, converted to USD and checked against DexScreener. [Robinhood Chain](/networks/robinhood#karmausd) describes the pricing. The adapter also carries `KARMA.B47F4702`, KARMA's market cap in USD, for markets created on it before KARMA moved to a price feed.
+
+```bash
+FEED=0x4b41524d41000000000000000000000000000000000000000000000000000000
+ADAPTER=0x0e674eeaaDB0213DE29C72aeFfD3d85E592024Bb
+RPC=https://rpc.mainnet.arc.io
+
+ROUND=$(cast call $ADAPTER "latestRoundForFeed(bytes32)(uint80)" $FEED --rpc-url $RPC)
+cast call $ADAPTER "getPrice(bytes32,uint80)(uint256)" $FEED $ROUND --rpc-url $RPC   # USD, 8 decimals
+```
 
 ## Explorer and verification
 

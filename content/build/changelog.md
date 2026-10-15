@@ -73,6 +73,17 @@ new chains are on their network pages.
 release: [Robinhood Chain](/networks/robinhood) since July 2026 and [Torus Testnet](/networks/torus)
 since September 2026. Each page lists its pairs, sources, relay cadence and addresses.
 
+## KARMA on Arc and Robinhood Chain, October 2026
+
+**[KARMA/USD](/networks/arc#karmausd) is live on Arc (5042) and Robinhood Chain (4663)** for
+Karma by Virtuals, the first partner token with its own feed. It is a feed on each chain's adapter
+under the feed ID `bytes32("KARMA")`, 8 decimals, and KARMA prediction markets settle on it.
+
+**Priced from KARMA's own pool.** The value is the 30-minute time-weighted average of the
+KARMA/VIRTUAL Uniswap v2 pair on Robinhood Chain, converted with VIRTUAL/USD and checked against
+DexScreener. Updates fire on a 1% move or every 24 hours, plus one round before each market
+expires. The market-cap feed `KARMA.B47F4702` stays up for markets created on it.
+
 ## Arc mainnet, September 2026
 
 **Arc mainnet is live, chain 5042.** The whole stack is deployed and both relays are pushing:

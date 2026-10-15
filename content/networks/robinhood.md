@@ -1,11 +1,11 @@
 ---
 title: Robinhood Chain
-description: Squidlor's oracle on Robinhood Chain (chain 4663). Seven aggregators, Squidlor's relay pushing BTC, ETH and SOL, a SHERWOOD/USD feed for Sherwood, and Chainlink's official feeds for the tokenized stocks.
+description: Squidlor's oracle on Robinhood Chain (chain 4663). Seven aggregators, Squidlor's relay pushing BTC, ETH and SOL, KARMA/USD and SHERWOOD/USD feeds for partner tokens, and Chainlink's official feeds for the tokenized stocks.
 ---
 
 Squidlor's oracle has run on Robinhood Chain since July 2026. Seven aggregators cover BTC, ETH, SOL, NVDA, TSLA, AAPL and GOOGL against USD. Squidlor's relay pushes BTC, ETH and SOL. The four stock pairs read Chainlink's official Robinhood feeds, which are the chain's own oracle for its stock tokens.
 
-Since October 2026 the adapter also carries **[SHERWOOD/USD](#sherwoodusd)**, the price of [Sherwood](https://sherwood.cash)'s token, priced from its Uniswap v4 pool on Robinhood Chain.
+Since October 2026 the adapter also carries two partner-token feeds, each priced from the token's own pool on Robinhood Chain: **[KARMA/USD](#karmausd)** for Karma by Virtuals and **[SHERWOOD/USD](#sherwoodusd)** for [Sherwood](https://sherwood.cash).
 
 > [!IMPORTANT]
 > Read Robinhood Chain on-chain. The public API, the SDK and the agent tools serve Arc, so
@@ -35,7 +35,7 @@ Since October 2026 the adapter also carries **[SHERWOOD/USD](#sherwoodusd)**, th
 
 Chainlink's stock-token feeds already include the corporate-action multiplier, so the price is what one stock token is worth.
 
-**Relay.** Squidlor pushes BTC, ETH and SOL on a 1% deviation or a 1-hour heartbeat, and SHERWOOD on a 2% deviation or a 6-hour heartbeat. Two relay copies run in different locations. Each re-reads the chain before it sends, so one update lands once.
+**Relay.** Squidlor pushes BTC, ETH and SOL on a 1% deviation or a 1-hour heartbeat, KARMA on a 1% deviation or a 24-hour heartbeat, and SHERWOOD on a 2% deviation or a 6-hour heartbeat. Two relay copies run in different locations. Each re-reads the chain before it sends, so one update lands once.
 
 **Staleness windows:**
 
@@ -44,6 +44,27 @@ Chainlink's stock-token feeds already include the corporate-action multiplier, s
 | BTC/USD, ETH/USD | 25,200 s | 3,900 s |
 | SOL/USD | none | 7,800 s |
 | Stock pairs | 259,200 s | 259,200 s |
+
+## KARMA/USD
+
+KARMA/USD is a feed on the adapter, not an aggregator pair: there is no `AggregatorV3Interface` address for it. The same feed, with the same value, runs on [Arc](/networks/arc#karmausd), where KARMA prediction markets settle.
+
+| Fact | Value |
+| --- | --- |
+| Feed ID | `bytes32("KARMA")` = `0x4b41524d41000000000000000000000000000000000000000000000000000000` |
+| Adapter | `0xf64c478d921e1d2904Dd15b43bE39659e54f22f1` |
+| Decimals | 8 |
+| Token | `0xB47f4702DEB124cb4eB6286bE83c9d84277C6239`, Karma by Virtuals (18 decimals) |
+| Updates | On a 1% move or every 24 hours, whichever comes first |
+| Live since | October 2026 |
+
+**Where the price comes from.** KARMA trades against VIRTUAL in a Uniswap v2 pair on Robinhood Chain (`0xC5178e5fF03Be87B7b21416a354c7A4f9FB1d04E`). Every minute Squidlor reads the pair's reserves and converts the price to USD with VIRTUAL/USD from Coinbase, or Binance when Coinbase does not answer. DexScreener's price for the same pair is a second reading. If the two differ by more than 3%, that minute is skipped.
+
+**What is published.** The 30-minute time-weighted average of those readings. If the pair's liquidity falls below $25,000, updates pause until it recovers.
+
+**Market-cap feed.** The adapter also carries `KARMA.B47F4702`, KARMA's market cap in USD (8 decimals) from the same readings. It stays up for markets created on it before KARMA moved to a price feed. New markets use `KARMA`.
+
+To read it, use the commands under [SHERWOOD/USD](#sherwoodusd) with `FEED=0x4b41524d41000000000000000000000000000000000000000000000000000000`.
 
 ## SHERWOOD/USD
 
@@ -103,6 +124,8 @@ Owner of every contract below: `0x34f54E0Ca7f18DB6F088297d3a34D67B57B443Cb`.
 | Contract | Address |
 | --- | --- |
 | SquidlorAdapterV2 | `0xf64c478d921e1d2904Dd15b43bE39659e54f22f1` |
+| KARMA feed (on the adapter, no proxy) | feed ID `bytes32("KARMA")` |
+| KARMA market-cap feed (on the adapter, no proxy) | feed ID `bytes32("KARMA.B47F4702")` |
 | SHERWOOD feed (on the adapter, no proxy) | feed ID `bytes32("SHERWOOD")` |
 | BTC SquidPriceFeed | `0x2eD9A7002D7e8685D47B7D802F951c856d742648` |
 | ETH SquidPriceFeed | `0x241B3638Bf7db7cF2eA530Bb30F372493456de36` |

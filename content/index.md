@@ -50,7 +50,7 @@ Most protocols rent their price data from a third-party network. Squidlor owns t
 - **Two independent paths agree.** Over 12,757 sampled rounds on the previous deployment, Squidlor's feed (six exchanges, medianed every second) and Chainlink's network disagreed by a median of 2 basis points on BTC/USD and ETH/USD, with a 95th percentile of 6 to 8.
 - **It refuses rather than lies.** With two legs wired, the BTC/USD aggregator required both fresh. It declined to answer 209 of those rounds, about 1.6%, and served a stale or single-source price as a two-source median exactly zero times.
 - **One transaction updates every feed.** A push carrying every feed is about 350,000 gas, about 0.007 USDC on Arc; the marginal feed is about 35,000. Chainlink's OCR transmit is 120,000 to 132,000 gas for one feed.
-- **Cadence is ours to set.** Arc runs a 0.5% deviation trigger with a 300-second heartbeat, live-changeable. Chainlink's ETH/USD on Ethereum updated 30 times in the 24 hours we measured; ours updates at least 288.
+- **Cadence is ours to set.** Arc runs a 0.5% deviation trigger with a 20-minute heartbeat, live-changeable. Chainlink's ETH/USD on Ethereum updated 30 times in the 24 hours we measured; ours updates at least 72.
 - **A new chain is a day, not a roadmap.** The full Arc deployment cost about 0.94 USDC in gas; BTC and ETH on a fresh chain is about 14.5M gas one time. No third party decides whether your chain is served.
 - **A real second source for tokenized equities.** Most chains have exactly one stock oracle, and Arc has none yet. Squidlor's four equity aggregators median four market-data APIs and are the first stock prices on Arc.
 

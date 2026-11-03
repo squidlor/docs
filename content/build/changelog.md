@@ -5,6 +5,15 @@ description: What shipped on the builder platform, newest first.
 
 Changes to the API, SDK, MCP server and builder platform. Contract deployments are on [deployed addresses](/networks/addresses).
 
+## Arc relay cadence, November 2026
+
+**Crypto and equity feeds on [Arc](/networks/arc) now push on a 0.5% move or every 20 minutes**,
+up from every 5 minutes. To keep every pair readable, the Squidlor leg's staleness window on the
+BTC, ETH and SOL aggregators went from 900 to 3,600 seconds (Safe transactions on 3 November); the
+equity window stays at 7,200 seconds. If your contract bounds `updatedAt` below 25 minutes, widen
+it: see [choosing `maxAge`](/integration/reading-prices#choosing-maxage). Prediction markets must
+stay open at least 30 minutes, so each one settles on a round pushed after its strike was set.
+
 ## Arbitrum relay cadence, November 2026
 
 **BTC/USD and ETH/USD on [Arbitrum One](/networks/arbitrum) now update on a 0.25% move** or

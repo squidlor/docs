@@ -47,7 +47,7 @@ Gas is the small part. Measured constants from the onboarding script, with Arc a
 | **BTC/USD and ETH/USD with two legs each** | **about 14.5M, one time** |
 | **The full Arc deployment: oracle, seven single-leg aggregators, registry, prediction market** | **about 46.8M, one time; about 0.94 USDC at Arc's 20 gwei floor** |
 
-Ongoing cost is one transaction per update carrying every feed. On Arc a push carrying every feed is about 350,000 gas, about 0.007 USDC, at a 0.5% deviation or 300-second heartbeat trigger. At a one-minute heartbeat, plan on roughly 1,500 transactions a day; at five minutes, about 300. Multiply by your chain's gas price and the answer is usually a rounding error in the native token. The exact figure for your chain, at your cadence, is a one-line calculation we do on the first call.
+Ongoing cost is one transaction per update carrying every feed. On Arc a push carrying every feed is about 350,000 gas, about 0.007 USDC, at a 0.5% deviation or 20-minute heartbeat trigger. At a one-minute heartbeat, plan on roughly 1,500 transactions a day; at five minutes, about 300. Multiply by your chain's gas price and the answer is usually a rounding error in the native token. The exact figure for your chain, at your cadence, is a one-line calculation we do on the first call.
 
 The real budget lines are operations and signer incentives, and they follow the same shape the incumbents use. Chainlink's Scale program has the chain cover node-operator gas and operating costs for a period under private terms. DIA funds twelve months of gas through per-chain grants. Our version:
 

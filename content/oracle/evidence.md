@@ -81,7 +81,7 @@ Chainlink's own cadence, measured on 11 September 2026 by walking rounds backwar
 | Chainlink ETH/USD, Ethereum | 0.5% or 1 h | 30 | 48 min |
 | Chainlink ETH/USD, Base | 0.15% or 20 min | 153 | 9.4 min |
 | Chainlink ETH/USD, Arbitrum | 0.05% or about 29 min | 615 | 2.3 min |
-| Squidlor ETH/USD | 0.5% or 5 min | 288 minimum | 5 min or less |
+| Squidlor ETH/USD, Arc | 0.5% or 20 min | 72 minimum | 20 min or less |
 
 Chainlink tunes tightest on the cheapest chains. Squidlor's cadence is an operator setting, changeable live.
 

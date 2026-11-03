@@ -7,7 +7,7 @@ Squidlor runs two feeds at two cadences, on purpose.
 
 | | Off-chain (this page) | On-chain (`/v1/feeds`) |
 | --- | --- | --- |
-| Cadence | **1 second** | 0.5% deviation, or 1h heartbeat |
+| Cadence | **1 second** | 0.5% deviation, or a 20-minute heartbeat on Arc |
 | Source | median of live venue WebSockets | the value stored in the aggregator contract |
 | Cost per update | zero | gas |
 | Use it for | charts, tickers, alerts, UI | liquidations, settlement, anything a contract reads |

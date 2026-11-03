@@ -37,7 +37,7 @@ On Arc the equity aggregators have the Squidlor leg only, with a 7,200-second st
 
 | Asset class | Relay trigger | Notes |
 | --- | --- | --- |
-| Crypto | 50 bps deviation or a 300-second heartbeat | Every due feed in one transaction, about 350k gas, about 0.007 USDC on Arc. Cadence is a tunable operational knob, not a protocol constant; the Squidlor leg's on-chain staleness (600s) must stay above the heartbeat or the pair goes dark between pushes. |
+| Crypto | 50 bps deviation or a 20-minute heartbeat on Arc | Every due feed in one transaction, about 350k gas, about 0.007 USDC on Arc. Cadence is a tunable operational knob, not a protocol constant; the Squidlor leg's on-chain staleness (3,600 s on Arc) must stay above the heartbeat or the pair goes dark between pushes. |
 | Equities | Deviation or heartbeat, during the US regular session only | No pushes overnight, at weekends, or on exchange holidays. The holiday calendar is curated and fails closed. |
 
 One transaction carries every feed that is due, and a feed past half its heartbeat rides along in a transaction another feed has already paid for. That batching is what keeps a wide asset list affordable.

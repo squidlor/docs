@@ -21,7 +21,7 @@ The market went live in September 2026 and runs on Arc.
 
 ## What is open
 
-The platform creates rounds on BTC, ETH, SOL and VIRTUAL: hourly ones, and a daily one that closes at 00:00 UTC, whenever its scheduler is switched on. KARMA, a partner token, has a daily round that settles on the [KARMA/USD](/networks/arc#karmausd) feed. It is not always on. Anyone signed in can create a market on any symbol the adapter publishes; creation previews the feed first and refuses a symbol whose feed has never published a round.
+The platform creates rounds on BTC, ETH, SOL and VIRTUAL: hourly ones, and a daily one that closes at 00:00 UTC, whenever its scheduler is switched on. KARMA, a partner token, has a daily round that settles on the [KARMA/USD](/networks/arc#karmausd) feed. It is not always on. Anyone signed in can create a market on any symbol the adapter publishes; creation previews the feed first and refuses a symbol whose feed has never published a round. A market must stay open at least 30 minutes, so the relay's 20-minute heartbeat always lands a round after the strike is set and before the market closes.
 
 Every market has a short link on `squidlor.market` (the code is the first eight hex characters of its question id) with a rendered preview card, for sharing on X.
 

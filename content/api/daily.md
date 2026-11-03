@@ -24,7 +24,7 @@ A row belongs to exactly one class, and the class decides how the price was meas
 | `equity` | `NVDA`, `TSLA` | median of independent quote APIs, captured at the boundary |
 | `onchain` | `BTC/USD` | the on-chain aggregator's answer at the boundary |
 
-`crypto` and `onchain` can both hold the same asset. They are two different measurements (the off-chain market, and the value contracts actually read, which only updates on a 0.5% deviation or the hourly heartbeat), so they are stored and returned separately rather than merged.
+`crypto` and `onchain` can both hold the same asset. They are two different measurements (the off-chain market, and the value contracts actually read, which only updates on a 0.5% deviation or the 20-minute heartbeat), so they are stored and returned separately rather than merged.
 
 The same pair on two chains is likewise two rows, not one: rows stored from earlier chains keep their own `chainId` and are not merged into Arc's.
 

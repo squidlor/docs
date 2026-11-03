@@ -155,7 +155,7 @@ There is no universal answer; it depends on the feed's cadence and on what a sta
 
 | Feed type | Suggested `maxAge` | Why |
 | --- | --- | --- |
-| Crypto | 15–30 minutes | The relay pushes on a 0.5% move or a 300 s heartbeat, and the Squidlor leg's on-chain window is 600 s. A bound under 10 minutes will trip on normal operation; one over an hour is looser than the feed. |
+| Crypto | 30–60 minutes | On Arc the relay pushes on a 0.5% move or a 20-minute heartbeat, and the Squidlor leg's on-chain window is 3,600 s. A bound under 25 minutes will trip on normal operation; one over two hours is looser than the feed. Other chains run other cadences: see the chain's page under Networks. |
 | Tokenized equity | 48–72 hours | No updates overnight or at weekends, and on Arc there is no second leg to carry the price across the gap. |
 | Anything liquidating positions | As tight as the cadence allows | A stale price here costs users money. |
 
@@ -168,7 +168,7 @@ Read `sourceCount()` for the feed and set your floor relative to it:
 
 | Feed | Sources | Reasonable floor |
 | --- | --- | --- |
-| Arc: BTC/USD, ETH/USD, SOL/USD | Squidlor only, pushed every 300 s or on a 0.5% move | 1, and read `updatedAt`; move to 2 once a second source is added |
+| Arc: BTC/USD, ETH/USD, SOL/USD | Squidlor only, pushed every 20 minutes or on a 0.5% move | 1, and read `updatedAt`; move to 2 once a second source is added |
 | Arc: NVDA, TSLA, AAPL, GOOGL | Squidlor only, pushed during the US session | 1, and read `updatedAt`; `peek()` reverts outside the session |
 
 > [!IMPORTANT]

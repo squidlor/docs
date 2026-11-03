@@ -5,6 +5,12 @@ description: What shipped on the builder platform, newest first.
 
 Changes to the API, SDK, MCP server and builder platform. Contract deployments are on [deployed addresses](/networks/addresses).
 
+## Arbitrum relay cadence, November 2026
+
+**BTC/USD and ETH/USD on [Arbitrum One](/networks/arbitrum) now update on a 0.25% move** or
+every 20 minutes, down from 0.1% (BTC) and 0.15% (ETH). The heartbeat, the staleness windows and
+the SOL and equity cadence are unchanged, so every pair stays readable exactly as before.
+
 ## SHERWOOD on Robinhood Chain, October 2026
 
 **[SHERWOOD/USD](/networks/robinhood#sherwoodusd) is live on Robinhood Chain (4663)** for

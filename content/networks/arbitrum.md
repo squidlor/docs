@@ -25,12 +25,12 @@ Squidlor's oracle has been live on Arbitrum One since October 2026. It runs the 
 
 **Sources per aggregator.** Two: a `ChainlinkSource` that reads Chainlink's Arbitrum proxy for the pair, and a `SquidSource` that reads Squidlor's `SquidPriceFeed`. BTC, ETH and SOL run `minHealthySources = 2`, so they answer only while both legs are fresh. The four equities run `minHealthySources = 1`, so they answer from whichever leg is fresh and median both when both are.
 
-**Relay.** Squidlor pushes on Chainlink's cadence for Base, which is looser than Chainlink's own on Arbitrum:
+**Relay.** Squidlor pushes each feed when its price moves past the deviation threshold, or when the heartbeat runs out with no such move:
 
 | Feed | Deviation | Heartbeat |
 | --- | --- | --- |
-| BTC | 0.1% | 20 minutes |
-| ETH | 0.15% | 20 minutes |
+| BTC | 0.25% | 20 minutes |
+| ETH | 0.25% | 20 minutes |
 | SOL | 0.5% | 24 hours |
 | NVDA, TSLA, AAPL, GOOGL | 0.5% | 24 hours, US regular session only |
 

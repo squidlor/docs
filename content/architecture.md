@@ -56,7 +56,7 @@ The backend is a pnpm/Turborepo monorepo of independent Express services. Redis 
 | **user** | Auth, profiles, JWT issuance, media uploads, waitlist. |
 | **websocket** | Real-time push over Socket.IO. JWT-gated connections join per-user and global rooms. |
 | **relay-pusher** | The price relay: reads sources, medians, signs, and pushes on-chain on a deviation-or-heartbeat trigger. One process per chain and asset class, each on its own signer key, because two relays on one key share a nonce sequence and race. Equities push during the US regular session, on a shared exchange calendar (`@squidlor/market-hours`) that the market service also reads. |
-| **quest** | The prediction-market API behind [markets.squidlor.com](https://markets.squidlor.com): market creation and its session-hours gate, orders through the netting relay, positions, settlement, the hourly and daily round scheduler, Season 1 points and the leaderboard. |
+| **quest** | The prediction-market API behind [markets.squidlor.com](https://markets.squidlor.com): market creation and its session-hours gate, orders through the netting relay, positions, settlement, the round scheduler, Season 1 points and the leaderboard. |
 | **chain watcher** | Indexes the market contracts on Arc (creations, trades, resolutions) into the database `quest` reads. Judge its health by indexed block against chain head, not by process status. |
 | **netting relay** | Submits users' signed orders on-chain and pays the gas, nets fills, and pays out winning positions after settlement. The only component that ever moves sqUSD to a trader. |
 | **pyth-pusher** | Keeps Pyth's on-chain price cache warm for low-liquidity feeds, which can otherwise go stale for days under a pure pull model. |

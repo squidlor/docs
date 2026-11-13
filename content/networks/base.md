@@ -25,14 +25,14 @@ Squidlor's oracle is live on Base, with the same seven pairs as [Arc](/networks/
 
 **Sources per aggregator.** Two: a `ChainlinkSource` and a `SquidSource`. BTC, ETH and SOL run `minHealthySources = 2`, so they answer only while both legs are fresh. The four equities run `minHealthySources = 1`.
 
-**Relay.** Squidlor pushes on the same cadence Chainlink uses on Base:
+**Relay.** Squidlor pushes each feed when its price moves past the deviation threshold, or when the heartbeat runs out with no such move:
 
 | Feed | Deviation | Heartbeat |
 | --- | --- | --- |
-| BTC | 0.1% | 20 minutes |
-| ETH | 0.15% | 20 minutes |
-| SOL | 0.5% | 24 hours |
-| NVDA, TSLA, AAPL, GOOGL | 0.5% | 24 hours, US regular session only |
+| BTC | 2% | 55 minutes |
+| ETH | 2% | 55 minutes |
+| SOL | 2% | 24 hours |
+| NVDA, TSLA, AAPL, GOOGL | 2% | 24 hours, US regular session only |
 
 Two relay copies run in different locations. Each re-reads the chain before it sends, so one update lands once.
 

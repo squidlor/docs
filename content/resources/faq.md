@@ -33,7 +33,7 @@ The pair's `SquidlorOracleAggregator`. Addresses are in [deployed addresses](/ne
 
 ### How often do prices update?
 
-On Arc, crypto pushes on a 50 bps deviation or a 20-minute heartbeat. Equities push during the US regular session only, 09:30 to 16:00 ET, and hold the last print outside it.
+On Arc, crypto pushes on a 2% deviation or a 55-minute heartbeat. Equities push during the US regular session only, 09:30 to 16:00 ET, and hold the last print outside it.
 
 Cadence is an operational knob rather than a protocol constant; see [price feeds & assets](/oracle/feeds#update-cadence).
 

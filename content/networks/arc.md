@@ -88,9 +88,11 @@ Gas is not a budget line on Arc. Funding the deployer and the relay wallet is.
 
 **Sources per aggregator.** Nobody has published Arc feed addresses for any push oracle yet, so each aggregator starts with **one on-chain source, Squidlor's own feed**, at `minHealthySources = 1`. Cross-checking against other venues still happens, but off-chain: the relay medians several exchanges before it signs, so the value stored on Arc is a median anchored by one contract rather than an on-chain median of two oracle networks. When Chainlink or RedStone publish Arc feeds, a second source is one `addSource` call on the live aggregator and `minHealthySources` goes to 2. The [trust model](/resources/trust-model) states what this means for a consumer.
 
-**Relay.** Two processes on separate signer keys. The crypto relay pushes BTC, ETH, SOL and VIRTUAL on a 0.5% deviation or a 20-minute heartbeat; the equity relay pushes NVDA, TSLA, AAPL and GOOGL on the same trigger during the US regular session, 09:30 to 16:00 ET, medianing four market-data APIs. A third process pushes [KARMA/USD](#karmausd). The crypto and equity relays read the venue median the [realtime price stream](/api/realtime) publishes every second.
+**Relay.** Two processes on separate signer keys. The crypto relay pushes BTC, ETH, SOL and VIRTUAL on a 2% deviation or a 55-minute heartbeat; the equity relay pushes NVDA, TSLA, AAPL and GOOGL on the same trigger during the US regular session, 09:30 to 16:00 ET, medianing four market-data APIs. A third process pushes [KARMA/USD](#karmausd). The crypto and equity relays read the venue median the [realtime price stream](/api/realtime) publishes every second.
 
-**Staleness windows.** Each aggregator drops its Squidlor leg once the last push is older than 3,600 seconds for BTC, ETH and SOL, three heartbeats, and 7,200 seconds for the equities. The 20-minute heartbeat also sits inside the prediction-market resolver's 30-minute window, so every market finds a round to settle on.
+**Staleness windows.** Each aggregator drops its Squidlor leg once the last push is older than 3,600 seconds for BTC, ETH and SOL and 7,200 seconds for the equities.
+
+**Settlement round.** The prediction-market resolver settles on the last round in the 30 minutes before a market closes. The 55-minute heartbeat does not always land one there, so in the 25 minutes before every 00:00 UTC the relay pushes any feed whose newest round is older than that window. Platform rounds close at 00:00 UTC and always find a round.
 
 **Prediction market.** `MarketFactory`, `ConditionalTokens`, the FPMM factory, `SquidlorPriceResolver`, sqUSD, the subsidy vault and the netting relay are all on Arc. See [prediction markets](/products/markets).
 

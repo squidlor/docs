@@ -29,10 +29,10 @@ Squidlor's oracle has been live on Arbitrum One since October 2026. It runs the 
 
 | Feed | Deviation | Heartbeat |
 | --- | --- | --- |
-| BTC | 0.25% | 20 minutes |
-| ETH | 0.25% | 20 minutes |
-| SOL | 0.5% | 24 hours |
-| NVDA, TSLA, AAPL, GOOGL | 0.5% | 24 hours, US regular session only |
+| BTC | 2% | 55 minutes |
+| ETH | 2% | 55 minutes |
+| SOL | 2% | 24 hours |
+| NVDA, TSLA, AAPL, GOOGL | 2% | 24 hours, US regular session only |
 
 Two relay copies run in different locations. Each re-reads the chain before it sends, so one update lands once.
 

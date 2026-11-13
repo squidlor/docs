@@ -35,7 +35,7 @@ Since October 2026 the adapter also carries two partner-token feeds, each priced
 
 Chainlink's stock-token feeds already include the corporate-action multiplier, so the price is what one stock token is worth.
 
-**Relay.** Squidlor pushes BTC, ETH and SOL on a 1% deviation or a 1-hour heartbeat, KARMA on a 1% deviation or a 24-hour heartbeat, and SHERWOOD on a 2% deviation or a 6-hour heartbeat. Two relay copies run in different locations. Each re-reads the chain before it sends, so one update lands once.
+**Relay.** Squidlor pushes BTC, ETH and SOL on a 2% deviation or a 1-hour heartbeat, KARMA on a 1% deviation or a 24-hour heartbeat, and SHERWOOD on a 2% deviation or a 6-hour heartbeat. Two relay copies run in different locations. Each re-reads the chain before it sends, so one update lands once.
 
 **Staleness windows:**
 

@@ -5,6 +5,19 @@ description: What shipped on the builder platform, newest first.
 
 Changes to the API, SDK, MCP server and builder platform. Contract deployments are on [deployed addresses](/networks/addresses).
 
+## Slower relays and weekly markets, 13 November 2026
+
+**Feeds on Arc, Arbitrum One, Base and Robinhood Chain now push on a 2% move.** The heartbeat is
+55 minutes for BTC and ETH on [Arc](/networks/arc), [Arbitrum One](/networks/arbitrum) and
+[Base](/networks/base), and for SOL, VIRTUAL and the equities on Arc. It is 1 hour for BTC, ETH and SOL on
+[Robinhood Chain](/networks/robinhood). SOL and the equities on Arbitrum and Base keep their 24-hour heartbeat.
+Staleness windows are unchanged, so every pair stays readable. On Arc, set `maxAge` to about 60
+minutes: see [choosing `maxAge`](/integration/reading-prices#choosing-maxage).
+
+**Platform prediction-market rounds are weekly.** Each round is open for 7 days and closes at 00:00 UTC.
+In the 25 minutes before every 00:00 UTC the Arc relay pushes any feed without a recent round, so
+each round has a price to settle on. See [prediction markets](/products/markets).
+
 ## Arc relay cadence, November 2026
 
 **Crypto and equity feeds on [Arc](/networks/arc) now push on a 0.5% move or every 20 minutes**,

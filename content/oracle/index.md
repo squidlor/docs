@@ -46,7 +46,7 @@ For **tokenized equities**, most chains provide only one stock oracle, which mak
 
 | Property | What Squidlor delivers |
 | --- | --- |
-| Update latency | Configurable. Arc runs a 0.5% deviation trigger with a 20-minute heartbeat; the contracts accept an update every 3 seconds. Off-chain the median refreshes every second. |
+| Update latency | Configurable. Arc runs a 2% deviation trigger with a 55-minute heartbeat; the contracts accept an update every 3 seconds. Off-chain the median refreshes every second. |
 | Stale tolerance | Configurable per consumer. The oracle itself rejects price packets older than 3 minutes, or future-dated by more than 1 minute. |
 | Signer consensus | Threshold-of-N multi-sig. The contracts enforce M-of-N; the live deployment runs 1-of-1 with an operator key. |
 | Decimals | 8, across every pair. |

@@ -35,7 +35,7 @@ Since October 2026 the adapter also carries two partner-token feeds, each priced
 
 Chainlink's stock-token feeds already include the corporate-action multiplier, so the price is what one stock token is worth.
 
-**Relay.** Squidlor pushes BTC, ETH and SOL on a 2% deviation or a 1-hour heartbeat, KARMA on a 1% deviation or a 24-hour heartbeat, and SHERWOOD on a 2% deviation or a 6-hour heartbeat. Two relay copies run in different locations. Each re-reads the chain before it sends, so one update lands once.
+**Relay.** Squidlor pushes BTC, ETH and SOL on a 2% deviation or a 1-hour heartbeat, KARMA on a 1% deviation or a 24-hour heartbeat until its pause takes effect, and SHERWOOD on a 2% deviation or a 6-hour heartbeat. Two relay copies run in different locations. Each re-reads the chain before it sends, so one update lands once.
 
 **Staleness windows:**
 
@@ -55,7 +55,7 @@ KARMA/USD is a feed on the adapter, not an aggregator pair: there is no `Aggrega
 | Adapter | `0xf64c478d921e1d2904Dd15b43bE39659e54f22f1` |
 | Decimals | 8 |
 | Token | `0xB47f4702DEB124cb4eB6286bE83c9d84277C6239`, Karma by Virtuals (18 decimals) |
-| Updates | On a 1% move or every 24 hours, whichever comes first |
+| Updates | Paused since 13 November 2026: no new KARMA markets, and the feed stops updating once the last open KARMA market has settled. |
 | Live since | October 2026 |
 
 **Where the price comes from.** KARMA trades against VIRTUAL in a Uniswap v2 pair on Robinhood Chain (`0xC5178e5fF03Be87B7b21416a354c7A4f9FB1d04E`). Every minute Squidlor reads the pair's reserves and converts the price to USD with VIRTUAL/USD from Coinbase, or Binance when Coinbase does not answer. DexScreener's price for the same pair is a second reading. If the two differ by more than 3%, that minute is skipped.

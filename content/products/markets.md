@@ -21,7 +21,7 @@ The market went live in September 2026 and runs on Arc.
 
 ## What is open
 
-The platform creates weekly rounds on BTC, ETH, SOL and VIRTUAL, each open for 7 days and closing at 00:00 UTC. KARMA, a partner token, has a weekly round that settles on the [KARMA/USD](/networks/arc#karmausd) feed, and SHERWOOD has one every 3 days. Anyone signed in can create a market on any symbol the adapter publishes; creation previews the feed first and refuses a symbol whose feed has never published a round. A market settles on the last round in the 30 minutes before it closes. The Arc relay always pushes one in the 25 minutes before 00:00 UTC, so a market closing at 00:00 UTC always has one; at other times it depends on a 2% move or the 55-minute heartbeat landing in that window.
+The platform creates weekly rounds on BTC, ETH, SOL and VIRTUAL, each open for 7 days and closing at 00:00 UTC. The four tokenized stocks get a weekly round too, opened at the same time and closing the next Friday at 17:30 UTC (12:30 ET in winter, 13:30 ET in summer), inside the US session; a week whose Friday is a market holiday has none. SHERWOOD has a round every 3 days. KARMA markets are paused. Anyone signed in can create a market on any symbol the adapter publishes; creation previews the feed first and refuses a symbol whose feed has never published a round. A market settles on the last round in the 30 minutes before it closes. The Arc relay reads every open market's close time and pushes a round in the 25 minutes before it when the feed has none in that window, so every market has a price to settle on.
 
 Every market has a short link on `squidlor.market` (the code is the first eight hex characters of its question id) with a rendered preview card, for sharing on X.
 

@@ -15,8 +15,12 @@ Staleness windows are unchanged, so every pair stays readable. On Arc, set `maxA
 minutes: see [choosing `maxAge`](/integration/reading-prices#choosing-maxage).
 
 **Platform prediction-market rounds are weekly.** Each round is open for 7 days and closes at 00:00 UTC.
-In the 25 minutes before every 00:00 UTC the Arc relay pushes any feed without a recent round, so
-each round has a price to settle on. See [prediction markets](/products/markets).
+The four tokenized stocks get a weekly round closing Friday at 17:30 UTC, inside the US session.
+In the 25 minutes before every open market's close the Arc relay pushes any feed without a recent
+round, so each market has a price to settle on. See [prediction markets](/products/markets).
+
+**KARMA is paused.** No new KARMA markets open, and [KARMA/USD](/networks/arc#karmausd) stops
+updating once the last open KARMA market has settled.
 
 ## Arc relay cadence, November 2026
 

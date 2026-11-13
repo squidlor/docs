@@ -92,7 +92,7 @@ Gas is not a budget line on Arc. Funding the deployer and the relay wallet is.
 
 **Staleness windows.** Each aggregator drops its Squidlor leg once the last push is older than 3,600 seconds for BTC, ETH and SOL and 7,200 seconds for the equities.
 
-**Settlement round.** The prediction-market resolver settles on the last round in the 30 minutes before a market closes. The 55-minute heartbeat does not always land one there, so in the 25 minutes before every 00:00 UTC the relay pushes any feed whose newest round is older than that window. Platform rounds close at 00:00 UTC and always find a round.
+**Settlement round.** The prediction-market resolver settles on the last round in the 30 minutes before a market closes. The 55-minute heartbeat does not always land one there, so in the 25 minutes before every open market's close, and before every 00:00 UTC, the relay pushes any feed whose newest round is older than that window. Every market finds a round to settle on.
 
 **Prediction market.** `MarketFactory`, `ConditionalTokens`, the FPMM factory, `SquidlorPriceResolver`, sqUSD, the subsidy vault and the netting relay are all on Arc. See [prediction markets](/products/markets).
 
@@ -105,7 +105,7 @@ KARMA/USD is the price of Karma by Virtuals, a token on Robinhood Chain, publish
 | Feed ID | `bytes32("KARMA")` = `0x4b41524d41000000000000000000000000000000000000000000000000000000` |
 | Adapter | `0x0e674eeaaDB0213DE29C72aeFfD3d85E592024Bb` |
 | Decimals | 8 |
-| Updates | On a 1% move or every 24 hours, and always once in the 25 minutes before an open KARMA market expires, so it can resolve |
+| Updates | Paused since 13 November 2026: no new KARMA markets, and the feed stops updating once the last open KARMA market has settled. |
 | Live since | October 2026 |
 
 The value is the same one published on Robinhood Chain: a 30-minute time-weighted average of KARMA's Uniswap v2 pair, converted to USD and checked against DexScreener. [Robinhood Chain](/networks/robinhood#karmausd) describes the pricing. The adapter also carries `KARMA.B47F4702`, KARMA's market cap in USD, for markets created on it before KARMA moved to a price feed.

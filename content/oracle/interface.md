@@ -26,6 +26,8 @@ Reverts if fewer than `minHealthySources` sources are healthy, an intentional re
 
 Use `peek()` when your contract wants to make its own decision about source health.
 
+`freshestUpdatedAt` is the publish time of the **newest** source counted, not the oldest. With one source the two are the same. With several, an older source can still be inside the median: each source is counted until it is older than its own `maxStaleness` (read it with `sources(i)`), so that limit, not `freshestUpdatedAt`, bounds the oldest price behind the answer. Every Arc pair runs one source today.
+
 ### `latestRoundData()`
 
 ```solidity
@@ -41,13 +43,15 @@ function latestRoundData()
     );
 ```
 
-Chainlink-compatible. Behaviour depends on whether a round has ever been committed:
+Chainlink-compatible. `updatedAt` is the same `freshestUpdatedAt` that `peek()` returns: the publish time of the newest healthy source, never the time of your read. A standard Chainlink staleness check works as written.
 
-- If `poke()` has been called at least once, this returns the **last committed round**.
-- Otherwise it returns a **live aggregate** stamped with the current block timestamp.
+- **It reverts instead of serving a stale price.** When fewer than `minHealthySources` sources are fresh, it reverts with `InsufficientHealthySources`, exactly like `peek()`.
+- **It follows the newest data.** A round committed with `poke()` is returned only while it is still the freshest publish. After the next publish it returns the live aggregate as provisional round `latestRoundId() + 1`, the id the next `poke()` would commit it under.
 
-> [!IMPORTANT]
-> That second case matters. On a feed where nobody has called `poke()`, `updatedAt` is `block.timestamp`, the freshness of the *read*, not of the underlying data. A staleness check against it will always pass. If your protocol needs true data age, read `peek()` and check `freshestUpdatedAt`, or verify that rounds are being committed on the feed you depend on.
+It does not return `healthyCount`. If your protocol needs a floor on agreeing sources, read `peek()`.
+
+> [!NOTE]
+> Aggregators deployed before 2026-09-24 stamp `updatedAt` with `block.timestamp` until a round is committed, so a staleness check against them always passes. They are superseded; every address on [networks & addresses](/networks/addresses) has the behaviour above.
 
 ### `getRoundData(uint80 roundId)`
 
@@ -118,8 +122,8 @@ All `onlyOwner`, and ownership uses `Ownable2Step` so a transfer requires the ne
 
 | Situation | Call |
 | --- | --- |
-| Existing Chainlink consumer, minimal change | `latestRoundData()`, but read the caveat above |
-| You want true data age and source health | `peek()` |
+| Existing Chainlink consumer, minimal change | `latestRoundData()` with a staleness check on `updatedAt` |
+| You want data age and the healthy-source count | `peek()` |
 | You need a stable round ID to settle against | `poke()`, then `getRoundData()` |
 | You are building a dashboard or bot | The [HTTP API](/api/feeds), not the chain |
 
